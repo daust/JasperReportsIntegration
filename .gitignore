@@ -1,5 +1,4 @@
-#
+# ignore all jasperreports libraries, they will be generated using gradle (task: jriDownloadJasperLibraries)
 lib/jasper-reports/**
-.DS_Store
-src/.DS_Store
+# ignore all Mac OS specific hidden files
 **/.DS_Store

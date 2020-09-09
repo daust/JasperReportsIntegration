@@ -1,33 +1,52 @@
-Current Build: #BUILD_TIME#
-$Id: ReleaseNotes.txt 129 2018-09-29 17:39:59Z dietmar.aust $
+# Infos about this file
+- Markdown Syntax: https://guides.github.com/features/mastering-markdown/
 
-Version 2.6.0
+----------------------------------------------------------------------------------
+# Version 2.6.0
 
-FEATURE: jetty-distribution-9.4.31.v20200723
+## Release Notes
 
+* New features
+  * FEATURE: #? - Updated the standalone application server to jetty-distribution-9.4.31.v20200723
+* Bug fixes
+  * BUG: #11 - ???
+* Changed behaviour
+  * 
 
+## Patch files to be installed
+...
 
-Version 2.5.0 - 
-====================================================================================
+----------------------------------------------------------------------------------
+# Version 2.5.0
 
-Moved to Github for Issue Tracking ( https://github.com/daust/JasperReportsIntegration ) . Source code and files will be moved later.
+## Release Notes
+* Moved to Github for Issue Tracking ( https://github.com/daust/JasperReportsIntegration ). Source code and files will be moved later. 
+* Further details on the changes can be found here: https://github.com/daust/JasperReportsIntegration/issues
+* New features
+  * FEATURE: #1 - Upgrade to JasperReports 6.7.0
+  * FEATURE: #9 - Ability to set Printjob name (programmatically)
+  * FEATURE: #13 - Upgrade to JDBC libraries for Oracle 12 / 18.x
+* Bug fixes
+  * BUG: #12 - encryptPasswords throws exection
+  * BUG: #11 - Issues with Glassfish
+* Changed behaviour
+  * The minimum requirement is now a Java JRE 8 because JasperReports requires this starting with release 6.6.0 ( https://sourceforge.net/projects/jasperreports/files/jasperreports/JasperReports%206.6.0/ ). See the change log at the bottom. 
 
-Change details can be found at https://github.com/daust/JasperReportsIntegration/issues/
+You can also download the binaries for this pre-release here: http://www.opal-consulting.de/downloads/free_tools/JasperReportsIntegration/Beta-releases/2.5.0.1/
 
-FEATURE: #1 - Upgrade to JasperReports 6.7.0
-FEATURE: #9 - Ability to set Printjob name (programmatically)
-
-Module Version Info:
-----------------------------------------------
+## Module Version Info:
 - apex/f121_JasperReportsIntegration-Test_2.5.0.0  	: 2.5.0.0 => CHANGED
 - sql/xlib_http    							        : 2.3.0.0 => not changed
 - sql/xlib_jasperreports    					    : 2.5.0.0 => CHANGED
 - webapp/JasperReportsIntegration.war			   	: 2.5.0.0 => CHANGED
 
-Version 2.4.0 - 15.10.2017
-====================================================================================
+----------------------------------------------------------------------------------
+# Version 2.4.0 - 15.10.2017
 
-BUG: #3939 - Built-in report functions not working due to missing library jasperreports-functions-$version.jar
+## Release Notes
+
+* Bug fixes
+    * BUG: #3939 - Built-in report functions not working due to missing library jasperreports-functions-$version.jar
 BUG: #3940 - printerDiagnostics abort when supported attribute values cannot be retrieved for category
 
 FEATURE: #3707 - Upgrade to JasperReports 6.4.1
