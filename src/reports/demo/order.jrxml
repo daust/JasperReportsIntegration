@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.4.final using JasperReports Library version 6.0.4  -->
+<!-- 2017-03-05T14:53:53 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="order" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b3a3acc7-30bc-406b-b624-b59570f68f26">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="test@vm1"/>
+	<style name="shared.reportTitle" mode="Transparent" fontName="Arial" fontSize="30" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+	<style name="shared.reportSubTitle" mode="Transparent" forecolor="#736343" fontName="Arial" fontSize="18">
+		<box>
+			<bottomPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="shared.H1" forecolor="#736343" fontName="Arial" fontSize="18">
+		<box>
+			<bottomPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<style name="shared.H2"/>
+	<style name="shared.H3"/>
+	<style name="shared.H4"/>
+	<style name="shared.table" vTextAlign="Middle" vImageAlign="Middle"/>
+	<style name="shared.tableHeader" style="shared.table" mode="Transparent" forecolor="#736343" fontName="Arial" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+	</style>
+	<style name="shared.tableColumnHeader" style="shared.table" mode="Transparent" forecolor="#736343" vTextAlign="Middle" vImageAlign="Middle" fontName="Arial" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.5" lineColor="#999999"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="shared.tableColumnHeader-formlayout" style="shared.table" mode="Transparent" forecolor="#736343" vTextAlign="Middle" vImageAlign="Middle" fontName="Arial" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0" lineColor="#999999"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="shared.tableData" style="shared.table" mode="Transparent" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Arial" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="shared.tableDataAlternateRow" style="shared.table" mode="Transparent" backcolor="#E6DAC3" vTextAlign="Middle" vImageAlign="Middle" fontName="Arial" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="shared.tableColumnFooter" style="shared.table" vTextAlign="Middle" vImageAlign="Middle" fontName="Arial" fontSize="12">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+	</style>
+	<style name="shared.tableFooter" style="shared.table" mode="Opaque" fontName="Arial"/>
+	<style name="tableData-conditional" style="shared.table" mode="Transparent" hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" fontName="Arial" fontSize="12">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E6DAC3">
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+			</style>
+		</conditionalStyle>
+	</style>
+	<parameter name="p_order_id" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="BaseDir" class="java.lang.String">
+		<defaultValueExpression><![CDATA["."]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select cust.customer_id,
+       cust.cust_first_name,
+       cust.cust_last_name,
+       cust.cust_street_address1,
+       cust.cust_street_address2,
+       cust.cust_city,
+       cust.cust_state,
+       cust.cust_postal_code,
+       cust.cust_email,
+       ord.order_id,
+       ord.order_total,
+       trunc(ord.order_timestamp) order_timestamp,
+       itm.unit_price,
+       itm.quantity,
+       prod.product_id, 
+       prod.product_name,
+       prod.product_description,
+       prod.category,
+       prod.list_price,
+       prod.product_image,
+       itm.quantity*itm.unit_price amount
+  from demo_customers cust
+       inner join demo_orders ord
+         on (ord.customer_id=cust.customer_id)
+       inner join demo_order_items itm
+         on (itm.order_id=ord.order_id)
+       inner join demo_product_info prod
+         on (prod.product_id=itm.product_id)
+ where ord.order_id= to_number($P{p_order_id} )]]>
+	</queryString>
+	<field name="PRODUCT_ID" class="java.math.BigDecimal"/>
+	<field name="PRODUCT_NAME" class="java.lang.String"/>
+	<field name="PRODUCT_DESCRIPTION" class="java.lang.String"/>
+	<field name="QUANTITY" class="java.math.BigDecimal"/>
+	<field name="UNIT_PRICE" class="java.math.BigDecimal"/>
+	<field name="AMOUNT" class="java.math.BigDecimal"/>
+	<field name="CUSTOMER_ID" class="java.math.BigDecimal"/>
+	<field name="CUST_FIRST_NAME" class="java.lang.String"/>
+	<field name="CUST_LAST_NAME" class="java.lang.String"/>
+	<field name="CUST_STREET_ADDRESS1" class="java.lang.String"/>
+	<field name="CUST_STREET_ADDRESS2" class="java.lang.String"/>
+	<field name="CUST_CITY" class="java.lang.String"/>
+	<field name="CUST_STATE" class="java.lang.String"/>
+	<field name="CUST_POSTAL_CODE" class="java.lang.String"/>
+	<field name="CUST_EMAIL" class="java.lang.String"/>
+	<field name="ORDER_ID" class="java.math.BigDecimal"/>
+	<field name="ORDER_TOTAL" class="java.math.BigDecimal"/>
+	<field name="ORDER_TIMESTAMP" class="java.sql.Date"/>
+	<field name="CATEGORY" class="java.lang.String"/>
+	<field name="LIST_PRICE" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="207" splitType="Stretch">
+			<image scaleImage="RealSize">
+				<reportElement x="1" y="0" width="184" height="80" uuid="d96bde33-b3cc-4f2c-8a4f-e02235527732"/>
+				<imageExpression><![CDATA[$P{SUBREPORT_DIR} + "opal_logo_80px_hoch.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement style="shared.H1" x="10" y="109" width="140" height="25" uuid="66d2539d-a8c0-449f-9cbe-858694aeab79">
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Order]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="shared.H1" x="270" y="110" width="140" height="25" uuid="d3c5d568-66d8-41c5-90f1-8a07426c2646">
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Customer]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="380" y="150" width="139" height="20" uuid="b3759927-24b4-41e2-83ca-3662fc30e1b2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CUST_LAST_NAME}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="shared.tableColumnHeader-formlayout" x="270" y="150" width="100" height="20" uuid="eeb58762-eed1-4e42-8666-dc8e4e1cbccc"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Customer:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="shared.tableColumnHeader-formlayout" x="10" y="150" width="70" height="20" uuid="ae06d2d2-1b81-451c-8192-f01b0134c978"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Order #:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="150" width="139" height="20" uuid="5dcc4a50-3f41-4631-851a-ee6b8287ac39"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ORDER_ID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="90" y="175" width="139" height="20" uuid="97e14ab9-5b62-40de-ad8b-2515b283103d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ORDER_TIMESTAMP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="shared.tableColumnHeader-formlayout" x="10" y="175" width="70" height="20" uuid="139656a6-5406-4291-9d9d-27db30809da0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement style="shared.tableColumnHeader" x="0" y="0" width="92" height="20" uuid="6d1869f4-27ea-42de-8b0b-f3b2c026b949"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Product #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="shared.tableColumnHeader" x="92" y="0" width="92" height="20" uuid="7da967fa-66ab-4bbd-8aec-179247dae1bd"/>
+				<text><![CDATA[Product]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="shared.tableColumnHeader" x="274" y="0" width="92" height="20" uuid="e3173634-407c-46f3-95ce-7d70d597f344"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Quantity]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="shared.tableColumnHeader" x="368" y="0" width="92" height="20" uuid="aaf3bea1-a27c-47c4-a1d8-f8979839594b"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Unit Price]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="shared.tableColumnHeader" x="460" y="0" width="92" height="20" uuid="390cd7b3-638a-4509-9294-98f097e5e08c"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="45" splitType="Stretch">
+			<frame>
+				<reportElement style="tableData-conditional" x="0" y="0" width="552" height="44" uuid="7c9e23b1-b594-4c4f-b68e-02eba8d6d895"/>
+				<textField pattern="¤#,##0.00#;¤-#,##0.00#">
+					<reportElement style="shared.tableData" x="460" y="0" width="88" height="20" uuid="56dd9e57-3a13-4d54-bd15-a00e2f13291a"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{AMOUNT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="shared.tableData" x="0" y="0" width="90" height="20" uuid="2515f4f3-6a0d-4d62-a755-a07b8e720d93">
+						<property name="local_mesure_unity" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{PRODUCT_ID}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="shared.tableData" x="92" y="0" width="176" height="20" uuid="9f8fa530-7480-4d8c-9f44-7001727c46b6"/>
+					<textFieldExpression><![CDATA[$F{PRODUCT_NAME}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="shared.tableData" x="93" y="20" width="182" height="20" uuid="99154605-d6f2-4392-8664-31dd71075345"/>
+					<textElement>
+						<font size="10" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PRODUCT_DESCRIPTION}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤#,##0.00#;¤-#,##0.00#">
+					<reportElement style="shared.tableData" x="368" y="0" width="90" height="20" uuid="1eccfbaa-4b7e-4986-8008-45850523241b"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{UNIT_PRICE}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<textField>
+				<reportElement style="shared.tableData" x="274" y="2" width="92" height="20" uuid="be87a76d-f33b-4990-999f-1eac70d211ca"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{QUANTITY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="20" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-21" y="1" width="597" height="24" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="7d946e25-26ac-4bdb-9cc6-bc02ecf0eb2a"/>
+				<textField evaluationTime="Report">
+					<reportElement x="533" y="0" width="40" height="20" forecolor="#736343" uuid="91f8c64b-6eb9-4696-be22-09cd46d52683"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="453" y="0" width="80" height="20" forecolor="#736343" uuid="39e38560-dc9b-4e98-ad94-abe75a71fbca"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement x="22" y="1" width="197" height="20" forecolor="#736343" uuid="6c92d30e-ceb2-4a49-ab9a-2e8305716587"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+</jasperReport>

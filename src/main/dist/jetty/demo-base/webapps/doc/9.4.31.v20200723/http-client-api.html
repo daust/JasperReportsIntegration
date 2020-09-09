@@ -1,0 +1,172 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>API Usage</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="http-client.html" title="Chapter&nbsp;22.&nbsp;HTTP Client"><link rel="prev" href="http-client.html" title="Chapter&nbsp;22.&nbsp;HTTP Client"><link rel="next" href="http-client-cookie.html" title="Cookies Support"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">API Usage</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="http-client.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;22.&nbsp;HTTP Client<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="http-client-cookie.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="http-client-api"></a>API Usage</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="http-client-api.html#http-client-blocking">Blocking APIs</a></span></dt><dt><span class="section"><a href="http-client-api.html#http-client-async">Non-Blocking APIs</a></span></dt><dt><span class="section"><a href="http-client-api.html#http-client-content">Content Handling</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="http-client-blocking"></a>Blocking APIs</h3></div></div></div><p>The simple way to perform a HTTP request is the following:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>ContentResponse response = httpClient.GET("http://domain.com/path?query");</code></pre><p>The method <code class="literal">HttpClient.GET(...)</code> performs a HTTP <code class="literal">GET</code> request to the given URI and returns a <code class="literal">ContentResponse</code> when the request/response conversation completes successfully.</p><p>The <code class="literal">ContentResponse</code> object contains the HTTP response information: status code, headers and possibly content.
+The content length is limited by default to 2 MiB; for larger content see <a class="xref" href="http-client-api.html#http-client-response-content" title="Response Content Handling">Response Content Handling</a>.</p><p>If you want to customize the request, for example by issuing a <code class="literal">HEAD</code> request instead of a <code class="literal">GET</code>, and simulating a browser user agent, you can do it in this way:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>ContentResponse response = httpClient.newRequest("http://domain.com/path?query")
+        .method(HttpMethod.HEAD)
+        .agent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:17.0) Gecko/20100101 Firefox/17.0")
+        .send();</code></pre><p>This is a shorthand for:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>Request request = httpClient.newRequest("http://domain.com/path?query");
+request.method(HttpMethod.HEAD);
+request.agent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:17.0) Gecko/20100101 Firefox/17.0");
+ContentResponse response = request.send();</code></pre><p>You first create a request object using <code class="literal">httpClient.newRequest(...)</code>, and then you customize it using the fluent API style (that is, a chained invocation of methods on the request object).
+When the request object is customized, you call <code class="literal">request.send()</code> that produces the <code class="literal">ContentResponse</code> when the request/response conversation is complete.</p><p>Simple <code class="literal">POST</code> requests also have a shortcut method:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>ContentResponse response = httpClient.POST("http://domain.com/entity/1")
+        .param("p", "value")
+        .send();</code></pre><p>The <code class="literal">POST</code> parameter values added via the <code class="literal">param()</code> method are automatically URL-encoded.</p><p>Jetty&#8217;s HTTP client automatically follows redirects, so it handles the typical web pattern <a class="link" href="http://en.wikipedia.org/wiki/Post/Redirect/Get" target="_top">POST/Redirect/GET</a>, and the response object contains the content of the response of the <code class="literal">GET</code> request.
+Following redirects is a feature that you can enable/disable on a per-request basis or globally.</p><p>File uploads also require one line, and make use of JDK 7&#8242;s <code class="literal">java.nio.file</code> classes:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>ContentResponse response = httpClient.newRequest("http://domain.com/upload")
+        .method(HttpMethod.POST)
+        .file(Paths.get("file_to_upload.txt"), "text/plain")
+        .send();</code></pre><p>It is possible to impose a total timeout for the request/response conversation using the <code class="literal">Request.timeout(...)</code> method as follows:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>ContentResponse response = httpClient.newRequest("http://domain.com/path?query")
+        .timeout(5, TimeUnit.SECONDS)
+        .send();</code></pre><p>In the example above, when the 5 seconds expire, the request is aborted and a <code class="literal">java.util.concurrent.TimeoutException</code> is thrown.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="http-client-async"></a>Non-Blocking APIs</h3></div></div></div><p>So far we have shown how to use Jetty HTTP client in a blocking style - that is, the thread that issues the request blocks until the request/response conversation is complete.</p><p>This section will look at Jetty&#8217;s HTTP client non-blocking, asynchronous APIs that are perfectly suited for large content downloads, for parallel processing of requests/responses and in cases where performance and efficient thread and resource utilization is a key factor.</p><p>The asynchronous APIs rely heavily on listeners that are invoked at various stages of request and response processing.
+These listeners are implemented by applications and may perform any kind of logic.
+The implementation invokes these listeners in the same thread that is used to process the request or response.
+Therefore, if the application code in these listeners takes a long time to execute, the request or response processing is delayed until the listener returns.</p><p>If you need to execute application code that takes long time inside a listener, you must spawn your own thread and remember to deep copy any data provided by the listener that you will need in your code, because when the listener returns the data it provides may be recycled/cleared/destroyed.</p><p>Request and response processing are executed by two different threads and therefore may happen concurrently.
+A typical example of this concurrent processing is an echo server, where a large upload may be concurrent with the large download echoed back.
+As a side note, remember that responses may be processed and completed <span class="emphasis"><em>before</em></span> requests; a typical example is a large upload that triggers a quick response - for example an error - by the server: the response may arrive and be completed while the request content is still being uploaded.</p><p>The application thread that calls <code class="literal">Request.send(Response.CompleteListener)</code> performs the processing of the request until either the request is fully processed or until it would block on I/O, then it returns (and therefore never blocks).
+If it would block on I/O, the thread asks the I/O system to emit an event when the I/O will be ready to continue, then returns.
+When such an event is fired, a thread taken from the <code class="literal">HttpClient</code> thread pool will resume the processing of the request.</p><p>Response are processed from the I/O thread that fires the event that bytes are ready to be read.
+Response processing continues until either the response is fully processed or until it would block for I/O.
+If it would block for I/O, the thread asks the I/O system to emit an event when the I/O will be ready to continue, then returns.
+When such an event is fired, a thread taken from the <code class="literal">HttpClient</code> thread pool will resume the processing of the response.</p><p>When the request and the response are both fully processed, the thread that finished the last processing (usually the thread that processes the response, but may also be the thread that processes the request - if the request takes more time than the response to be processed) is used to de-queue the next request for the same destination and processes it.</p><p>A simple asynchronous <code class="literal">GET</code> request that discards the response content can be written in this way:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>httpClient.newRequest("http://domain.com/path")
+        .send(new Response.CompleteListener()
+        {
+            @Override
+            public void onComplete(Result result)
+            {
+                // Your logic here
+            }
+        });</code></pre><p>Method <code class="literal">Request.send(Response.CompleteListener)</code> returns <code class="literal">void</code> and does not block; the <code class="literal">Response.CompleteListener</code> provided as a parameter is notified when the request/response conversation is complete, and the <code class="literal">Result</code> parameter allows you to access the response object.</p><p>You can write the same code using JDK 8&#8242;s lambda expressions:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>httpClient.newRequest("http://domain.com/path")
+        .send(result -&gt; { /* Your logic here */ });</code></pre><p>You can impose a total timeout for the request/response conversation in the same way used by the synchronous API:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>httpClient.newRequest("http://domain.com/path")
+        .timeout(3, TimeUnit.SECONDS)
+        .send(result -&gt; { /* Your logic here */ });</code></pre><p>The example above will impose a total timeout of 3 seconds on the request/response conversation.</p><p>The HTTP client APIs use listeners extensively to provide hooks for all possible request and response events, and with JDK 8&#8242;s lambda expressions they are even more fun to use:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>httpClient.newRequest("http://domain.com/path")
+        // Add request hooks
+        .onRequestQueued(request -&gt; { ... })
+        .onRequestBegin(request -&gt; { ... })
+        ... // More request hooks available
+
+        // Add response hooks
+        .onResponseBegin(response -&gt; { ... })
+        .onResponseHeaders(response -&gt; { ... })
+        .onResponseContent((response, buffer) -&gt; { ... })
+        ... // More response hooks available
+
+        .send(result -&gt; { ... });</code></pre><p>This makes Jetty HTTP client suitable for HTTP load testing because, for example, you can accurately time every step of the request/response conversation (thus knowing where the request/response time is really spent).</p><p>Have a look at the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/client/api/Request.Listener.html" target="_top"><code class="literal">Request.Listener</code></a> class to know about request events, and to the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/client/api/Response.Listener.html" target="_top"><code class="literal">Response.Listener</code></a> class to know about response events.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="http-client-content"></a>Content Handling</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="http-client-request-content"></a>Request Content Handling</h4></div></div></div><p>Jetty&#8217;s HTTP client provides a number of utility classes off the shelf to handle request content.</p><p>You can provide request content as <code class="literal">String</code>, <code class="literal">byte[]</code>, <code class="literal">ByteBuffer</code>, <code class="literal">java.nio.file.Path</code>, <code class="literal">InputStream</code>, and provide your own implementation of <code class="literal">org.eclipse.jetty.client.api.ContentProvider</code>.
+Here&#8217;s an example that provides the request content using <code class="literal">java.nio.file.Paths</code>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>ContentResponse response = httpClient.newRequest("http://domain.com/upload")
+        .method(HttpMethod.POST)
+        .file(Paths.get("file_to_upload.txt"), "text/plain")
+        .send();</code></pre><p>This is equivalent to using the <code class="literal">PathContentProvider</code> utility class:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>ContentResponse response = httpClient.newRequest("http://domain.com/upload")
+        .method(HttpMethod.POST)
+        .content(new PathContentProvider(Paths.get("file_to_upload.txt")), "text/plain")
+        .send();</code></pre><p>Alternatively, you can use <code class="literal">FileInputStream</code> via the <code class="literal">InputStreamContentProvider</code> utility class:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>ContentResponse response = httpClient.newRequest("http://domain.com/upload")
+        .method(HttpMethod.POST)
+        .content(new InputStreamContentProvider(new FileInputStream("file_to_upload.txt")), "text/plain")
+        .send();</code></pre><p>Since <code class="literal">InputStream</code> is blocking, then also the send of the request will block if the input stream blocks, even in case of usage of the asynchronous <code class="literal">HttpClient</code> APIs.</p><p>If you have already read the content in memory, you can pass it as a <code class="literal">byte[]</code> using the <code class="literal">BytesContentProvider</code> utility class:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>byte[] bytes = ...;
+ContentResponse response = httpClient.newRequest("http://domain.com/upload")
+        .method(HttpMethod.POST)
+        .content(new BytesContentProvider(bytes), "text/plain")
+        .send();</code></pre><p>If the request content is not immediately available, but your application will be notified of the content to send, you can use <code class="literal">DeferredContentProvider</code> in this way:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>DeferredContentProvider content = new DeferredContentProvider();
+httpClient.newRequest("http://domain.com/upload")
+        .method(HttpMethod.POST)
+        .content(content)
+        .send(new Response.CompleteListener()
+        {
+            @Override
+            public void onComplete(Result result)
+            {
+                // Your logic here
+            }
+        });
+
+// Content not available yet here
+
+...
+
+// An event happens, now content is available
+byte[] bytes = ...;
+content.offer(ByteBuffer.wrap(bytes));
+
+...
+
+// All content has arrived
+content.close();</code></pre><p>While the request content is awaited and consequently uploaded by the client application, the server may be able to respond (at least with the response headers) completely asynchronously.
+In this case, <code class="literal">Response.Listener</code> callbacks will be invoked before the request is fully sent.
+This allows fine-grained control of the request/response conversation: for example the server may reject contents that are too big, send a response to the client, which in turn may stop the content upload.</p><p>Another way to provide request content is by using an <code class="literal">OutputStreamContentProvider</code>,
+which allows applications to write request content when it is available to the <code class="literal">OutputStream</code> provided by <code class="literal">OutputStreamContentProvider</code>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>OutputStreamContentProvider content = new OutputStreamContentProvider();
+
+// Use try-with-resources to close the OutputStream when all content is written
+try (OutputStream output = content.getOutputStream())
+{
+    client.newRequest("localhost", 8080)
+            .method(HttpMethod.POST)
+            .content(content)
+            .send(new Response.CompleteListener()
+            {
+                @Override
+                public void onComplete(Result result)
+                {
+                    // Your logic here
+                }
+            });
+
+    ...
+
+    // Write content
+    writeContent(output);
+}
+// End of try-with-resource, output.close() called automatically to signal end of content</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="http-client-response-content"></a>Response Content Handling</h4></div></div></div><p>Jetty HTTP client allows applications to handle response content in different ways.</p><p>The first way is to buffer the response content in memory; this is done when using the blocking APIs (see <a class="xref" href="http-client-api.html#http-client-blocking" title="Blocking APIs">Blocking APIs</a>) and the content is buffered within a <code class="literal">ContentResponse</code> up to 2 MiB.</p><p>If you want to control the length of the response content (for example limiting to values smaller than the default of 2 MiB), then you can use a <code class="literal">org.eclipse.jetty.client.util.FutureResponseListener</code> in this way:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>Request request = httpClient.newRequest("http://domain.com/path");
+
+// Limit response content buffer to 512 KiB
+FutureResponseListener listener = new FutureResponseListener(request, 512 * 1024);
+
+request.send(listener);
+
+ContentResponse response = listener.get(5, TimeUnit.SECONDS);</code></pre><p>If the response content length is exceeded, the response will be aborted, and an exception will be thrown by method <code class="literal">get()</code>.</p><p>If you are using the asynchronous APIs (see <a class="xref" href="http-client-api.html#http-client-async" title="Non-Blocking APIs">Non-Blocking APIs</a>), you can use the <code class="literal">BufferingResponseListener</code> utility class:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>httpClient.newRequest("http://domain.com/path")
+        // Buffer response content up to 8 MiB
+        .send(new BufferingResponseListener(8 * 1024 * 1024)
+        {
+            @Override
+            public void onComplete(Result result)
+            {
+                if (!result.isFailed())
+                {
+                    byte[] responseContent = getContent();
+                    // Your logic here
+                }
+            }
+        });</code></pre><p>The second way is the most efficient (because it avoids content copies) and allows you to specify a <code class="literal">Response.ContentListener</code>, or a subclass, to handle the content as soon as it arrives.
+In the example below, <code class="literal">Response.Listener.Adapter</code> is a class that implements both <code class="literal">Response.ContentListener</code> and <code class="literal">Response.CompleteListener</code> and can be passed to <code class="literal">Request.send()</code>.
+Jetty&#8217;s HTTP client will invoke the <code class="literal">onContent()</code> method zero or more times (until there is content), and finally invoke the <code class="literal">onComplete()</code> method.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>httpClient .newRequest("http://domain.com/path")
+        .send(new Response.Listener.Adapter()
+        {
+            @Override
+            public void onContent(Response response, ByteBuffer buffer)
+            {
+                // Your logic here
+            }
+        });</code></pre><p>The third way allows you to wait for the response and then stream the content using the <code class="literal">InputStreamResponseListener</code> utility class:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>InputStreamResponseListener listener = new InputStreamResponseListener();
+httpClient.newRequest("http://domain.com/path")
+        .send(listener);
+
+// Wait for the response headers to arrive
+Response response = listener.get(5, TimeUnit.SECONDS);
+
+// Look at the response
+if (response.getStatus() == HttpStatus.OK_200)
+{
+    // Use try-with-resources to close input stream.
+    try (InputStream responseContent = listener.getInputStream())
+    {
+        // Your logic here
+    }
+}</code></pre></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="http-client.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="http-client.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="http-client-cookie.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;22.&nbsp;HTTP Client&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Cookies Support</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

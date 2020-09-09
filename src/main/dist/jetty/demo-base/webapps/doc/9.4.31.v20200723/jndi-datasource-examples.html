@@ -1,0 +1,214 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Datasource Examples</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="jndi.html" title="Chapter&nbsp;12.&nbsp;Configuring JNDI"><link rel="prev" href="jndi-embedded.html" title="Using JNDI with Jetty Embedded"><link rel="next" href="annotations.html" title="Chapter&nbsp;13.&nbsp;Annotations"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Datasource Examples</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jndi-embedded.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;12.&nbsp;Configuring JNDI<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="annotations.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jndi-datasource-examples"></a>Datasource Examples</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="jndi-datasource-examples.html#pooling-datasources">Pooling DataSources</a></span></dt><dt><span class="section"><a href="jndi-datasource-examples.html#non-pooling-datasources">Non-pooling DataSources</a></span></dt></dl></div><p>Here are examples of configuring a JNDI datasource for various databases.</p><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>Read <a class="link" href="jndi-configuration.html#configuring-datasources" title="Configuring DataSources">] in xref:jndi-configuration[</a> for more information about configuring datasources.</p></div></blockquote></div><p>All of these examples correspond to a <code class="literal">resource-ref</code> in <code class="literal">web.xml</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;resource-ref&gt;
+     &lt;description&gt;My DataSource Reference&lt;/description&gt;
+     &lt;res-ref-name&gt;jdbc/DSTest&lt;/res-ref-name&gt;
+     &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+     &lt;res-auth&gt;Container&lt;/res-auth&gt;
+  &lt;/resource-ref&gt;</code></pre><p>These examples assume that all of the datasources are declared at the JVM scope, but you can use other scopes if desired.
+You can configure all JNDI resources in a <code class="literal">jetty.xml</code> file, a <code class="literal">WEB-INF/jetty-env.xml</code> file, or a context XML file.
+See the section <a class="xref" href="using-jetty-jndi.html#jndi-where-to-declare" title="Deciding Where to Declare Resources">Deciding Where to Declare Resources</a> for more information.</p><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-plus" aria-hidden="true"></i> Important</h3><p>You must provide Jetty with the libraries necessary to instantiate the datasource you have configured by putting the corresponding Jar in <code class="literal">JETTY_HOME/lib/ext</code>.</p></div></blockquote></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="pooling-datasources"></a>Pooling DataSources</h3></div></div></div><p>Pooling datasources enables connection pooling, which lets you reuse an existing connection instead of creating a new connection to the database.
+This is highly efficient in terms of memory allocation and speed of the request to the database.
+We highly recommend this option for production environments.</p><p>The following is a list of the pooled datasource examples we have worked with in the past:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#hikaricp-datasource" title="HikariCP">HikariCP</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#bonecp-datasource" title="BoneCP">BoneCP</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#c3p0-datasource" title="c3p0">c3p0</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#dbcp-datasource" title="DBCP">DBCP</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#atomikos-datasource" title="Atomikos 3.3.2+">Atomikos 3.3.2+</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#mysql-pooled-datasource" title="MySQL">MySQL</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#postgreSQL-pooled-datasource" title="PostgreSQL">PostgreSQL</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#DB2-pooled-datasource" title="DB2">DB2</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="hikaricp-datasource"></a>HikariCP</h4></div></div></div><p>Connection pooling, available at <a class="link" href="http://search.maven.org/remotecontent?filepath=com/zaxxer/HikariCP/1.4.0/HikariCP-1.4.0.jar" target="_top">HikariCP Download</a>.
+All configuration options for HikariCP are described here: <a class="link" href="https://github.com/brettwooldridge/HikariCP" target="_top">HikariCP documentation</a>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+       &lt;New class="com.zaxxer.hikari.HikariDataSource"&gt;
+         &lt;Arg&gt;
+            &lt;New class="com.zaxxer.hikari.HikariConfig"&gt;
+               &lt;Set name="minimumPoolSize"&gt;5&lt;/Set&gt;
+               &lt;Set name="maximumPoolSize"&gt;20&lt;/Set&gt;
+               &lt;Set name="dataSourceClassName"&gt;com.mysql.jdbc.jdbc2.optional.MysqlDataSource&lt;/Set&gt;
+               &lt;Set name="username"&gt;jdbc.user&lt;/Set&gt;
+               &lt;Set name="password"&gt;jdbc.pass&lt;/Set&gt;
+               &lt;Call name="addDataSourceProperty"&gt;
+                  &lt;Arg&gt;url&lt;/Arg&gt;
+                  &lt;Arg&gt;jdbc.url&lt;/Arg&gt;
+               &lt;/Call&gt;
+            &lt;/New&gt;
+         &lt;/Arg&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="bonecp-datasource"></a>BoneCP</h4></div></div></div><p>Connection pooling, available at <a class="link" href="http://jolbox.com/index.html?page=http://jolbox.com/download.html" target="_top">BoneCP Download</a>.
+All configuration options for BoneCP are described here: <a class="link" href="http://jolbox.com/bonecp/downloads/site/apidocs/com/jolbox/bonecp/BoneCPDataSource.html" target="_top">BoneCP API</a>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+       &lt;New class="com.jolbox.bonecp.BoneCPDataSource"&gt;
+         &lt;Set name="driverClass"&gt;com.mysql.jdbc.Driver&lt;/Set&gt;
+         &lt;Set name="jdbcUrl"&gt;jdbc.url&lt;/Set&gt;
+         &lt;Set name="username"&gt;jdbc.user&lt;/Set&gt;
+         &lt;Set name="password"&gt;jdbc.pass&lt;/Set&gt;
+         &lt;Set name="minConnectionsPerPartition"&gt;5&lt;/Set&gt;
+         &lt;Set name="maxConnectionsPerPartition"&gt;50&lt;/Set&gt;
+         &lt;Set name="acquireIncrement"&gt;5&lt;/Set&gt;
+         &lt;Set name="idleConnectionTestPeriod"&gt;30&lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="c3p0-datasource"></a>c3p0</h4></div></div></div><p>Connection pooling, available at <a class="link" href="https://repo1.maven.org/maven2/c3p0/c3p0/0.9.1.2/c3p0-0.9.1.2.jar" target="_top">c3p0 Jar</a>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+      &lt;New class="com.mchange.v2.c3p0.ComboPooledDataSource"&gt;
+         &lt;Set name="driverClass"&gt;org.some.Driver&lt;/Set&gt;
+         &lt;Set name="jdbcUrl"&gt;jdbc.url&lt;/Set&gt;
+         &lt;Set name="user"&gt;jdbc.user&lt;/Set&gt;
+         &lt;Set name="password"&gt;jdbc.pass&lt;/Set&gt;
+      &lt;/New&gt;
+     &lt;/Arg&gt;
+    &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="dbcp-datasource"></a>DBCP</h4></div></div></div><p>Connection pooling, available at <a class="link" href="https://repo1.maven.org/maven2/commons-dbcp/commons-dbcp/1.2/commons-dbcp-1.2.jar" target="_top">dbcp Jar</a>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+         &lt;New class="org.apache.commons.dbcp.BasicDataSource"&gt;
+            &lt;Set name="driverClassName"&gt;org.some.Driver&lt;/Set&gt;
+            &lt;Set name="url"&gt;jdbc.url&lt;/Set&gt;
+            &lt;Set name="username"&gt;jdbc.user&lt;/Set&gt;
+            &lt;Set name="password"&gt;jdbc.pass&lt;/Set&gt;
+         &lt;/New&gt;
+         &lt;/New&gt;
+     &lt;/Arg&gt;
+    &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="atomikos-datasource"></a>Atomikos 3.3.2+</h4></div></div></div><p>Connection pooling + XA transactions.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>   &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+      &lt;Arg&gt;&lt;/Arg&gt;
+      &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+      &lt;Arg&gt;
+         &lt;New class="com.atomikos.jdbc.AtomikosDataSourceBean"&gt;
+            &lt;Set name="minPoolSize"&gt;2&lt;/Set&gt;
+            &lt;Set name="maxPoolSize"&gt;50&lt;/Set&gt;
+            &lt;Set name="xaDataSourceClassName"&gt;com.mysql.jdbc.jdbc2.optional.MysqlXADataSource&lt;/Set&gt;
+            &lt;Set name="UniqueResourceName"&gt;DSTest&lt;/Set&gt;
+            &lt;Get name="xaProperties"&gt;
+               &lt;Call name="setProperty"&gt;
+                  &lt;Arg&gt;url&lt;/Arg&gt;
+                  &lt;Arg&gt;jdbc:mysql://localhost:3306/databasename&lt;/Arg&gt;
+               &lt;/Call&gt;
+               &lt;Call name="setProperty"&gt;
+                  &lt;Arg&gt;user&lt;/Arg&gt;
+                  &lt;Arg&gt;some_username&lt;/Arg&gt;
+               &lt;/Call&gt;
+               &lt;Call name="setProperty"&gt;
+                  &lt;Arg&gt;password&lt;/Arg&gt;
+                  &lt;Arg&gt;some_password&lt;/Arg&gt;
+               &lt;/Call&gt;
+            &lt;/Get&gt;
+         &lt;/New&gt;
+      &lt;/Arg&gt;
+    &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mysql-pooled-datasource"></a>MySQL</h4></div></div></div><p>Implements <code class="literal">javax.sql.DataSource</code> and <code class="literal">javax.sql.ConnectionPoolDataSource</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+        &lt;New class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource"&gt;
+           &lt;Set name="Url"&gt;jdbc:mysql://localhost:3306/databasename&lt;/Set&gt;
+           &lt;Set name="User"&gt;user&lt;/Set&gt;
+           &lt;Set name="Password"&gt;pass&lt;/Set&gt;
+        &lt;/New&gt;
+     &lt;/Arg&gt;
+    &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="postgreSQL-pooled-datasource"></a>PostgreSQL</h4></div></div></div><p>Implements <code class="literal">javax.sql.ConnectionPoolDataSource</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+        &lt;New class="org.postgresql.ds.PGConnectionPoolDataSource"&gt;
+           &lt;Set name="User"&gt;user&lt;/Set&gt;
+           &lt;Set name="Password"&gt;pass&lt;/Set&gt;
+           &lt;Set name="DatabaseName"&gt;dbname&lt;/Set&gt;
+           &lt;Set name="ServerName"&gt;localhost&lt;/Set&gt;
+           &lt;Set name="PortNumber"&gt;5432&lt;/Set&gt;
+
+        &lt;/New&gt;
+     &lt;/Arg&gt;
+  &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="DB2-pooled-datasource"></a>DB2</h4></div></div></div><p>Implements <code class="literal">javax.sql.ConnectionPoolDataSource</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+        &lt;New class="com.ibm.db2.jcc.DB2ConnectionPoolDataSource"&gt;
+           &lt;Set name="DatabaseName"&gt;dbname&lt;/Set&gt;
+           &lt;Set name="User"&gt;user&lt;/Set&gt;
+           &lt;Set name="Password"&gt;pass&lt;/Set&gt;
+           &lt;Set name="ServerName"&gt;servername&lt;/Set&gt;
+           &lt;Set name="PortNumber"&gt;50000&lt;/Set&gt;
+        &lt;/New&gt;
+     &lt;/Arg&gt;
+  &lt;/New&gt;</code></pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="non-pooling-datasources"></a>Non-pooling DataSources</h3></div></div></div><p>If you are deploying in a production environment, we highly recommend using a Pooling DataSource.
+Since that is not always an option we have a handful of examples for non-pooling datasources listed here as well.</p><p>The following is a list of the non-pooled datasource examples:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#sql-server-2000-datasource" title="SQL Server 2000">SQL Server 2000</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#oracle-9i10g-datasource" title="Oracle 9i/10g">Oracle 9i/10g</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#postgreSQL-datasource" title="PostgreSQL">PostgreSQL</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#sybase-datasource" title="Sybase">Sybase</a></li><li class="listitem"><a class="xref" href="jndi-datasource-examples.html#DB2-datasource" title="DB2">DB2</a></li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="sql-server-2000-datasource"></a>SQL Server 2000</h4></div></div></div><p>Implements <code class="literal">javax.sql.DataSource</code> and <code class="literal">javax.sql.ConnectionPoolDataSource</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+        &lt;New class="net.sourceforge.jtds.jdbcx.JtdsDataSource"&gt;
+           &lt;Set name="User"&gt;user&lt;/Set&gt;
+           &lt;Set name="Password"&gt;pass&lt;/Set&gt;
+           &lt;Set name="DatabaseName"&gt;dbname&lt;/Set&gt;
+           &lt;Set name="ServerName"&gt;localhost&lt;/Set&gt;
+           &lt;Set name="PortNumber"&gt;1433&lt;/Set&gt;
+        &lt;/New&gt;
+     &lt;/Arg&gt;
+    &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="oracle-9i10g-datasource"></a>Oracle 9i/10g</h4></div></div></div><p>Implements <code class="literal">javax.sql.DataSource</code> and <code class="literal">javax.sql.ConnectionPoolDataSource</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+    &lt;Arg&gt;&lt;/Arg&gt;
+    &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+    &lt;Arg&gt;
+      &lt;New class="oracle.jdbc.pool.OracleDataSource"&gt;
+        &lt;Set name="DriverType"&gt;thin&lt;/Set&gt;
+        &lt;Set name="URL"&gt;jdbc:oracle:thin:@fmsswdb1:10017:otcd&lt;/Set&gt;
+        &lt;Set name="User"&gt;xxxx&lt;/Set&gt;
+        &lt;Set name="Password"&gt;xxxx&lt;/Set&gt;
+        &lt;Set name="connectionCachingEnabled"&gt;true&lt;/Set&gt;
+        &lt;Set name="connectionCacheProperties"&gt;
+          &lt;New class="java.util.Properties"&gt;
+            &lt;Call name="setProperty"&gt;
+              &lt;Arg&gt;MinLimit&lt;/Arg&gt;
+              &lt;Arg&gt;5&lt;/Arg&gt;
+            &lt;/Call&gt;
+            &lt;!-- put the other properties in here too --&gt;
+          &lt;/New&gt;
+        &lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/New&gt;</code></pre><p>For more information, refer to: <a class="link" href="http://docs.oracle.com/cd/B14117_01/java.101/b10979/conncache.htm" target="_top">Oracle Database JDBC documentation</a>.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="postgreSQL-datasource"></a>PostgreSQL</h4></div></div></div><p>Implements <code class="literal">javax.sql.DataSource</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+        &lt;New class="org.postgresql.ds.PGSimpleDataSource"&gt;
+           &lt;Set name="User"&gt;user&lt;/Set&gt;
+           &lt;Set name="Password"&gt;pass&lt;/Set&gt;
+           &lt;Set name="DatabaseName"&gt;dbname&lt;/Set&gt;
+           &lt;Set name="ServerName"&gt;localhost&lt;/Set&gt;
+           &lt;Set name="PortNumber"&gt;5432&lt;/Set&gt;
+        &lt;/New&gt;
+     &lt;/Arg&gt;
+  &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="sybase-datasource"></a>Sybase</h4></div></div></div><p>Implements <code class="literal">javax.sql.DataSource</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+        &lt;New class="com.sybase.jdbc2.jdbc.SybDataSource"&gt;
+           &lt;Set name="DatabaseName"&gt;dbname&lt;/Set&gt;
+           &lt;Set name="User"&gt;user&lt;/Set&gt;
+           &lt;Set name="Password"&gt;pass&lt;/Set&gt;
+           &lt;Set name="ServerName"&gt;servername&lt;/Set&gt;
+           &lt;Set name="PortNumber"&gt;5000&lt;/Set&gt;
+        &lt;/New&gt;
+     &lt;/Arg&gt;
+  &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="DB2-datasource"></a>DB2</h4></div></div></div><p>Implements <code class="literal">javax.sql.DataSource</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+     &lt;Arg&gt;&lt;/Arg&gt;
+     &lt;Arg&gt;jdbc/DSTest&lt;/Arg&gt;
+     &lt;Arg&gt;
+        &lt;New class="com.ibm.db2.jcc.DB2SimpleDataSource"&gt;
+           &lt;Set name="DatabaseName"&gt;dbname&lt;/Set&gt;
+           &lt;Set name="User"&gt;user&lt;/Set&gt;
+           &lt;Set name="Password"&gt;pass&lt;/Set&gt;
+           &lt;Set name="ServerName"&gt;servername&lt;/Set&gt;
+           &lt;Set name="PortNumber"&gt;50000&lt;/Set&gt;
+        &lt;/New&gt;
+     &lt;/Arg&gt;
+  &lt;/New&gt;</code></pre></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jndi-embedded.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="jndi.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="annotations.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Using JNDI with Jetty Embedded&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;13.&nbsp;Annotations</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

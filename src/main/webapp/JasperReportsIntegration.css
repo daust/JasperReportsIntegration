@@ -1,0 +1,60 @@
+body,html {
+	font-family: Arial, Helvetica, Geneva;
+}
+
+html,body,p,th,td,input,select,submit {
+	font-size: 12px;
+}
+
+h1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 170%;
+	color: #336699;
+	background-color: #ffffff;
+	border: solid #cccc99;
+	border-width: 0px 0px 2px 0px;
+	width: 100%
+}
+
+.newspaper-b {
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin-left: 45px;
+	/*margin:0px auto; 
+	width: 90%;*/
+	text-align: left;
+	border-collapse: collapse;
+	border: 1px solid #69c;
+}
+
+.newspaper-b th {
+	padding: 5px 5px 5px 5px;
+	font-weight: normal;
+	font-size: 13px;
+	color: #039;
+}
+
+.newspaper-b tbody {
+	background: #e8edff;
+}
+
+.newspaper-b td {
+	padding: 5px;
+	color: #669;
+	border-top: 1px dashed #fff;
+}
+
+.newspaper-b tbody tr:hover td {
+	color: #339;
+	background: #d0dafd;
+}
+
+td.heading {
+	font-weight: bold;
+	padding-left: 3px;
+	font-size: 140%;
+}
+
+td.center,th.center {
+	text-align: center;
+}

@@ -1,0 +1,284 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Chapter&nbsp;3.&nbsp;An Introduction to Jetty Configuration</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="quick-start.html" title="Part&nbsp;I.&nbsp;Getting Started With Jetty"><link rel="prev" href="quickstart-deploying-webapps.html" title="Deploying Web Applications"><link rel="next" href="quickstart-config-what.html" title="What to Configure in Jetty"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter&nbsp;3.&nbsp;An Introduction to Jetty Configuration</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="quickstart-deploying-webapps.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;I.&nbsp;Getting Started With Jetty<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="quickstart-config-what.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="quick-start-configure"></a>Chapter&nbsp;3.&nbsp;An Introduction to Jetty Configuration</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="quick-start-configure.html#quickstart-config-how">How to Configure Jetty</a></span></dt><dt><span class="section"><a href="quickstart-config-what.html">What to Configure in Jetty</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="quickstart-config-how"></a>How to Configure Jetty</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="quick-start-configure.html#_jetty_pojo_configuration">Jetty POJO Configuration</a></span></dt><dt><span class="section"><a href="quick-start-configure.html#_jetty_start_configuration_files">Jetty Start Configuration Files</a></span></dt><dt><span class="section"><a href="quick-start-configure.html#_a_closer_look">A Closer Look</a></span></dt><dt><span class="section"><a href="quick-start-configure.html#_other_configuration_files">Other Configuration Files</a></span></dt><dt><span class="section"><a href="quick-start-configure.html#_jetty_ioc_xml_format">Jetty IoC XML format</a></span></dt></dl></div><p>To understand Jetty configuration, you need to understand the "How" and the "What".
+This section covers how to configure Jetty in terms of what mechanisms exist to perform configuration.
+The <a class="link" href="quickstart-config-what.html" title="What to Configure in Jetty">next section</a> gives an overview of the action components and fields that you can configure with these mechanisms.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_jetty_pojo_configuration"></a>Jetty POJO Configuration</h3></div></div></div><p>The core components of Jetty are Plain Old Java Objects (<a class="link" href="http://en.wikipedia.org/wiki/Plain_Old_Java_Object" target="_top">POJOs</a>)
+The process of configuring Jetty is mostly the process of instantiating, assembling and setting fields on the Jetty POJOs.
+This can be achieved by:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Writing Java code to directly instantiate and assemble Jetty objects.
+This is referred to as <a class="xref" href="embedding-jetty.html" title="Embedding Jetty">Embedding Jetty</a>.</li><li class="listitem">Using Jetty XML configuration, which is an <a class="link" href="http://en.wikipedia.org/wiki/Inversion_of_Control" target="_top">Inversion of Control (IoC)</a> framework, to instantiate and assemble Jetty objects as XML objects.
+The <code class="literal">etc/jetty.xml</code> file is the main Jetty XML configuration file, but there are many other <code class="literal">etc/jetty-__feature__.xml</code> files included in the Jetty distribution.</li><li class="listitem">Using a third party <a class="link" href="http://en.wikipedia.org/wiki/Inversion_of_Control" target="_top">IoC</a> framework like <a class="link" href="http://en.wikipedia.org/wiki/Spring_Framework" target="_top">Spring</a>, to instantiate and assemble Jetty objects as Spring beans.</li></ul></div><p>Because the main Jetty configuration is done by IoC, the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/" target="_top">Jetty API documentation</a> is the ultimate configuration reference.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_jetty_start_configuration_files"></a>Jetty Start Configuration Files</h3></div></div></div><p>The Jetty distribution uses the following configuration files to instantiate, inject and start server via the <code class="literal">start.jar</code> mechanism.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">ini</code> files</span></dt><dd><p class="simpara">The Jetty Start mechanism uses the command line, the <code class="literal">$JETTY_BASE/start.ini</code> and/or <code class="literal">$JETTY_BASE/start.d/*.ini</code> files to create an effective command line of arguments.
+Arguments may be:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Module activations in the form <code class="literal">--module=name</code></li><li class="listitem">Properties in the form of <code class="literal">name=value</code>, used to parameterize Jetty IoC XML</li><li class="listitem">XML files in Jetty IoC (or Spring) XML format</li><li class="listitem">A standard <a class="link" href="http://en.wikipedia.org/wiki/Java_properties" target="_top">Java property file</a> containing additional start properties</li><li class="listitem">Other start.jar options (see <code class="literal">java -jar start.jar --help</code>)</li><li class="listitem">Some JVM options in combination with <code class="literal">--exec</code>, such as <code class="literal">-Xbootclasspath</code>.</li></ul></div></dd></dl></div><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>It is the <code class="literal">ini</code> files located in the Jetty base directory (if different from Jetty home) that are typically edited to change the configuration (e.g. change ports).</p></div></blockquote></div><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">mod</code> files</span></dt><dd><p class="simpara">The <code class="literal">$JETTY_HOME/modules/*.mod</code> files contain the definition of modules that can be activated by <code class="literal">--module=name</code>.
+Each <code class="literal">mod</code> file defines:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Module dependencies for ordering and activation</li><li class="listitem">The libraries needed by the module to be added to the classpath</li><li class="listitem">The XML files needed by the module to be added to the effective command line</li><li class="listitem">Files needed by the activated module</li><li class="listitem"><p class="simpara">A template <code class="literal">ini</code> file to be used when activating the <code class="literal">--add-to-start=name</code> option</p><p class="simpara">Typically module files are rarely edited and only then for significant structural changes.
+The <code class="literal">*.mod</code> files are normally located in <code class="literal">$JETTY_HOME/modules/</code>, but extra or edited modules may be added to <code class="literal">$JETTY_BASE/module</code>.
+If module changes are required, it is best practice to copy the particular <code class="literal">*.mod</code> file from <code class="literal">$JETTY_HOME/modules/</code> to <code class="literal">$JETTY_BASE/modules/</code> before being modified.</p></li></ul></div></dd><dt><span class="term">XML files</span></dt><dd>XML files in <a class="link" href="reference-section.html#jetty-xml-syntax" title="Jetty XML Syntax">Jetty IoC XML format</a> or Spring IoC format are listed either on the command line, in <code class="literal">ini</code> files, or are added to the effective command line by a module definition.
+The XML files instantiate and inject the actual Java objects that comprise the server, connectors and contexts.
+Because Jetty IoC XML files use properties, most common configuration tasks can be accomplished without editing these XML files and can instead be achieved by editing the property in the corresponding <code class="literal">ini</code> files.
+XML files are normally located in <code class="literal">$JETTY_HOME/etc/</code>, but extra or edited XML files may be added to <code class="literal">$JETTY_BASE/etc/</code>.
+<span class="strong"><strong>Note</strong></span> If XML configuration changes are required, it is best practice to copy the XML file from <code class="literal">$JETTY_HOME/etc/</code> to <code class="literal">$JETTY_BASE/etc/</code> before being modified.</dd></dl></div><p>Below is an illustration of how the various Jetty configuration files (<code class="literal">ini</code>, <code class="literal">mod</code> and XML) are related:</p><p><span class="inlinemediaobject"><img src="images/Jetty_Configuration_File_Relationships.png" width="693" alt="image"></span></p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_a_closer_look"></a>A Closer Look</h3></div></div></div><p>To put it simply: XML files are responsible for instantiating the Jetty POJOs that make up the server.
+They define properties which users can modify to meet the needs of their server.
+These XML files are broken up by type in the distribution so they can be consumed as a user/server needs them.
+For example, a server may need HTTP and HTTPS functionality, but opt out of using HTTP/2 and Websocket.</p><p>Module files allow users to enable and remove functionality quickly and easily from their server implementation.
+They include a template of the different properties included in the associated XML file, as well as a pointer to the XML or JAR file(s) they are referencing.
+When a module is activated these properties are added to a related <code class="literal">ini</code> file where users can configure them to meet their needs.
+We will discuss modules in further detail in an upcoming chapter.</p><p>Ini files are where most users will spend the bulk of their time editing the configuration for their server.
+As mentioned, they contain properties which were defined in their associated XML files which in turn reference Jetty Java objcts.</p><p>This can be a bit overwhelming at first, so let&#8217;s look at an example - in this case the <code class="literal">http</code> module.
+We will work backwards from an ini file to the associated module and then the XML file in question.</p><p>First up, the <code class="literal">http.ini</code> file.
+If we take a look at it&#8217;s contents, we will see the following:</p><div class="screenexample"><pre class="screen">$ cat start.d/http.ini
+# ---------------------------------------
+# Module: http
+# Enables a HTTP connector on the server.
+# By default HTTP/1 is support, but HTTP2C can
+# be added to the connector with the http2c module.
+# ---------------------------------------
+--module=http
+
+### HTTP Connector Configuration
+
+## Connector host/address to bind to
+# jetty.http.host=0.0.0.0
+
+## Connector port to listen on
+# jetty.http.port=8080
+
+## Connector idle timeout in milliseconds
+# jetty.http.idleTimeout=30000
+
+## Number of acceptors (-1 picks default based on number of cores)
+# jetty.http.acceptors=-1
+
+## Number of selectors (-1 picks default based on number of cores)
+# jetty.http.selectors=-1
+
+## ServerSocketChannel backlog (0 picks platform default)
+# jetty.http.acceptQueueSize=0
+
+## Thread priority delta to give to acceptor threads
+# jetty.http.acceptorPriorityDelta=0
+
+## Reserve threads for high priority tasks (-1 use a heuristic, 0 no reserved threads)
+# jetty.http.reservedThreads=-1
+
+## Connect Timeout in milliseconds
+# jetty.http.connectTimeout=15000
+
+## HTTP Compliance: RFC7230, RFC2616, LEGACY
+# jetty.http.compliance=RFC7230</pre></div><p>So what do we see?
+We have a module name, the module activation (<code class="literal">--module=http</code>), as well as a description and what look like properties to configure.
+Those will some scripting/coding experience might notice that most of the lines are commented out with <code class="literal">#</code> and you&#8217;d be correct.
+When a module is enabled and an <code class="literal">ini</code> file is created, all of the properties you see here were set to these defaults - the server is already using the values shown
+If you wanted to change one of the properties though, say <code class="literal">jetty.http.port</code>, you&#8217;d simply uncomment the line and change the value.
+For example:</p><div class="screenexample"><pre class="screen">$ cat start.d/http.ini
+# ---------------------------------------
+# Module: http
+# Enables a HTTP connector on the server.
+# By default HTTP/1 is support, but HTTP2C can
+# be added to the connector with the http2c module.
+# ---------------------------------------
+--module=http
+
+### HTTP Connector Configuration
+
+## Connector host/address to bind to
+# jetty.http.host=0.0.0.0
+
+## Connector port to listen on
+jetty.http.port=1234
+...</pre></div><p>As seen before, these properties were populated in this ini file based on a related module.
+Standard Jetty modules live in the Home of the Jetty Distribution in the aptly named <code class="literal">modules</code> directory.
+So let&#8217;s take a quick look at the associated <code class="literal">$JETTY_HOME/modules/http.mod</code> file:</p><div class="screenexample"><pre class="screen">$ cat $JETTY_HOME/modules/http.mod
+[description]
+Enables a HTTP connector on the server.
+By default HTTP/1 is support, but HTTP2C can
+be added to the connector with the http2c module.
+
+[tags]
+connector
+http
+
+[depend]
+server
+
+[xml]
+etc/jetty-http.xml
+
+[ini-template]
+### HTTP Connector Configuration
+
+## Connector host/address to bind to
+# jetty.http.host=0.0.0.0
+
+## Connector port to listen on
+# jetty.http.port=8080
+
+## Connector idle timeout in milliseconds
+# jetty.http.idleTimeout=30000
+...</pre></div><p>At first blush, it looks remarkable similar to the <code class="literal">ini</code> file we just looked at.
+We still have a description and the properties we could edit, but now we also have several other sections.
+These other sections will be looked at further in our chapter on modules, but for now it is worth noting the <code class="literal">[xml]</code> and <code class="literal">[ini-template]</code> sections.
+As you could probably have puzzled out, the <code class="literal">[ini-template]</code> contains a template (go figure) for properties to be placed in the associated <code class="literal">ini</code> file when a module is activated.
+The <code class="literal">[xml]</code> section refers to the file and location of the XML file these properties are based on.
+It is important to note that not every module file will have the same sections, but most should look structurally the same.</p><p>Now that we know what XML file these properties relate to, we can navigate to it and have a look.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>$ cat $JETTY_HOME/etc/jetty-http.xml
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd"&gt;
+
+&lt;!-- ============================================================= --&gt;
+&lt;!-- Configure the Jetty Server instance with an ID "Server"       --&gt;
+&lt;!-- by adding a HTTP connector.                                   --&gt;
+&lt;!-- This configuration must be used in conjunction with jetty.xml --&gt;
+&lt;!-- ============================================================= --&gt;
+&lt;Configure id="Server" class="org.eclipse.jetty.server.Server"&gt;
+
+  &lt;!-- =========================================================== --&gt;
+  &lt;!-- Add a HTTP Connector.                                       --&gt;
+  &lt;!-- Configure an o.e.j.server.ServerConnector with a single     --&gt;
+  &lt;!-- HttpConnectionFactory instance using the common httpConfig  --&gt;
+  &lt;!-- instance defined in jetty.xml                               --&gt;
+  &lt;!--                                                             --&gt;
+  &lt;!-- Consult the javadoc of o.e.j.server.ServerConnector and     --&gt;
+  &lt;!-- o.e.j.server.HttpConnectionFactory for all configuration    --&gt;
+  &lt;!-- that may be set here.                                       --&gt;
+  &lt;!-- =========================================================== --&gt;
+  &lt;Call name="addConnector"&gt;
+    &lt;Arg&gt;
+      &lt;New id="httpConnector" class="org.eclipse.jetty.server.ServerConnector"&gt;
+        &lt;Arg name="server"&gt;&lt;Ref refid="Server" /&gt;&lt;/Arg&gt;
+        &lt;Arg name="acceptors" type="int"&gt;&lt;Property name="jetty.http.acceptors" deprecated="http.acceptors" default="-1"/&gt;&lt;/Arg&gt;
+        &lt;Arg name="selectors" type="int"&gt;&lt;Property name="jetty.http.selectors" deprecated="http.selectors" default="-1"/&gt;&lt;/Arg&gt;
+        &lt;Arg name="factories"&gt;
+          &lt;Array type="org.eclipse.jetty.server.ConnectionFactory"&gt;
+            &lt;Item&gt;
+              &lt;New class="org.eclipse.jetty.server.HttpConnectionFactory"&gt;
+                &lt;Arg name="config"&gt;&lt;Ref refid="httpConfig" /&gt;&lt;/Arg&gt;
+                &lt;Arg name="compliance"&gt;&lt;Call class="org.eclipse.jetty.http.HttpCompliance" name="valueOf"&gt;&lt;Arg&gt;&lt;Property name="jetty.http.compliance" default="RFC7230"/&gt;&lt;/Arg&gt;&lt;/Call&gt;&lt;/Arg&gt;
+              &lt;/New&gt;
+            &lt;/Item&gt;
+          &lt;/Array&gt;
+        &lt;/Arg&gt;
+        &lt;Set name="host"&gt;&lt;Property name="jetty.http.host" deprecated="jetty.host" /&gt;&lt;/Set&gt;
+        &lt;Set name="port"&gt;&lt;Property name="jetty.http.port" deprecated="jetty.port" default="8080" /&gt;&lt;/Set&gt;
+        &lt;Set name="idleTimeout"&gt;&lt;Property name="jetty.http.idleTimeout" deprecated="http.timeout" default="30000"/&gt;&lt;/Set&gt;
+        &lt;Set name="acceptorPriorityDelta"&gt;&lt;Property name="jetty.http.acceptorPriorityDelta" deprecated="http.acceptorPriorityDelta" default="0"/&gt;&lt;/Set&gt;
+        &lt;Set name="acceptQueueSize"&gt;&lt;Property name="jetty.http.acceptQueueSize" deprecated="http.acceptQueueSize" default="0"/&gt;&lt;/Set&gt;
+        &lt;Get name="SelectorManager"&gt;
+          &lt;Set name="connectTimeout"&gt;&lt;Property name="jetty.http.connectTimeout" default="15000"/&gt;&lt;/Set&gt;
+          &lt;Set name="reservedThreads"&gt;&lt;Property name="jetty.http.reservedThreads" default="-2"/&gt;&lt;/Set&gt;
+        &lt;/Get&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/Call&gt;
+
+&lt;/Configure&gt;</code></pre><p>Now we can see where those properties in our <code class="literal">ini</code> and module files came from.
+In Jetty XML files, Jetty objects come to life; defined properties are set which link back to the jar libraries and run the server to a user&#8217;s specification.</p><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-plus" aria-hidden="true"></i> Important</h3><p>It is important to remember that you should <span class="strong"><strong>not</strong></span> modify the XML files in your <code class="literal">$JETTY_HOME</code>.
+If you do for some reason feel you want to change the way an XML file operates, it is best to make a copy of it in your <code class="literal">$JETTY_BASE</code> in an <code class="literal">/etc</code> directory.
+Jetty will always look first to the <code class="literal">$JETTY_BASE</code> for configuration.</p></div></blockquote></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_other_configuration_files"></a>Other Configuration Files</h3></div></div></div><p>In addition to the configuration files described above, the configuration of the server can use the following file types:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">Context XML files</span></dt><dd>Any XML files in <a class="link" href="reference-section.html#jetty-xml-syntax" title="Jetty XML Syntax">Jetty IoC XML format</a> or Spring IoC format that is discovered in the <code class="literal">/webapps</code> directory are used by the deploy module to instantiate and inject <code class="literal">HttpContext</code> instances to create a specific context.
+These may be standard web applications or bespoke contexts created from special purpose handlers.</dd><dt><span class="term">web.xml</span></dt><dd><p class="simpara">The <a class="link" href="http://en.wikipedia.org/wiki/Servlet" target="_top">Servlet</a> Specification defines the <a class="link" href="http://en.wikipedia.org/wiki/Web.xml" target="_top"><code class="literal">web.xml</code></a> deployment descriptor that defines and configures the filters, servlets and resources a <a class="link" href="http://en.wikipedia.org/wiki/Web_application" target="_top">web application</a> uses.
+The Jetty <code class="literal">WebAppContext</code> component uses this XML format to:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Set up the default configuration of a web application context.</li><li class="listitem">Interpret the application-specific configuration supplied with a web application in the <code class="literal">WEB-INF/web.xml</code> file.</li><li class="listitem"><p class="simpara">Interpret descriptor fragments included in the <code class="literal">META-INF</code> directory of Jar files within <code class="literal">WEB-INF/lib.</code></p><p class="simpara">Normally the <code class="literal">web.xml</code> file for a web application is found in the <code class="literal">WEB-INF/web.xml</code> location within the war file/directory or as <code class="literal">web.xml</code> fragments with <code class="literal">.jar</code> files found in <code class="literal">WEB-INF/lib</code>.
+Jetty also supports multiple <code class="literal">web.xml</code> files so that a default descriptor may be applied before <code class="literal">WEB-INF/web.xml</code> (typically set to <code class="literal">etc/webdefault.xml</code> by the deploy module) and an override descriptor may be applied after <code class="literal">WEB-INF/web.xml</code> (typically set by a context XML file see <code class="literal">test.xml</code>)</p></li></ul></div></dd><dt><span class="term">Property Files</span></dt><dd><p class="simpara">Standard <a class="link" href="http://en.wikipedia.org/wiki/Java_properties" target="_top">Java property files</a> are also used for Jetty configuration in several ways:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">To parameterize Jetty IoC XML via the use of the <code class="literal">Property</code> element.</li><li class="listitem">To configure the default logging mechanism (<code class="literal">StdErrLog</code>). Other logging frameworks can be utilized and also use property files (for example, <code class="literal">log4j</code>).</li><li class="listitem">As a simple database for login usernames and credentials.</li></ul></div></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_jetty_ioc_xml_format"></a>Jetty IoC XML format</h3></div></div></div><p>To understand the <a class="link" href="reference-section.html#jetty-xml-syntax" title="Jetty XML Syntax">Jetty IoC XML format</a>, consider the following example of an embedded Jetty server instantiated and configured in Java:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>//
+//  ========================================================================
+//  Copyright (c) 1995-2020 Mort Bay Consulting Pty Ltd and others.
+//  ------------------------------------------------------------------------
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Eclipse Public License v1.0
+//  and Apache License v2.0 which accompanies this distribution.
+//
+//      The Eclipse Public License is available at
+//      http://www.eclipse.org/legal/epl-v10.html
+//
+//      The Apache License v2.0 is available at
+//      http://www.opensource.org/licenses/apache2.0.php
+//
+//  You may elect to redistribute this code under either of these licenses.
+//  ========================================================================
+//
+
+package org.eclipse.jetty.embedded;
+
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+
+public class ExampleServer
+{
+    public static Server createServer(int port)
+    {
+        Server server = new Server();
+
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(port);
+        server.setConnectors(new Connector[]{connector});
+
+        ServletContextHandler context = new ServletContextHandler();
+        context.setContextPath("/");
+        context.addServlet(HelloServlet.class, "/hello");
+        context.addServlet(AsyncEchoServlet.class, "/echo/*");
+
+        HandlerCollection handlers = new HandlerCollection();
+        handlers.setHandlers(new Handler[]{context, new DefaultHandler()});
+        server.setHandler(handlers);
+
+        return server;
+    }
+
+    public static void main(String[] args) throws Exception
+    {
+        int port = ExampleUtil.getPort(args, "jetty.http.port", 8080);
+        Server server = createServer(port);
+        server.start();
+        server.join();
+    }
+}</code></pre><p><a class="link" href="reference-section.html#jetty-xml-syntax" title="Jetty XML Syntax">Jetty IoC XML format</a> allows you to instantiate and configure the exact same server in XML without writing any java code:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;?xml version="1.0"?&gt;&lt;!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd"&gt;
+
+&lt;Configure id="ExampleServer" class="org.eclipse.jetty.server.Server"&gt;
+
+  &lt;Set name="connectors"&gt;
+    &lt;Array type="org.eclipse.jetty.server.Connector"&gt;
+      &lt;Item&gt;
+        &lt;New class="org.eclipse.jetty.server.ServerConnector"&gt;
+          &lt;Arg&gt;&lt;Ref refid="ExampleServer"/&gt;&lt;/Arg&gt;
+          &lt;Set name="port"&gt;
+            &lt;Property name="http.port" default="8080" /&gt;
+          &lt;/Set&gt;
+        &lt;/New&gt;
+      &lt;/Item&gt;
+    &lt;/Array&gt;
+  &lt;/Set&gt;
+
+  &lt;New id="context" class="org.eclipse.jetty.servlet.ServletContextHandler"&gt;
+    &lt;Set name="contextPath"&gt;/hello&lt;/Set&gt;
+    &lt;Call name="addServlet"&gt;
+      &lt;Arg&gt;org.eclipse.jetty.embedded.HelloServlet&lt;/Arg&gt;
+      &lt;Arg&gt;/&lt;/Arg&gt;
+    &lt;/Call&gt;
+  &lt;/New&gt;
+
+  &lt;Set name="handler"&gt;
+    &lt;New class="org.eclipse.jetty.server.handler.HandlerCollection"&gt;
+      &lt;Set name="handlers"&gt;
+        &lt;Array type="org.eclipse.jetty.server.Handler"&gt;
+          &lt;Item&gt;
+            &lt;Ref refid="context" /&gt;
+          &lt;/Item&gt;
+          &lt;Item&gt;
+            &lt;New class="org.eclipse.jetty.server.handler.DefaultHandler" /&gt;
+          &lt;/Item&gt;
+        &lt;/Array&gt;
+      &lt;/Set&gt;
+    &lt;/New&gt;
+  &lt;/Set&gt;
+&lt;/Configure&gt;</code></pre></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="quickstart-deploying-webapps.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="quick-start.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="quickstart-config-what.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Deploying Web Applications&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;What to Configure in Jetty</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

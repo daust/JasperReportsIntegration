@@ -1,0 +1,3 @@
+CREATE TYPE xlib_vc2_array_t AS TABLE OF VARCHAR2 (32767 CHAR)
+/
+

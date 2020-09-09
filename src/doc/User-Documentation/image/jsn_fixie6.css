@@ -1,0 +1,102 @@
+
+/********************************************************************
+ * JOOMLA 1.0.X TEMPLATE CSS FILE
+ * ----------------------------------------------------------------
+ * Copyright (C) 2007 JoomlaShine.com. All Rights Reserved.
+ * @license - Copyrighted Commercial Software
+ * Author: JoomlaShine.com
+ * Websites:  http://www.joomlashine.com
+ * ----------------------------------------------------------------
+ * 
+ * CSS FIX for IE6:
+ * Special fixes for IE6
+ *
+*********************************************************************/
+
+#jsn-usermodules1_inner_grid2,
+#jsn-usermodules2_inner_grid2,
+#jsn-usermodules3_inner_grid2,
+#jsn-usermodules3_inner_grid3,
+#jsn-content_inner2,
+#jsn-pleft,
+#jsn-pright,
+#jsn-footer,
+div.module-box div {
+	height: 1%;
+}
+
+div.jsn-column {
+	overflow: hidden;
+}
+
+#jsn-usermodules1 .padding,
+#jsn-usermodules2 .padding {
+	padding: .6em;
+}
+
+
+/*box style*/
+div.module-box div {
+	padding: 30px 0 0 0;
+}
+
+div.module-box div div {
+	padding: 0 0 0 10px;
+}
+
+div.module-box div div div {
+	padding: 5px 20px 15px 10px;
+}
+
+div.module-box div div div div {
+	padding: 0;
+}
+
+
+div.box-blue div {
+	background: transparent url(module-box-blue-bg-l.png) top left no-repeat;
+}
+
+div.box-blue div div {
+	background: transparent url(module-box-blue-bg-l.png) bottom left no-repeat;
+}
+
+div.box-blue div div div {
+	background: transparent url(module-box-blue-bg-r.png) bottom right no-repeat;
+}
+
+div.box-green div {
+	background: transparent url(module-box-green-bg-l.png) no-repeat top left;
+}
+
+div.box-green div div {
+	background: transparent url(module-box-green-bg-l.png) no-repeat bottom left;
+}
+
+div.box-green div div div {
+	background: transparent url(module-box-green-bg-r.png) no-repeat bottom right;
+}
+
+div.box-yellow div {
+	background: transparent url(module-box-yellow-bg-l.png) no-repeat top left;
+}
+
+div.box-yellow div div {
+	background: transparent url(module-box-yellow-bg-l.png) no-repeat bottom left;
+}
+
+div.box-yellow div div div {
+	background: transparent url(module-box-yellow-bg-r.png) no-repeat bottom right;
+}
+
+div.box-grey div {
+	background: transparent url(module-box-grey-bg-l.png) no-repeat top left;
+}
+
+div.box-grey div div {
+	background: transparent url(module-box-grey-bg-l.png) no-repeat bottom left;
+}
+
+div.box-grey div div div {
+	background: transparent url(module-box-grey-bg-r.png) no-repeat bottom right;
+}

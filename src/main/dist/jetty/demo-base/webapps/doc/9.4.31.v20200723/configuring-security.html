@@ -1,0 +1,344 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Chapter&nbsp;7.&nbsp;Configuring Security</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="jetty-config-guide.html" title="Part&nbsp;II.&nbsp;Jetty Configuration Guide"><link rel="prev" href="jetty-ssl-distribution.html" title="SSL in the Jetty Distribution"><link rel="next" href="configuring-form-size.html" title="Limiting Form Content"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter&nbsp;7.&nbsp;Configuring Security</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jetty-ssl-distribution.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;II.&nbsp;Jetty Configuration Guide<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="configuring-form-size.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="configuring-security"></a>Chapter&nbsp;7.&nbsp;Configuring Security</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="configuring-security.html#configuring-security-authentication">Authentication and Authorization</a></span></dt><dt><span class="section"><a href="configuring-form-size.html">Limiting Form Content</a></span></dt><dt><span class="section"><a href="serving-aliased-files.html">Aliased Files and Symbolic links</a></span></dt><dt><span class="section"><a href="configuring-security-secure-passwords.html">Secure Password Obfuscation</a></span></dt><dt><span class="section"><a href="setting-port80-access.html">Setting Port 80 Access for a Non-Root User</a></span></dt><dt><span class="section"><a href="jaas-support.html">JAAS Support</a></span></dt><dt><span class="section"><a href="spnego-support.html">SPNEGO Support</a></span></dt><dt><span class="section"><a href="openid-support.html">OpenID Support</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="configuring-security-authentication"></a>Authentication and Authorization</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="configuring-security.html#_configuring_an_authentication_mechanism">Configuring an Authentication mechanism</a></span></dt><dt><span class="section"><a href="configuring-security.html#security-realms">Security Realms</a></span></dt><dt><span class="section"><a href="configuring-security.html#_scoping_security_realms">Scoping Security Realms</a></span></dt><dt><span class="section"><a href="configuring-security.html#configuring-login-service">Configuring a LoginService</a></span></dt><dt><span class="section"><a href="configuring-security.html#_authorization">Authorization</a></span></dt><dt><span class="section"><a href="configuring-security.html#_authentication_and_authorization_with_embedded_jetty">Authentication and Authorization with Embedded Jetty</a></span></dt></dl></div><p>There are two aspects to securing a web application(or context) within the Jetty server:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">Authentication</span></dt><dd>The web application can be configured with a mechanism to determine the identity of the user.
+This is configured by a mix of standard declarations and jetty specific mechanisms and is covered in this section.</dd><dt><span class="term">Authorization</span></dt><dd>Once the identify of the user is known (or not known), the web application can be configured via standard descriptors with security constraints that declare what resources that user may access.</dd></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_configuring_an_authentication_mechanism"></a>Configuring an Authentication mechanism</h3></div></div></div><p>Jetty server supports several standard authentication mechanisms: <a class="link" href="http://en.wikipedia.org/wiki/Basic_access_authentication" target="_top">BASIC</a>; <a class="link" href="http://en.wikipedia.org/wiki/Digest_authentication" target="_top">DIGEST</a>; <a class="link" href="http://en.wikipedia.org/wiki/Form-based_authentication" target="_top">FORM</a>; CLIENT-CERT; and other mechanisms can be plugged in using the extensible <a class="link" href="http://docs.oracle.com/cd/E19462-01/819-6717/gcszc/index.html" target="_top">JASPI</a> or <a class="link" href="http://en.wikipedia.org/wiki/SPNEGO" target="_top">SPNEGO</a> mechanisms.</p><p>Internally, configuring an authentication mechanism is done by setting an instance of a the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/Authenticator.html" target="_top">Authenticator</a> interface onto the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/SecurityHandler.html" target="_top">SecurityHandler</a> of the context, but in most cases it is done by declaring a <code class="literal">&lt;login-config&gt;</code> element in the standard web.xml descriptor or via annotations.</p><p>Below is an example taken from the <a class="link" href="https://github.com/eclipse/jetty.project/tree/jetty-9.4.x/tests/test-webapps/test-jetty-webapp/src/main/webapp/WEB-INF/web.xml?h=release-9" target="_top">jetty-test-webapp web.xml</a> that configures BASIC authentication:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;login-config&gt;
+    &lt;auth-method&gt;BASIC&lt;/auth-method&gt;
+    &lt;realm-name&gt;Test Realm&lt;/realm-name&gt;
+  &lt;/login-config&gt;</code></pre><p>The <a class="link" href="https://github.com/eclipse/jetty.project/tree/jetty-9.4.x/tests/test-webapps/test-jetty-webapp/src/main/webapp/WEB-INF/web.xml?h=release-9" target="_top">jetty-test-webapp web.xml</a> also includes commented out examples of other DIGEST and FORM configuration:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  &lt;login-config&gt;
+    &lt;auth-method&gt;FORM&lt;/auth-method&gt;
+    &lt;realm-name&gt;Test Realm&lt;/realm-name&gt;
+    &lt;form-login-config&gt;
+       &lt;form-login-page&gt;/logon.html?param=test&lt;/form-login-page&gt;
+       &lt;form-error-page&gt;/logonError.html?param=test&lt;/form-error-page&gt;
+    &lt;/form-login-config&gt;
+  &lt;/login-config&gt;</code></pre><p>With FORM Authentication, you must also configure URLs of pages to generate a login form and handle errors.
+Below is a simple HTML form from the <a class="link" href="https://github.com/eclipse/jetty.project/tree/jetty-9.4.x/tests/test-webapps/test-jetty-webapp/src/main/webapp/logon.html?h=release-9" target="_top">test webapp logon.html</a>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;HTML&gt;
+&lt;H1&gt;FORM Authentication demo&lt;/H1&gt;
+&lt;form method="POST" action="j_security_check"&gt;
+&lt;table border="0" cellspacing="2" cellpadding="1"&gt;
+&lt;tr&gt;
+  &lt;td&gt;Username:&lt;/td&gt;
+  &lt;td&gt;&lt;input size="12" value="" name="j_username" maxlength="25" type="text"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Password:&lt;/td&gt;
+  &lt;td&gt;&lt;input size="12" value="" name="j_password" maxlength="25" type="password"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td colspan="2" align="center"&gt;
+    &lt;input name="submit" type="submit" value="Login"&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+&lt;/HTML&gt;</code></pre><p>The Authentication mechanism declared for a context / web application defines how the server obtain authentication credentials from the
+client, but it does not define how the server checks if those credentials are valid.
+To check credentials, the server and/or context also need to be configured with a <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/LoginService.html" target="_top">LoginService</a> instance, which may be matched by the declared realm-name.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="security-realms"></a>Security Realms</h3></div></div></div><p>Security realms allow you to secure your web applications against unauthorized access.
+Protection is based on authentication that identifies who is requesting access to the webapp and access control that restricts what can be accessed and how it is accessed within the webapp.</p><p>A webapp statically declares its security requirements in its web.xml file.
+Authentication is controlled by the <code class="literal">&lt;login-config&gt;</code> element.
+Access controls are specified by <code class="literal">&lt;security-constraint&gt;</code> and <code class="literal">&lt;security-role-ref&gt;</code> elements.
+When a request is received for a protected resource, the web container checks if the user performing the request is authenticated, and if the user has a role assignment that permits access to the requested resource.</p><p>The Servlet Specification does not address how the static security information in the <code class="literal">WEB-INF/web.xml</code> file is mapped to the runtime environment of the container.
+For Jetty, the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/LoginService.html" target="_top">LoginService</a> performs this function.</p><p>A <code class="literal">LoginService</code> has a unique name, and gives access to information about a set of users.
+Each user has authentication information (e.g. a password) and a set of roles associated with him/herself.</p><p>You may configure one or many different LoginServices depending on your needs.
+A single realm would indicate that you wish to share common security information across all of your web applications.
+Distinct realms allow you to partition your security information webapp by webapp.</p><p>When a request to a web application requires authentication or authorization, Jetty will use the <code class="literal">&lt;realm-name&gt;</code> sub-element inside <code class="literal">&lt;login-config&gt;</code> element in the web.xml file to perform an <span class="emphasis"><em>exact match</em></span> to a LoginService.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_scoping_security_realms"></a>Scoping Security Realms</h3></div></div></div><p>A <code class="literal">LoginService</code> has a unique name, and is composed of a set of users.
+Each user has authentication information (for example, a password) and a set of roles associated with him/herself.
+You can configure one or many different realms depending on your needs.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Configure a single LoginService to share common security information across all of your web applications.</li><li class="listitem">Configure distinct LoginServices to partition your security information webapp by webapp.</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_globally_scoped"></a>Globally Scoped</h4></div></div></div><p>A LoginService is available to all web applications on a Server instance if you add it as a bean to the Server.
+Such a definition would go into an xml file in your <code class="literal">${jetty.base}/etc</code> directory, e.g. <code class="literal">${jetty.base}/etc/my-realm.xml</code> and you would add this xml file to the execution path via <code class="literal">start.ini</code> or <code class="literal">start.d</code> (you may want to review the material in the <a class="link" href="startup.html" title="Chapter&nbsp;9.&nbsp;Starting Jetty">Starting Jetty</a> chapter).
+Here&#8217;s an example of an xml file that defines an in-memory type of LoginService called the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/HashLoginService.html" target="_top">HashLoginService</a>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id="Server" class="org.eclipse.jetty.server.Server"&gt;
+  &lt;Call name="addBean"&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.eclipse.jetty.security.HashLoginService"&gt;
+        &lt;Set name="name"&gt;Test Realm&lt;/Set&gt;
+        &lt;Set name="config"&gt;&lt;SystemProperty name="jetty.home" default="."/&gt;/etc/realm.properties&lt;/Set&gt;
+        &lt;Set name="hotReload"&gt;true&lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/Call&gt;
+&lt;/Configure&gt;</code></pre><p>If you define more than one <code class="literal">LoginService</code> on a Server, you will need to specify which one you want used for each context.
+You can do that by telling the context the name of the <code class="literal">LoginService</code>, or passing it the <code class="literal">LoginService</code> instance.
+Here&#8217;s an example of doing both of these, using a <a class="link" href="configuring-specific-webapp-deployment.html#deployable-descriptor-file" title="Jetty Deployable Descriptor XML File">context xml file</a>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+ &lt;Get name="securityHandler"&gt;
+   &lt;!-- Either: --&gt;
+   &lt;Set name="loginService"&gt;
+     &lt;New class="org.eclipse.jetty.security.HashLoginService"&gt;
+           &lt;Set name="name"&gt;Test Realm&lt;/Set&gt;
+     &lt;/New&gt;
+   &lt;/Set&gt;
+
+   &lt;!-- or if you defined a LoginService called "Test Realm" in jetty.xml : --&gt;
+   &lt;Set name="realmName"&gt;Test Realm&lt;/Set&gt;
+
+ &lt;/Get&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_per_webapp_scoped"></a>Per-Webapp Scoped</h4></div></div></div><p>Alternatively, you can define a <code class="literal">LoginService</code> for just a single web application.
+Here&#8217;s how to define the same HashLoginService, but inside a <a class="link" href="configuring-specific-webapp-deployment.html#deployable-descriptor-file" title="Jetty Deployable Descriptor XML File">context xml file</a>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+  &lt;Set name="contextPath"&gt;/test&lt;/Set&gt;
+  &lt;Set name="war"&gt;&lt;SystemProperty name="jetty.home" default="."/&gt;/webapps/test&lt;/Set&gt;
+  &lt;Get name="securityHandler"&gt;
+    &lt;Set name="loginService"&gt;
+      &lt;New class="org.eclipse.jetty.security.HashLoginService"&gt;
+            &lt;Set name="name"&gt;Test Realm&lt;/Set&gt;
+            &lt;Set name="config"&gt;&lt;SystemProperty name="jetty.home" default="."/&gt;/etc/realm.properties&lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Set&gt;
+  &lt;/Get&gt;
+&lt;/Configure&gt;</code></pre><p>Jetty provides a number of different <code class="literal">LoginService</code> types which can be seen in the next section.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="configuring-login-service"></a>Configuring a LoginService</h3></div></div></div><p>A <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/LoginService.html" target="_top"><code class="literal">LoginService</code></a> instance is required by each context/webapp that has a authentication mechanism, which is used to check the validity of the username and credentials collected by the authentication mechanism. Jetty provides the following implementations of <code class="literal">LoginService</code>:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/HashLoginService.html" target="_top">HashLoginService</a></span></dt><dd>A user realm that is backed by a hash map that is filled either programatically or from a Java properties file.</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/JDBCLoginService.html" target="_top">JDBCLoginService</a></span></dt><dd>Uses a JDBC connection to an SQL database for authentication</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/plus/security/DataSourceLoginService.html" target="_top">DataSourceLoginService</a></span></dt><dd>Uses a JNDI defined   <a class="link" href="http://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html" target="_top">DataSource</a> for authentication</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/jaas/JAASLoginService.html" target="_top">JAASLoginService</a></span></dt><dd>Uses a <a class="link" href="http://en.wikipedia.org/wiki/Java_Authentication_and_Authorization_Service" target="_top">JAAS</a> provider for authentication; see the section on
+<a class="link" href="jaas-support.html" title="JAAS Support">JAAS support</a> for more information</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/SpnegoLoginService.html" target="_top">SpnegoLoginService</a></span></dt><dd><a class="link" href="http://en.wikipedia.org/wiki/SPNEGO" target="_top">SPNEGO</a> Authentication; see the section on <a class="link" href="spnego-support.html" title="SPNEGO Support">SPNEGO support</a> for more information.</dd></dl></div><p>An instance of a <code class="literal">LoginService</code> can be matched to a context/webapp by:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">A <code class="literal">LoginService</code> instance may be set directly on the <code class="literal">SecurityHandler</code> instance via embedded code or IoC XML</li><li class="listitem">Matching the realm-name defined in web.xml with the name of a <code class="literal">LoginService</code> instance that has been added to the Server instance as a dependent bean</li><li class="listitem">If only a single <code class="literal">LoginService</code> instance has been set on the Server then it is used as the login service for the context</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="hash-login-service"></a>HashLoginService</h4></div></div></div><p>The <code class="literal">HashLoginService</code> is a simple and efficient login service that loads usernames, credentials and roles from a Java properties file in the format:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>username: password[,rolename ...]</code></pre><p>Where:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">username</span></dt><dd>is the user&#8217;s unique identity</dd><dt><span class="term">password</span></dt><dd>is the user&#8217;s (possibly obfuscated or MD5 encrypted) password;</dd><dt><span class="term">rolename</span></dt><dd>is a role of the user</dd></dl></div><p>For example:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>admin: CRYPT:ad1ks..kc.1Ug,server-administrator,content-administrator,admin
+other: OBF:1xmk1w261u9r1w1c1xmq
+guest: guest,read-only</code></pre><p>You configure the <code class="literal">HashLoginService</code> with a name and a reference to the location of the properties file:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Item&gt;
+&lt;New class="org.eclipse.jetty.security.HashLoginService"&gt;
+  &lt;Set name="name"&gt;Test Realm&lt;/Set&gt;
+  &lt;Set name="config"&gt;&lt;SystemProperty name="jetty.home" default="."/&gt;/etc/realm.properties&lt;/Set&gt;
+&lt;/New&gt;
+&lt;/Item&gt;</code></pre><p>You can also configure it to reload the configuration file when changes to it are detected.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;New class="org.eclipse.jetty.security.HashLoginService"&gt;
+    &lt;Set name="name"&gt;Test Realm&lt;/Set&gt;
+    &lt;Set name="config"&gt;&lt;SystemProperty name="jetty.home" default="."/&gt;/etc/realm.properties&lt;/Set&gt;
+    &lt;Set name="hotReload"&gt;true&lt;/Set&gt;
+    &lt;Call name="start"&gt;&lt;/Call&gt;
+  &lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="jdbc-login-service"></a>JDBCLoginService</h4></div></div></div><p>In this implementation, authentication and role information is stored in a database accessed via JDBC.
+A properties file defines the JDBC connection and database table information.
+Here is an example of a properties file for this realm implementation:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>jdbcdriver = org.gjt.mm.mysql.Driver
+url = jdbc:mysql://localhost/jetty
+username = jetty
+password = jetty
+usertable = users
+usertablekey = id
+usertableuserfield = username
+usertablepasswordfield = pwd
+roletable = roles
+roletablekey = id
+roletablerolefield = role
+userroletable = user_roles
+userroletableuserkey = user_id
+userroletablerolekey = role_id
+cachetime = 300</code></pre><p>The format of the database tables is (pseudo-sql):</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>users
+(
+  id integer PRIMARY KEY,
+  username varchar(100) NOT NULL UNIQUE KEY,
+  pwd varchar(50) NOT NULL
+);
+user_roles
+(
+  user_id integer NOT NULL,
+  role_id integer NOT NULL,
+  UNIQUE KEY (user_id, role_id),
+  INDEX(user_id)
+);
+roles
+(
+  id integer PRIMARY KEY,
+  role varchar(100) NOT NULL UNIQUE KEY
+);</code></pre><p>Where:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara"><span class="strong"><strong>users</strong></span> is a table containing one entry for every user consisting of:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">id</span></dt><dd>the unique identity of a user</dd><dt><span class="term">user</span></dt><dd>the name of the user</dd><dt><span class="term">pwd</span></dt><dd>the user&#8217;s password (possibly obfuscated or MD5 encrypted)</dd></dl></div></li><li class="listitem"><p class="simpara"><span class="strong"><strong>user-roles</strong></span> is a table containing one row for every role granted to a
+user:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">user_id</span></dt><dd>the unique identity of the user</dd><dt><span class="term">role_id</span></dt><dd>the role for a user</dd></dl></div></li><li class="listitem"><p class="simpara"><span class="strong"><strong>roles</strong></span> is a a table containing one role for every role in the system:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">id</span></dt><dd>the unique identifier of a role</dd><dt><span class="term">role</span></dt><dd>a human-readable name for a role</dd></dl></div></li></ul></div><p>If you want to use obfuscated, MD5 hashed or encrypted passwords the <code class="literal">pwd</code> column of the <code class="literal">users</code> table must be large enough to hold the obfuscated, hashed or encrypted password text plus the appropriate prefix.</p><p>You define a <code class="literal">JDBCLoginService</code> with the name of the realm and the location of the properties file describing the database:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;New class="org.eclipse.jetty.security.JDBCLoginService"&gt;
+  &lt;Set name="name"&gt;Test JDBC Realm&lt;/Set&gt;
+  &lt;Set name="config"&gt;etc/jdbcRealm.properties&lt;/Set&gt;
+&lt;/New&gt;</code></pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_authorization"></a>Authorization</h3></div></div></div><p>As far as the <a class="link" href="https://jcp.org/en/jsr/detail?id=340" target="_top">Servlet Specification</a> is concerned, authorization is based on roles.
+As we have seen, a <code class="literal">LoginService</code> associates a user with a set of roles.
+When a user requests a resource that is access protected, the <code class="literal">LoginService</code> will be asked to authenticate the user if they are not already, and then asked to confirm if that user possesses one of the roles permitted access to the resource.</p><p>Until Servlet 3.1, role-based authorization could define:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Access granted to a set of named roles:</li></ul></div><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;security-constraint&gt;
+  &lt;web-resource-collection&gt;
+    &lt;web-resource-name&gt;Foo Admin Data&lt;/web-resource-name&gt;
+    &lt;url-pattern&gt;/foo/admin/*&lt;/url-pattern&gt;
+  &lt;/web-resource-collection&gt;
+  &lt;auth-constraint&gt;
+    &lt;role-name&gt;admin&lt;/role-name&gt;
+    &lt;role-name&gt;manager&lt;/role-name&gt;
+  &lt;/auth-constraint&gt;
+&lt;/security-constraint&gt;</code></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Access totally forbidden, regardless of role:</li></ul></div><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;security-constraint&gt;
+  &lt;web-resource-collection&gt;
+    &lt;web-resource-name&gt;Foo Protected Data&lt;/web-resource-name&gt;
+    &lt;url-pattern&gt;/foo/protected/*&lt;/url-pattern&gt;
+  &lt;/web-resource-collection&gt;
+  &lt;auth-constraint&gt;
+  &lt;/auth-constraint&gt;
+&lt;/security-constraint&gt;</code></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Access granted to a user in any of the roles defined in the effective <code class="literal">web.xml</code>.
+This is indicated by the special value of <code class="literal">*</code> for the <code class="literal">&lt;role-name&gt;</code> of a <code class="literal">&lt;auth-constraint&gt;</code> in the <code class="literal">&lt;security-constraint&gt;</code>:</li></ul></div><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;security-constraint&gt;
+  &lt;web-resource-collection&gt;
+    &lt;web-resource-name&gt;Foo Role Data&lt;/web-resource-name&gt;
+    &lt;url-pattern&gt;/foo/role/*&lt;/url-pattern&gt;
+  &lt;/web-resource-collection&gt;
+  &lt;auth-constraint&gt;
+    &lt;role-name&gt;*&lt;/role-name&gt;
+  &lt;/auth-constraint&gt;
+&lt;/security-constraint&gt;</code></pre><p>Servlet 3.1 introduced an additional authorization:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Access granted to any user who is authenticated, regardless of roles.
+This is indicated by the special value of <code class="literal">**</code> for the <code class="literal">&lt;role-name&gt;</code> of a <code class="literal">&lt;auth-constraint&gt;</code> in the <code class="literal">&lt;security-constraint&gt;</code>:</li></ul></div><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;security-constraint&gt;
+  &lt;web-resource-collection&gt;
+    &lt;web-resource-name&gt;Foo Authenticated Data&lt;/web-resource-name&gt;
+    &lt;url-pattern&gt;/foo/authenticated/*&lt;/url-pattern&gt;
+  &lt;/web-resource-collection&gt;
+  &lt;auth-constraint&gt;
+    &lt;role-name&gt;**&lt;/role-name&gt;
+  &lt;/auth-constraint&gt;
+&lt;/security-constraint&gt;</code></pre><p>Additionally, when configuring your security constraints you can protect various HTTP methods as well, such as <code class="literal">PUT</code>, <code class="literal">GET</code>, <code class="literal">POST</code>, <code class="literal">HEAD</code> or <code class="literal">DELETE</code>.
+This is done by adding the method you want to protect as a <code class="literal">&lt;http-method&gt;</code> in the <code class="literal">&lt;web-resource-collection&gt;</code>.
+You can then define roles that should be able to perform these protected methods in an <code class="literal">&lt;auth-constraint&gt;</code>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;security-constraint&gt;
+  &lt;web-resource-collection&gt;
+    &lt;web-resource-name&gt;Foo Authenticated Data&lt;/web-resource-name&gt;
+    &lt;url-pattern&gt;/foo/authenticated/*&lt;/url-pattern&gt;
+    &lt;http-method&gt;DELETE&lt;/http-method&gt;
+    &lt;http-method&gt;POST&lt;/http-method&gt;
+  &lt;/web-resource-collection&gt;
+  &lt;auth-constraint&gt;
+    &lt;role-name&gt;admin&lt;/role-name&gt;
+  &lt;/auth-constraint&gt;
+&lt;/security-constraint&gt;</code></pre><p>In the above example, only users with an <code class="literal">admin</code> role will be able to perform <code class="literal">DELETE</code> or <code class="literal">POST</code> methods.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_configuring_authorization_with_context_xml_files"></a>Configuring Authorization with Context XML Files</h4></div></div></div><p>While the examples above show configuration of Authorization in a <code class="literal">web.xml</code> file, they can also be configured as part of the link#<a class="link" href="configuring-specific-webapp-deployment.html#deployable-descriptor-file" title="Jetty Deployable Descriptor XML File">context xml file</a> for a web application.
+This is especially helpful if authorization needs change over time and need updated without re-packaging the whole web app.</p><p>To do this, we add a section for security constraints into the context xml file for our web app as part of the <code class="literal">securityHandler</code>.
+In the example below, a <code class="literal">HashLoginService</code> is defined with authorization being granted too <code class="literal">foo/*</code> paths to users with the <code class="literal">admin</code> and <code class="literal">manager</code> roles.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id="testWebapp" class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+  &lt;Get name="securityHandler"&gt;
+    &lt;Set name="realmName"&gt;Test Realm&lt;/Set&gt;
+    &lt;Set name="authMethod"&gt;BASIC&lt;/Set&gt;
+    &lt;Call name="addConstraintMapping"&gt;
+      &lt;Arg&gt;
+         &lt;New class="org.eclipse.jetty.security.ConstraintMapping"&gt;
+            &lt;Set name="pathSpec"&gt;/foo/*&lt;/Set&gt;
+            &lt;Set name="constraint"&gt;
+              &lt;New class="org.eclipse.jetty.util.security.Constraint"&gt;
+                  &lt;Set name="name"&gt;Foo Auth&lt;/Set&gt;
+                  &lt;Set name="authenticate"&gt;true&lt;/Set&gt;
+                  &lt;Set name="roles"&gt;
+                    &lt;Array type="java.lang.String"&gt;
+                      &lt;Item&gt;admin&lt;/Item&gt;
+                      &lt;Item&gt;manager&lt;/Item&gt;
+                    &lt;/Array&gt;
+                  &lt;/Set&gt;
+              &lt;/New&gt;
+            &lt;/Set&gt;
+         &lt;/New&gt;
+      &lt;/Arg&gt;
+    &lt;/Call&gt;
+    &lt;Set name="loginService"&gt;
+      &lt;New class="org.eclipse.jetty.security.HashLoginService"&gt;
+        &lt;Set name="name"&gt;Test Realm&lt;/Set&gt;
+        &lt;Set name="config"&gt;/src/tmp/small-security-test/realm.properties&lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Set&gt;
+  &lt;/Get&gt;
+&lt;/Configure&gt;</code></pre><p>If roles changed in the future, administrators could easily change this context xml file without having to edit the contents of the web app at all.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_authentication_and_authorization_with_embedded_jetty"></a>Authentication and Authorization with Embedded Jetty</h3></div></div></div><p>In addition to the distribution, security can be defined as part of an embedded implementation as well.
+Below is an example which, like the one above, sets up a server with a <code class="literal">HashLoginService</code> and adds security constraints to restrict access based on roles.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>//
+//  ========================================================================
+//  Copyright (c) 1995-2020 Mort Bay Consulting Pty Ltd and others.
+//  ------------------------------------------------------------------------
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Eclipse Public License v1.0
+//  and Apache License v2.0 which accompanies this distribution.
+//
+//      The Eclipse Public License is available at
+//      http://www.eclipse.org/legal/epl-v10.html
+//
+//      The Apache License v2.0 is available at
+//      http://www.opensource.org/licenses/apache2.0.php
+//
+//  You may elect to redistribute this code under either of these licenses.
+//  ========================================================================
+//
+
+package org.eclipse.jetty.embedded;
+
+import java.io.FileNotFoundException;
+import java.net.URL;
+import java.util.Collections;
+
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.LoginService;
+import org.eclipse.jetty.security.authentication.BasicAuthenticator;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.security.Constraint;
+
+public class SecuredHelloHandler
+{
+    public static Server createServer(int port) throws FileNotFoundException
+    {
+        // Create a basic jetty server object that will listen on port 8080.
+        // Note that if you set this to port 0 then a randomly available port
+        // will be assigned that you can either look in the logs for the port,
+        // or programmatically obtain it for use in test cases.
+        Server server = new Server(port);
+
+        // Since this example is for our test webapp, we need to setup a
+        // LoginService so this shows how to create a very simple hashmap based
+        // one. The name of the LoginService needs to correspond to what is
+        // configured a webapp's web.xml and since it has a lifecycle of its own
+        // we register it as a bean with the Jetty server object so it can be
+        // started and stopped according to the lifecycle of the server itself.
+        // In this example the name can be whatever you like since we are not
+        // dealing with webapp realms.
+        String realmResourceName = "etc/realm.properties";
+        ClassLoader classLoader = SecuredHelloHandler.class.getClassLoader();
+        URL realmProps = classLoader.getResource(realmResourceName);
+        if (realmProps == null)
+            throw new FileNotFoundException("Unable to find " + realmResourceName);
+
+        LoginService loginService = new HashLoginService("MyRealm",
+            realmProps.toExternalForm());
+        server.addBean(loginService);
+
+        // A security handler is a jetty handler that secures content behind a
+        // particular portion of a url space. The ConstraintSecurityHandler is a
+        // more specialized handler that allows matching of urls to different
+        // constraints. The server sets this as the first handler in the chain,
+        // effectively applying these constraints to all subsequent handlers in
+        // the chain.
+        ConstraintSecurityHandler security = new ConstraintSecurityHandler();
+        server.setHandler(security);
+
+        // This constraint requires authentication and in addition that an
+        // authenticated user be a member of a given set of roles for
+        // authorization purposes.
+        Constraint constraint = new Constraint();
+        constraint.setName("auth");
+        constraint.setAuthenticate(true);
+        constraint.setRoles(new String[]{"user", "admin"});
+
+        // Binds a url pattern with the previously created constraint. The roles
+        // for this constraint mapping are mined from the Constraint itself
+        // although methods exist to declare and bind roles separately as well.
+        ConstraintMapping mapping = new ConstraintMapping();
+        mapping.setPathSpec("/*");
+        mapping.setConstraint(constraint);
+
+        // First you see the constraint mapping being applied to the handler as
+        // a singleton list, however you can passing in as many security
+        // constraint mappings as you like so long as they follow the mapping
+        // requirements of the servlet api. Next we set a BasicAuthenticator
+        // instance which is the object that actually checks the credentials
+        // followed by the LoginService which is the store of known users, etc.
+        security.setConstraintMappings(Collections.singletonList(mapping));
+        security.setAuthenticator(new BasicAuthenticator());
+        security.setLoginService(loginService);
+
+        // The Hello Handler is the handler we are securing so we create one,
+        // and then set it as the handler on the
+        // security handler to complain the simple handler chain.
+        HelloHandler hh = new HelloHandler();
+
+        // chain the hello handler into the security handler
+        security.setHandler(hh);
+
+        return server;
+    }
+
+    public static void main(String[] args) throws Exception
+    {
+        int port = ExampleUtil.getPort(args, "jetty.http.port", 8080);
+        Server server = createServer(port);
+
+        // Start things up!
+        server.start();
+
+        // The use of server.join() the will make the current thread join and
+        // wait until the server is done executing.
+        server.join();
+    }
+}</code></pre></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jetty-ssl-distribution.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="jetty-config-guide.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="configuring-form-size.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">SSL in the Jetty Distribution&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Limiting Form Content</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

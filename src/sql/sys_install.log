@@ -1,0 +1,35 @@
+> @@xlib_base/_sys_install.sql &&USERNAME
+alt:@@xlib_base/_sys_install.sql &&USERNAME
+neu:@@xlib_base/_sys_install.sql TEST
+alt:define USERNAME=&&1
+neu:define USERNAME=TEST
+alt:GRANT   "CONNECT" TO &&USERNAME
+neu:GRANT   "CONNECT" TO TEST
+GRANT erfolgreich.
+alt:GRANT   "RESOURCE" TO &&USERNAME
+neu:GRANT   "RESOURCE" TO TEST
+GRANT erfolgreich.
+alt:GRANT   CREATE VIEW TO &&USERNAME
+neu:GRANT   CREATE VIEW TO TEST
+GRANT erfolgreich.
+alt:GRANT   CREATE SYNONYM TO &&USERNAME
+neu:GRANT   CREATE SYNONYM TO TEST
+GRANT erfolgreich.
+> @@xlib_http/_sys_install.sql &&USERNAME
+alt:@@xlib_http/_sys_install.sql &&USERNAME
+neu:@@xlib_http/_sys_install.sql TEST
+alt:define USERNAME=&&1
+neu:define USERNAME=TEST
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+alt:prompt ~~ SYS GRANTS to &&USERNAME
+neu:prompt ~~ SYS GRANTS to TEST
+~~ SYS GRANTS to TEST
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+alt:grant execute on sys.utl_http to &&USERNAME
+neu:grant execute on sys.utl_http to TEST
+grant erfolgreich.
+> @@xlib_jasperreports/_sys_install.sql &&USERNAME
+alt:@@xlib_jasperreports/_sys_install.sql &&USERNAME
+neu:@@xlib_jasperreports/_sys_install.sql TEST
+alt:define USERNAME=&&1
+neu:define USERNAME=TEST

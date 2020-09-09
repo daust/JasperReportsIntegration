@@ -1,0 +1,120 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Startup a Unix Service using jetty.sh</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="startup.html" title="Chapter&nbsp;9.&nbsp;Starting Jetty"><link rel="prev" href="startup-xml-config.html" title="Managing XML Based Startup Configuration"><link rel="next" href="startup-windows-service.html" title="Startup via Windows Service"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Startup a Unix Service using jetty.sh</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="startup-xml-config.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;9.&nbsp;Starting Jetty<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="startup-windows-service.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="startup-unix-service"></a>Startup a Unix Service using jetty.sh</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="startup-unix-service.html#_quick_start_a_jetty_service">Quick-Start a Jetty Service</a></span></dt><dt><span class="section"><a href="startup-unix-service.html#_practical_setup_of_a_jetty_service">Practical Setup of a Jetty Service</a></span></dt></dl></div><p>The standalone Jetty distribution ships with a <code class="literal">bin/jetty.sh</code> script that can be used by various Unix distros (including OSX) to manage Jetty as a startup service.</p><p>This script is suitable for setting up Jetty as a service in Unix.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_quick_start_a_jetty_service"></a>Quick-Start a Jetty Service</h3></div></div></div><p>The minimum steps to get Jetty to run as a Service include:</p><div class="screenexample"><pre class="screen">[/opt/jetty]# tar -zxf /home/user/downloads/jetty-distribution-9.4.31.v20200723.tar.gz
+[/opt/jetty]# cd jetty-distribution-9.4.31.v20200723/
+[/opt/jetty/jetty-distribution-9.4.31.v20200723]# ls
+bin        lib                         modules      resources  start.jar
+demo-base  license-eplv10-aslv20.html  notice.html  start.d    VERSION.txt
+etc        logs                        README.TXT   start.ini  webapps
+
+[/opt/jetty/jetty-distribution-9.4.31.v20200723]# cp bin/jetty.sh /etc/init.d/jetty
+[/opt/jetty/jetty-distribution-9.4.31.v20200723]# echo JETTY_HOME=`pwd` &gt; /etc/default/jetty
+[/opt/jetty/jetty-distribution-9.4.31.v20200723]# cat /etc/default/jetty
+JETTY_HOME=/opt/jetty/jetty-distribution-9.4.31.v20200723
+
+[/opt/jetty/jetty-distribution-9.4.31.v20200723]# service jetty start
+Starting Jetty: OK Wed Nov 20 10:26:53 MST 2013</pre></div><p>From this demonstration we can see that Jetty started successfully as a Unix Service from the <code class="literal">/opt/jetty/jetty-distribution-{VERSION}</code> directory.</p><p>This configuration works well but it is running Jetty as the root user.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_practical_setup_of_a_jetty_service"></a>Practical Setup of a Jetty Service</h3></div></div></div><p>There are various ways this can be accomplished, mostly depending on your Unix environment (and possibly corporate policies).</p><p>The techniques outlined here assume an installation on Linux (demonstrated on Ubuntu 12.04.3 LTS).</p><p>Prepare some empty directories to work with.</p><div class="screenexample"><pre class="screen"># mkdir -p /opt/jetty
+# mkdir -p /opt/web/mybase
+# mkdir -p /opt/jetty/temp</pre></div><p>The directory purposes are as follows:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">/opt/jetty</span></dt><dd>Where the Jetty Distribution will be unpacked into</dd><dt><span class="term">/opt/web/mybase</span></dt><dd>Where your specific set of webapps will be located, including all of the configuration required of the server to make them operational.</dd><dt><span class="term">/opt/jetty/temp</span></dt><dd><p class="simpara">This is the temporary directory assigned to Java by the Service Layer (this is what Java sees as the <code class="literal">java.io.tmpdir</code> System Property).</p><p class="simpara">This is intentionally kept separate from the standard temp directory of <code class="literal">/tmp</code>, as this location doubles as the Servlet Spec work directory.
+It is our experience that the standard temp directory is often managed by various cleanup scripts that wreak havoc on a long running Jetty server.</p></dd></dl></div><p>Jetty 9.3 requires Java 8 (or greater) to run.
+Make sure you have it installed.</p><div class="screenexample"><pre class="screen"># apt-get install openjdk-8-jdk</pre></div><p>Or download Java 8 from: <a class="link" href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_top">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a></p><div class="screenexample"><pre class="screen"># java -version
+java version "1.6.0_27"
+OpenJDK Runtime Environment (IcedTea6 1.12.6) (6b27-1.12.6-1ubuntu0.12.04.2)
+OpenJDK 64-Bit Server VM (build 20.0-b12, mixed mode)
+
+# update-alternatives --list java
+/usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
+/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
+
+# update-alternatives --config java
+There are 2 choices for the alternative java (providing /usr/bin/java).
+
+  Selection    Path                                            Priority   Status
+------------------------------------------------------------
+* 0            /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java   1061      auto mode
+  1            /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java   1061      manual mode
+  2            /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java   1051      manual mode
+
+Press enter to keep the current choice[*], or type selection number: 2
+update-alternatives: using /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java to provide /usr/bin/java (java) in manual mode.
+
+# java -version
+java version "1.7.0_25"
+OpenJDK Runtime Environment (IcedTea 2.3.10) (7u25-2.3.10-1ubuntu0.12.04.2)
+OpenJDK 64-Bit Server VM (build 23.7-b01, mixed mode)</pre></div><p>It is recommended that you create a user to specifically run Jetty.
+This user should have the minimum set of privileges needed to run Jetty.</p><div class="screenexample"><pre class="screen"># useradd --user-group --shell /bin/false --home-dir /opt/jetty/temp jetty</pre></div><p>This will create a user called <code class="literal">jetty</code>, belonging to the group called <code class="literal">jetty</code>, with no shell access (aka <code class="literal">/bin/false</code>), and home directory at <code class="literal">/opt/jetty/temp</code>.</p><p>Download a copy of the Jetty distribution from the <a class="link" href="quick-start-getting-started.html#jetty-downloading" title="Downloading Jetty">Official Eclipse Download Site</a></p><p>Unpack it into place.</p><div class="screenexample"><pre class="screen">[/opt/jetty]# tar -zxf /home/user/Downloads/jetty-distribution-9.4.31.v20200723.tar.gz
+[/opt/jetty]# ls -F
+jetty-distribution-9.4.31.v20200723/
+[/opt/jetty]# mkdir /opt/jetty/temp</pre></div><p>It might seem strange or undesirable to unpack the first portion of the jetty-distribution directory name too.
+But starting with Jetty 9 the split between <code class="literal">${jetty.home}</code> and <code class="literal">${jetty.base}</code> allows for easier upgrades of Jetty itself while isolating your webapp specific configuration.
+For more information on the Jetty home and base concepts see the section on managing a Jetty installation <a class="link" href="startup-base-and-home.html" title="Managing Jetty Base and Jetty Home">earlier in this Chapter.</a></p><p>The <code class="literal">/opt/jetty/temp</code> directory is created as a durable place for Jetty to use for temp and working directories.
+Many Unix systems will periodically clean out the /tmp directory, this behavior is undesired in a Servlet container and has been known to cause problems.
+This durable directory at <code class="literal">/opt/jetty/temp</code> solves for that behavior.</p><p>The directory at <code class="literal">/opt/web/mybase</code> is going to be a <code class="literal">${jetty.base}</code>, so lets configure it to hold your webapp and its configuration.</p><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Tip</h3><p>In past versions of Jetty, you would configure / modify / add to the <code class="literal">jetty-distribution</code> directory directly.
+While this is still supported, we encourage you to setup a proper <code class="literal">${jetty.base}</code> directory, as it will benefit you with easier <code class="literal">jetty-distribution</code> upgrades in the future.</p></div><div class="screenexample"><pre class="screen"># cd /opt/web/mybase/
+[/opt/web/mybase]# ls
+[/opt/web/mybase]# java -jar /opt/jetty/jetty-distribution-9.4.31.v20200723/start.jar \
+   --add-to-start=deploy,http,console-capture
+   INFO  : webapp          transitively enabled, ini template available with --add-to-start=webapp
+   INFO  : server          transitively enabled, ini template available with --add-to-start=server
+   INFO  : security        transitively enabled
+   INFO  : servlet         transitively enabled
+   INFO  : console-capture initialized in ${jetty.base}/start.ini
+   INFO  : http            initialized in ${jetty.base}/start.ini
+   INFO  : deploy          initialized in ${jetty.base}/start.ini
+   MKDIR : ${jetty.base}/logs
+   MKDIR : ${jetty.base}/webapps
+   INFO  : Base directory was modified
+[/opt/web/mybase]# ls -F
+start.ini  webapps/</pre></div><p>At this point you have configured your <code class="literal">/opt/web/mybase</code> to enable the following modules:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">deploy</span></dt><dd>This is the module that will perform deployment of web applications (WAR files or exploded directories), or Jetty IoC XML context deployables, from the <code class="literal">/opt/web/mybase/webapps</code> directory.</dd><dt><span class="term">http</span></dt><dd><p class="simpara">This sets up a single Connector that listens for basic HTTP requests.</p><p class="simpara">See the created <code class="literal">start.ini</code> for configuring this connector.</p></dd><dt><span class="term">console-capture</span></dt><dd>When running Jetty as a service it is very important to have logging enabled.
+This module will enable the basic STDOUT and STDERR capture logging to the <code class="literal">/opt/web/mybase/logs/</code> directory.</dd></dl></div><p>Additionally, the <code class="literal">webapp</code>, <code class="literal">server</code>, <code class="literal">security</code> and <code class="literal">servlet</code> modules were enabled as they are dependencies for other modules.</p><p>See <a class="xref" href="start-jar.html" title="Using start.jar">Using start.jar</a> for more details and options on setting up and configuring a <code class="literal">${jetty.base}</code> directory.</p><p>Copy your war file into place.</p><div class="screenexample"><pre class="screen"># cp /home/user/projects/mywebsite.war /opt/web/mybase/webapps/</pre></div><p>Most service installations will want Jetty to run on port 80, now is the opportunity to change this from the default value of <code class="literal">8080</code> to <code class="literal">80</code>.</p><p>Edit the <code class="literal">/opt/web/mybase/start.ini</code> and change the <code class="literal">jetty.http.port</code> value.</p><div class="screenexample"><pre class="screen"># grep jetty.http.port /opt/web/mybase/start.ini
+jetty.port=80</pre></div><p>Change the permissions on the Jetty distribution and webapp directories so that the user you created can access it.</p><div class="screenexample"><pre class="screen"># chown --recursive jetty /opt/jetty
+# chown --recursive jetty /opt/web/mybase</pre></div><p>Next we need to make the Unix System aware that we have a new Jetty Service that can be managed by the standard <code class="literal">service</code> calls.</p><div class="screenexample"><pre class="screen"># cp /opt/jetty/jetty-distribution-9.4.31.v20200723/bin/jetty.sh /etc/init.d/jetty
+# echo "JETTY_HOME=/opt/jetty/jetty-distribution-9.4.31.v20200723" &gt; /etc/default/jetty
+# echo "JETTY_BASE=/opt/web/mybase" &gt;&gt; /etc/default/jetty
+# echo "JETTY_USER=jetty" &gt;&gt; /etc/default/jetty
+# echo "TMPDIR=/opt/jetty/temp" &gt;&gt; /etc/default/jetty</pre></div><p>Test out the configuration:</p><div class="screenexample"><pre class="screen"># service jetty status
+Checking arguments to Jetty:
+START_INI      =  /opt/web/mybase/start.ini
+JETTY_HOME     =  /opt/jetty/jetty-distribution-9.4.31.v20200723
+JETTY_BASE     =  /opt/web/mybase
+JETTY_CONF     =  /opt/jetty/jetty-distribution-9.4.31.v20200723/etc/jetty.conf
+JETTY_PID      =  /var/run/jetty.pid
+JETTY_START    =  /opt/jetty/jetty-distribution-9.4.31.v20200723/start.jar
+CLASSPATH      =
+JAVA           =  /usr/bin/java
+JAVA_OPTIONS   =  -Djetty.state=/opt/web/mybase/jetty.state
+       -Djetty.logs=/opt/web/mybase/logs
+       -Djetty.home=/opt/jetty/jetty-distribution-9.4.31.v20200723
+       -Djetty.base=/opt/web/mybase
+       -Djava.io.tmpdir=/opt/jetty/temp
+JETTY_ARGS     =  console-capture.xml jetty-started.xml
+RUN_CMD        =  /usr/bin/java
+       -Djetty.state=/opt/web/mybase/jetty.state
+       -Djetty.logs=/opt/web/mybase/logs
+       -Djetty.home=/opt/jetty/jetty-distribution-9.4.31.v20200723
+       -Djetty.base=/opt/web/mybase
+       -Djava.io.tmpdir=/opt/jetty/temp
+       -jar /opt/jetty/jetty-distribution-9.4.31.v20200723/start.jar
+       console-capture.xml
+       jetty-started.xml</pre></div><p>You now have a configured <code class="literal">${jetty.base}</code> in <code class="literal">/opt/web/mybase</code> and a <code class="literal">${jetty.home}</code> in <code class="literal">/opt/jetty/jetty-distribution-{VERSION}</code>, along with the service level files necessary to start the service.</p><p>Test the service to make sure it starts up and runs successfully.</p><div class="screenexample"><pre class="screen"># service jetty start
+Starting Jetty: OK Wed Nov 20 12:35:28 MST 2013
+
+# service jetty check
+..(snip)..
+Jetty running pid=2958
+
+[/opt/web/mybase]# ps u 2958
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+jetty     2958  5.3  0.1 11179176 53984 ?      Sl   12:46   0:00 /usr/bin/java -Djetty...</pre></div><p>You should now have your server running.</p></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="startup-xml-config.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="startup.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="startup-windows-service.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Managing XML Based Startup Configuration&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Startup via Windows Service</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

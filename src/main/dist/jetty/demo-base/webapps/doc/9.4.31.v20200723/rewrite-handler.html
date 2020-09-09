@@ -1,0 +1,169 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Rewrite Handler</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="advanced-extras.html" title="Chapter&nbsp;18.&nbsp;Provided Servlets, Filters, and Handlers"><link rel="prev" href="error-handler.html" title="Error Handler"><link rel="next" href="runner.html" title="Chapter&nbsp;19.&nbsp;Jetty Runner"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Rewrite Handler</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="error-handler.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;18.&nbsp;Provided Servlets, Filters, and Handlers<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="runner.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="rewrite-handler"></a>Rewrite Handler</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="rewrite-handler.html#rewrite-handler-metadata">Info</a></span></dt><dt><span class="section"><a href="rewrite-handler.html#_usage_2">Usage</a></span></dt><dt><span class="section"><a href="rewrite-handler.html#rewrite-rules">Rules</a></span></dt></dl></div><p>The <code class="literal">RewriteHandler</code> matches a request against a set of rules, and modifies the request accordingly for any rules that match.
+The most common use is to rewrite request URIs, but it is capable of much more: rules can also be configured to redirect the response, set a cookie or response code on the response, modify the header, etc.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rewrite-handler-metadata"></a>Info</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Classname: org.eclipse.jetty.rewrite.handler.RewriteHandler</li><li class="listitem">Maven artifact: org.eclipse.jetty:jetty-rewrite</li><li class="listitem">Javadoc: <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/RewriteHandler.html" target="_top">http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/RewriteHandler.html</a></li></ul></div><p>The standard Jetty distribution bundle contains the <code class="literal">jetty-rewrite</code> <a class="link" href="startup-modules.html" title="Managing Startup Modules">module</a>, so all you need to do is to enable it using one of the <a class="link" href="start-jar.html" title="Using start.jar">module commands</a>, eg:</p><div class="screenexample"><pre class="screen">$ java -jar start.jar --add-to-start=rewrite</pre></div><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>If you are running the standard Jetty distribution with the sample test webapp, there will be a demo of the rewrite module at <a class="link" href="http://localhost:8080/test/rewrite/" target="_top">http://localhost:8080/test/rewrite/</a></p></div></blockquote></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_usage_2"></a>Usage</h3></div></div></div><p>The rewrite module enables the following Jetty xml config file on the execution path:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;?xml version="1.0"?&gt;&lt;!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd"&gt;
+
+&lt;Configure id="Server" class="org.eclipse.jetty.server.Server"&gt;
+
+  &lt;!-- =========================================================== --&gt;
+  &lt;!-- configure rewrite handler                                   --&gt;
+  &lt;!-- =========================================================== --&gt;
+  &lt;Call name="insertHandler"&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.eclipse.jetty.rewrite.handler.RewriteHandler"&gt;
+	&lt;Set name="rewriteRequestURI"&gt;&lt;Property name="jetty.rewrite.rewriteRequestURI" deprecated="rewrite.rewriteRequestURI" default="true"/&gt;&lt;/Set&gt;
+	&lt;Set name="rewritePathInfo"&gt;&lt;Property name="jetty.rewrite.rewritePathInfo" deprecated="rewrite.rewritePathInfo" default="false"/&gt;&lt;/Set&gt;
+	&lt;Set name="originalPathAttribute"&gt;&lt;Property name="jetty.rewrite.originalPathAttribute" deprecated="rewrite.originalPathAttribute" default="requestedPath"/&gt;&lt;/Set&gt;
+
+	&lt;!-- Set DispatcherTypes  --&gt;
+	&lt;Set name="dispatcherTypes"&gt;
+	  &lt;Array type="javax.servlet.DispatcherType"&gt;
+	    &lt;Item&gt;&lt;Call class="javax.servlet.DispatcherType" name="valueOf"&gt;&lt;Arg&gt;REQUEST&lt;/Arg&gt;&lt;/Call&gt;&lt;/Item&gt;
+	    &lt;Item&gt;&lt;Call class="javax.servlet.DispatcherType" name="valueOf"&gt;&lt;Arg&gt;ASYNC&lt;/Arg&gt;&lt;/Call&gt;&lt;/Item&gt;
+	  &lt;/Array&gt;
+	&lt;/Set&gt;
+
+        &lt;Get id="Rewrite" name="ruleContainer"/&gt;
+
+	&lt;!-- see rewrite-compactpath.xml for example how to add a rule --&gt;
+
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/Call&gt;
+&lt;/Configure&gt;</code></pre><p>As the commented out code shows, you configure the <code class="literal">RewriteHandler</code> by adding various rules.</p><p>There is an example of <a class="link" href="rewrite-handler.html#rewrite-rules" title="Rules">rules</a> configuration in the standard distribution in the <code class="literal">demo-base/etc/demo-rewrite-rules.xml</code> file:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;?xml version="1.0"?&gt;&lt;!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd"&gt;
+
+&lt;!-- =============================================================== --&gt;&lt;!-- Configure the demos                                             --&gt;&lt;!-- =============================================================== --&gt;
+&lt;Configure id="Server" class="org.eclipse.jetty.server.Server"&gt;
+
+  &lt;!-- ============================================================= --&gt;
+  &lt;!-- Add rewrite rules                                             --&gt;
+  &lt;!-- ============================================================= --&gt;
+  &lt;Ref refid="Rewrite"&gt;
+      &lt;!-- Add rule to protect against IE ssl bug --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+          &lt;New class="org.eclipse.jetty.rewrite.handler.MsieSslRule"/&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+
+      &lt;!-- protect favicon handling --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+          &lt;New class="org.eclipse.jetty.rewrite.handler.HeaderPatternRule"&gt;
+            &lt;Set name="pattern"&gt;/favicon.ico&lt;/Set&gt;
+            &lt;Set name="name"&gt;Cache-Control&lt;/Set&gt;
+            &lt;Set name="value"&gt;Max-Age=3600,public&lt;/Set&gt;
+            &lt;Set name="terminating"&gt;true&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+
+      &lt;!-- redirect from the welcome page to a specific page --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+          &lt;New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule"&gt;
+            &lt;Set name="pattern"&gt;/test/rewrite/&lt;/Set&gt;
+            &lt;Set name="replacement"&gt;/test/rewrite/info.html&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+
+      &lt;!-- replace the entire request URI --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+          &lt;New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule"&gt;
+            &lt;Set name="pattern"&gt;/test/some/old/context&lt;/Set&gt;
+            &lt;Set name="replacement"&gt;/test/rewritten/newcontext&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+
+      &lt;!-- replace the beginning of the request URI --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+          &lt;New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule"&gt;
+            &lt;Set name="pattern"&gt;/test/rewrite/for/*&lt;/Set&gt;
+            &lt;Set name="replacement"&gt;/test/rewritten/&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+
+      &lt;!-- reverse the order of the path sections --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+          &lt;New class="org.eclipse.jetty.rewrite.handler.RewriteRegexRule"&gt;
+            &lt;Set name="regex"&gt;(.*?)/reverse/([^/]*)/(.*)&lt;/Set&gt;
+            &lt;Set name="replacement"&gt;$1/reverse/$3/$2&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+
+      &lt;!-- add a cookie to each path visited --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+          &lt;New class="org.eclipse.jetty.rewrite.handler.CookiePatternRule"&gt;
+            &lt;Set name="pattern"&gt;/*&lt;/Set&gt;
+            &lt;Set name="name"&gt;visited&lt;/Set&gt;
+            &lt;Set name="value"&gt;yes&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+
+      &lt;!--  actual redirect, instead of internal rewrite --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+          &lt;New class="org.eclipse.jetty.rewrite.handler.RedirectPatternRule"&gt;
+            &lt;Set name="pattern"&gt;/test/redirect/*&lt;/Set&gt;
+            &lt;Set name="location"&gt;/test/redirected&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+
+      &lt;!-- add a response rule --&gt;
+      &lt;Call name="addRule"&gt;
+        &lt;Arg&gt;
+           &lt;New class="org.eclipse.jetty.rewrite.handler.ResponsePatternRule"&gt;
+             &lt;Set name="pattern"&gt;/400Error&lt;/Set&gt;
+             &lt;Set name="code"&gt;400&lt;/Set&gt;
+             &lt;Set name="reason"&gt;ResponsePatternRule Demo&lt;/Set&gt;
+          &lt;/New&gt;
+        &lt;/Arg&gt;
+      &lt;/Call&gt;
+  &lt;/Ref&gt;
+&lt;/Configure&gt;</code></pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_embedded_example_2"></a>Embedded Example</h4></div></div></div><p>This is an example for embedded Jetty, which does something similar to the configuration file example above:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>  Server server = new Server();
+
+  RewriteHandler rewrite = new RewriteHandler();
+  rewrite.setRewriteRequestURI(true);
+  rewrite.setRewritePathInfo(false);
+  rewrite.originalPathAttribute("requestedPath");
+
+  RedirectPatternRule redirect = new RedirectPatternRule();
+  redirect.setPattern("/redirect/*");
+  redirect.setReplacement("/redirected");
+  rewrite.addRule(redirect);
+
+  RewritePatternRule oldToNew = new RewritePatternRule();
+  oldToNew.setPattern("/some/old/context");
+  oldToNew.setReplacement("/some/new/context");
+  rewrite.addRule(oldToNew);
+
+  RewriteRegexRule reverse = new RewriteRegexRule();
+  reverse.setRegex("/reverse/([^/]*)/(.*)");
+  reverse.setReplacement("/reverse/$2/$1");
+  rewrite.addRule(reverse);
+
+  server.setHandler(rewrite);</code></pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rewrite-rules"></a>Rules</h3></div></div></div><p>There are several types of rules that are written extending useful base rule classes.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_patternrule"></a>PatternRule</h4></div></div></div><p>Matches against the request URI using the servlet pattern syntax.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/CookiePatternRule.html" target="_top">CookiePatternRule</a></span></dt><dd>Adds a cookie to the response.</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/HeaderPatternRule.html" target="_top">HeaderPatternRule</a></span></dt><dd>Adds/modifies a header in the response.</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/RedirectPatternRule.html" target="_top">RedirectPatternRule</a></span></dt><dd>Redirects the response.</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/ResponsePatternRule.html" target="_top">ResponsePatternRule</a></span></dt><dd>Sends the response code (status or error).</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/RewritePatternRule.html" target="_top">RewritePatternRule</a></span></dt><dd>Rewrite the URI by replacing the matched request path with a fixed string.</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_regexrule"></a>RegexRule</h4></div></div></div><p>Matches against the request URI using regular expressions.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/RedirectRegexRule.html" target="_top">RedirectRegexRule</a></span></dt><dd>Redirect the response.</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/RewriteRegexRule.html" target="_top">RewriteRegexRule</a></span></dt><dd>Rewrite the URI by matching with a regular expression.
+(The replacement string may use <code class="literal">Template:$n</code> to replace the nth capture group.)</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_headerrule"></a>HeaderRule</h4></div></div></div><p>Match against request headers. Match either on a header name and specific value, or on the presence of a header (with any value).</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/ForwardedSchemeHeaderRule.html" target="_top">ForwardedSchemaHeaderRule</a></span></dt><dd>Set the scheme on the request (defaulting to HTTPS).</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_others"></a>Others</h4></div></div></div><p>Extra rules that defy standard classification.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/MsieSslRule.html" target="_top">MsieSslRule</a></span></dt><dd>Disables the keep alive for SSL from IE5 or IE6.</dd><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/LegacyRule.html" target="_top">LegacyRule</a></span></dt><dd>Implements the legacy API of RewriteHandler</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_rulecontainer"></a>RuleContainer</h4></div></div></div><p>Groups rules together.
+The contained rules will only be processed if the conditions for the <code class="literal">RuleContainer</code> evaluate to true.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/rewrite/handler/VirtualHostRuleContainer.html" target="_top">VirtualHostRuleContainer</a></span></dt><dd>Groups rules that apply only to a specific virtual host or a set of virtual hosts</dd></dl></div></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="error-handler.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="advanced-extras.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="runner.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Error Handler&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;19.&nbsp;Jetty Runner</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

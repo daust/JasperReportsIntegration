@@ -1,0 +1,152 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Jetty WebSocket Server API</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="websocket-jetty.html" title="Chapter&nbsp;27.&nbsp;Jetty Websocket API"><link rel="prev" href="jetty-websocket-api-adapter.html" title="Using the WebSocketAdapter"><link rel="next" href="jetty-websocket-client-api.html" title="Jetty WebSocket Client API"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Jetty WebSocket Server API</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jetty-websocket-api-adapter.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;27.&nbsp;Jetty Websocket API<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jetty-websocket-client-api.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jetty-websocket-server-api"></a>Jetty WebSocket Server API</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="jetty-websocket-server-api.html#_the_jetty_websocketservlet">The Jetty WebSocketServlet</a></span></dt><dt><span class="section"><a href="jetty-websocket-server-api.html#_using_the_websocketcreator">Using the WebSocketCreator</a></span></dt></dl></div><p>Jetty provides the ability to wire up WebSocket endpoints to Servlet Path Specs via the use of a WebSocketServlet bridge servlet.</p><p>Internally, Jetty manages the HTTP Upgrade to WebSocket and migration from a HTTP Connection to a WebSocket Connection.</p><p>This will only work when running within the Jetty Container (unlike past Jetty technologies, you cannot get Jetty WebSocket server functionality running Jetty within other containers like JBoss, Tomcat, or WebLogic).</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_the_jetty_websocketservlet"></a>The Jetty WebSocketServlet</h3></div></div></div><p>To wire up your WebSocket to a specific path via the WebSocketServlet, you will need to extend org.eclipse.jetty.websocket.servlet.WebSocketServlet and specify what WebSocket object should be created with incoming Upgrade requests.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>//
+//  ========================================================================
+//  Copyright (c) 1995-2020 Mort Bay Consulting Pty Ltd and others.
+//  ------------------------------------------------------------------------
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Eclipse Public License v1.0
+//  and Apache License v2.0 which accompanies this distribution.
+//
+//      The Eclipse Public License is available at
+//      http://www.eclipse.org/legal/epl-v10.html
+//
+//      The Apache License v2.0 is available at
+//      http://www.opensource.org/licenses/apache2.0.php
+//
+//  You may elect to redistribute this code under either of these licenses.
+//  ========================================================================
+//
+
+package examples;
+
+import javax.servlet.annotation.WebServlet;
+
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "MyEcho WebSocket Servlet", urlPatterns = {"/echo"})
+public class MyEchoServlet extends WebSocketServlet
+{
+    @Override
+    public void configure(WebSocketServletFactory factory)
+    {
+        // set a 10 second timeout
+        factory.getPolicy().setIdleTimeout(10000);
+
+        // register MyEchoSocket as the WebSocket to create on Upgrade
+        factory.register(MyEchoSocket.class);
+    }
+}</code></pre><p>This example will create a Servlet mapped via the <a class="link" href="http://docs.oracle.com/javaee/6/api/javax/servlet/annotation/WebServlet.html" target="_top">@WebServlet</a> annotation to the Servlet path spec of <code class="literal">"/echo"</code> (or you can do this manually in the <code class="literal">WEB-INF/web.xml</code> of your web application) which will create MyEchoSocket instances when encountering HTTP Upgrade requests.</p><p>The <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/websocket/servlet/WebSocketServlet.html#configure(org.eclipse.jetty.websocket.servlet.WebSocketServletFactory)" target="_top"><code class="literal">WebSocketServlet.configure(WebSocketServletFactory factory)</code></a> is where you put your specific configuration for your WebSocket.
+In the example we specify a 10 second idle timeout and register MyEchoSocket with the default WebSocketCreator the WebSocket class we want to be created on Upgrade.</p><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>It is important that you take in account any firewall or router timeouts
+when configuring websockets. Be sure the websocket configuration is
+lower than your firewall or router.</p></div></blockquote></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_using_the_websocketcreator"></a>Using the WebSocketCreator</h3></div></div></div><p>All WebSocket&#8217;s are created via whatever <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/websocket/servlet/WebSocketCreator.html" target="_top">WebSocketCreator</a> you have registered with the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/websocket/servlet/WebSocketServletFactory.html" target="_top">WebSocketServletFactory</a>.</p><p>By default, the WebSocketServletFactory is a simple WebSocketCreator capable of creating a single WebSocket object.
+Use <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/websocket/servlet/WebSocketServletFactory.html#register(java.lang.Class)" target="_top"><code class="literal">WebSocketCreator.register(Class&lt;?&gt; websocket)</code></a> to tell the WebSocketServletFactory which class it should instantiate (make sure it has a default constructor).</p><p>If you have a more complicated creation scenario, you might want to provide your own WebSocketCreator that bases the WebSocket it creates off of information present in the UpgradeRequest object.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>//
+//  ========================================================================
+//  Copyright (c) 1995-2020 Mort Bay Consulting Pty Ltd and others.
+//  ------------------------------------------------------------------------
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Eclipse Public License v1.0
+//  and Apache License v2.0 which accompanies this distribution.
+//
+//      The Eclipse Public License is available at
+//      http://www.eclipse.org/legal/epl-v10.html
+//
+//      The Apache License v2.0 is available at
+//      http://www.opensource.org/licenses/apache2.0.php
+//
+//  You may elect to redistribute this code under either of these licenses.
+//  ========================================================================
+//
+
+package examples;
+
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+
+public class MyAdvancedEchoCreator implements WebSocketCreator
+{
+    private MyBinaryEchoSocket binaryEcho;
+    private MyEchoSocket textEcho;
+
+    public MyAdvancedEchoCreator()
+    {
+        // Create the reusable sockets
+        this.binaryEcho = new MyBinaryEchoSocket();
+        this.textEcho = new MyEchoSocket();
+    }
+
+    @Override
+    public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp)
+    {
+        for (String subprotocol : req.getSubProtocols())
+        {
+            if ("binary".equals(subprotocol))
+            {
+                resp.setAcceptedSubProtocol(subprotocol);
+                return binaryEcho;
+            }
+            if ("text".equals(subprotocol))
+            {
+                resp.setAcceptedSubProtocol(subprotocol);
+                return textEcho;
+            }
+        }
+
+        // No valid subprotocol in request, ignore the request
+        return null;
+    }
+}</code></pre><p>Here we show a WebSocketCreator that will utilize the <a class="link" href="http://tools.ietf.org/html/rfc6455#section-1.9" target="_top">WebSocket subprotocol</a> information from request to determine what WebSocket type should be
+created.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>//
+//  ========================================================================
+//  Copyright (c) 1995-2020 Mort Bay Consulting Pty Ltd and others.
+//  ------------------------------------------------------------------------
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Eclipse Public License v1.0
+//  and Apache License v2.0 which accompanies this distribution.
+//
+//      The Eclipse Public License is available at
+//      http://www.eclipse.org/legal/epl-v10.html
+//
+//      The Apache License v2.0 is available at
+//      http://www.opensource.org/licenses/apache2.0.php
+//
+//  You may elect to redistribute this code under either of these licenses.
+//  ========================================================================
+//
+
+package examples;
+
+import javax.servlet.annotation.WebServlet;
+
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "MyAdvanced Echo WebSocket Servlet", urlPatterns = {"/advecho"})
+public class MyAdvancedEchoServlet extends WebSocketServlet
+{
+    @Override
+    public void configure(WebSocketServletFactory factory)
+    {
+        // set a 10 second timeout
+        factory.getPolicy().setIdleTimeout(10000);
+
+        // set a custom WebSocket creator
+        factory.setCreator(new MyAdvancedEchoCreator());
+    }
+}</code></pre><p>When you want a custom WebSocketCreator, use <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/websocket/servlet/WebSocketServletFactory.html#setCreator(org.eclipse.jetty.websocket.servlet.WebSocketCreator)" target="_top"><code class="literal">WebSocketServletFactory.setCreator(WebSocketCreator creator)</code></a> and the WebSocketServletFactory will use your creator for all incoming Upgrade requests on this servlet.</p><p>Other uses for a WebSocketCreator:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Controlling the selection of WebSocket subprotocol</li><li class="listitem">Performing any WebSocket origin you deem important.</li><li class="listitem">Obtaining the HTTP headers from incoming request</li><li class="listitem">Obtaining the Servlet HttpSession object (if it exists)</li><li class="listitem">Specifying a response status code and reason</li></ul></div><p>If you don&#8217;t want to accept the upgrade, simply return null from the link:http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/websocket/servlet/WebSocketCreator.html#createWebSocket(org.eclipse.jetty.websocket.api.UpgradeRequest, org.eclipse.jetty.websocket.api.UpgradeResponse)[<code class="literal">WebSocketCreator.createWebSocket(UpgradeRequest req, UpgradeResponse resp)</code>] method.</p></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jetty-websocket-api-adapter.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="websocket-jetty.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jetty-websocket-client-api.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Using the WebSocketAdapter&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Jetty WebSocket Client API</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

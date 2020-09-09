@@ -1,0 +1,156 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Configuring JNDI</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="jndi.html" title="Chapter&nbsp;12.&nbsp;Configuring JNDI"><link rel="prev" href="using-jetty-jndi.html" title="Working with Jetty JNDI"><link rel="next" href="jndi-embedded.html" title="Using JNDI with Jetty Embedded"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Configuring JNDI</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="using-jetty-jndi.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;12.&nbsp;Configuring JNDI<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jndi-embedded.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jndi-configuration"></a>Configuring JNDI</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="jndi-configuration.html#configuring-jndi-env-entries">Configuring JNDI <span class="emphasis"><em>env-entries</em></span></a></span></dt><dt><span class="section"><a href="jndi-configuration.html#configuring-resource-refs-and-resource-env-refs">Configuring <span class="emphasis"><em>resource-refs</em></span> and <span class="emphasis"><em>resource-env-refs</em></span></a></span></dt><dt><span class="section"><a href="jndi-configuration.html#configuring-datasources">Configuring DataSources</a></span></dt><dt><span class="section"><a href="jndi-configuration.html#configuring-jms-queues-topics-connectionfactories">Configuring JMS Queues, Topics and ConnectionFactories</a></span></dt><dt><span class="section"><a href="jndi-configuration.html#configuring-mail-with-jndi">Configuring Mail</a></span></dt><dt><span class="section"><a href="jndi-configuration.html#configuring-xa-transactions">Configuring XA Transactions</a></span></dt><dt><span class="section"><a href="jndi-configuration.html#configuring-links">Configuring Links</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="configuring-jndi-env-entries"></a>Configuring JNDI <span class="emphasis"><em>env-entries</em></span></h3></div></div></div><p>Sometimes it is useful to pass configuration information to a webapp at runtime that you either cannot or cannot conveniently code into a <code class="literal">web.xml</code> env-entry.
+In such cases, you can use the <code class="literal">org.eclipse.jetty.plus.jndi.EnvEntry</code> class, and even override an entry of the same name in <code class="literal">web.xml</code>.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;New class="org.eclipse.jetty.plus.jndi.EnvEntry"&gt;
+  &lt;Arg&gt;&lt;/Arg&gt;
+  &lt;Arg&gt;mySpecialValue&lt;/Arg&gt;
+  &lt;Arg type="java.lang.Integer"&gt;4000&lt;/Arg&gt;
+  &lt;Arg type="boolean"&gt;true&lt;/Arg&gt;
+&lt;/New&gt;</code></pre><p>This example defines a virtual <code class="literal">env-entry</code> called <code class="literal">mySpecialValue</code> with value <code class="literal">4000</code> that is <a class="link" href="using-jetty-jndi.html#jndi-name-scope" title="Scope of Resource Names">scoped</a> to the JVM.
+It is put into JNDI at <code class="literal">java:comp/env/mySpecialValue</code> for <span class="emphasis"><em>every</em></span> web app deployed.
+Moreover, the boolean argument indicates that this value overrides an <code class="literal">env-entry</code> of the same name in <code class="literal">web.xml</code>.
+If you don&#8217;t want to override, omit this argument, or set it to <code class="literal">false</code>.</p><p>The Servlet Specification allows binding only the following object types to an <code class="literal">env-entry</code>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">java.lang.String</li><li class="listitem">java.lang.Integer</li><li class="listitem">java.lang.Float</li><li class="listitem">java.lang.Double</li><li class="listitem">java.lang.Long</li><li class="listitem">java.lang.Short</li><li class="listitem">java.lang.Character</li><li class="listitem">java.lang.Byte</li><li class="listitem">java.lang.Boolean</li></ul></div><p>That being said, Jetty is a little more flexible and allows you to also bind custom POJOs, <a class="link" href="http://docs.oracle.com/javase/1.5.0/docs/api/javax/naming/Reference.html" target="_top"><code class="literal">javax.naming.References</code></a> and <a class="link" href="http://docs.oracle.com/javase/1.5.0/docs/api/javax/naming/Referenceable.html" target="_top"><code class="literal">javax.naming.Referenceables</code></a>.
+Be aware that if you take advantage of this feature, your web application is <span class="emphasis"><em>not portable</em></span>.</p><p>To use the <code class="literal">env-entry</code> configured above, use code in your <code class="literal">servlet/filter/etc.</code>, such as:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>import javax.naming.InitialContext;
+
+public class MyClass {
+
+  public void myMethod() {
+
+    InitialContext ic = new InitialContext();
+    Integer mySpecialValue = (Integer)ic.lookup("java:comp/env/mySpecialValue");
+    ...
+  }
+}</code></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="configuring-resource-refs-and-resource-env-refs"></a>Configuring <span class="emphasis"><em>resource-refs</em></span> and <span class="emphasis"><em>resource-env-refs</em></span></h3></div></div></div><p>You can configure any type of resource that you want to refer to in a <code class="literal">web.xml</code> file as a <code class="literal">resource-ref</code> or <code class="literal">resource-env-ref</code>, using the <code class="literal">org.eclipse.jetty.plus.jndi.Resource</code> type of naming entry.
+You provide the scope, the name of the object (relative to <code class="literal">java:comp/env</code>) and a POJO instance or a <code class="literal">javax.naming.Reference</code> instance or <code class="literal">javax.naming.Referenceable</code> instance.</p><p>The <a class="link" href="http://jcp.org/aboutJava/communityprocess/pr/jsr244/index.html" target="_top">J2EE Specification</a> recommends storing DataSources in <code class="literal">java:comp/env/jdbc</code>, JMS connection factories under <code class="literal">java:comp/env/jms</code>, JavaMail connection factories under <code class="literal">java:comp/env/mail</code> and URL connection factories under <code class="literal">java:comp/env/url</code>.</p><p>For example:</p><div class="table"><a name="d0e15726"></a><p class="title"><b>Table&nbsp;12.1.&nbsp;DataSource Declaration Conventions</b></p><div class="table-contents"><table class="table" summary="DataSource Declaration Conventions" border="1"><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th align="left" valign="top">Resource Type</th><th align="left" valign="top">Name in <code class="literal">jetty.xml</code></th><th align="left" valign="top">Environment Lookup</th></tr></thead><tbody><tr><td align="left" valign="top"><p>javax.sql.DataSource</p></td><td align="left" valign="top"><p>jdbc/myDB</p></td><td align="left" valign="top"><p>java:comp/env/jdbc/myDB</p></td></tr><tr><td align="left" valign="top"><p>javax.jms.QueueConnectionFactory</p></td><td align="left" valign="top"><p>jms/myQueue</p></td><td align="left" valign="top"><p>java:comp/env/jms/myQueue</p></td></tr><tr><td align="left" valign="top"><p>javax.mail.Session</p></td><td align="left" valign="top"><p>mail/myMailService</p></td><td align="left" valign="top"><p>java:comp/env/mail/myMailService</p></td></tr></tbody></table></div></div><br class="table-break"></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="configuring-datasources"></a>Configuring DataSources</h3></div></div></div><p>Here is an example of configuring a <code class="literal">javax.sql.DataSource</code>.
+Jetty can use any DataSource implementation available on its classpath.
+In this example, the DataSource is from the <a class="link" href="http://db.apache.org/derby" target="_top">Derby</a> relational database, but you can use any implementation of a <code class="literal">javax.sql.DataSource</code>.
+This example configures it as scoped to a web app with the id of <span class="emphasis"><em>wac</em></span>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id='wac' class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+  &lt;New id="myds" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+    &lt;Arg&gt;&lt;Ref refid="wac"/&gt;&lt;/Arg&gt;
+    &lt;Arg&gt;jdbc/myds&lt;/Arg&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.apache.derby.jdbc.EmbeddedDataSource"&gt;
+        &lt;Set name="DatabaseName"&gt;test&lt;/Set&gt;
+        &lt;Set name="createDatabase"&gt;create&lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/New&gt;
+&lt;/Configure&gt;</code></pre><p>The code above creates an instance of <code class="literal">org.apache.derby.jdbc.EmbeddedDataSource</code>, calls the two setter methods <code class="literal">setDatabaseName("test"),</code> and <code class="literal">setCreateDatabase("create"),</code> and binds it into the JNDI scope for the web app.
+If you do not have the appropriate <code class="literal">resource-ref</code> set up in your <code class="literal">web.xml</code>, it is available from application lookups as <code class="literal">java:comp/env/jdbc/myds</code>.</p><p>Here&#8217;s an example <code class="literal">web.xml</code> declaration for the datasource above:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;resource-ref&gt;
+  &lt;res-ref-name&gt;jdbc/myds&lt;/res-ref-name&gt;
+  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+&lt;/resource-ref&gt;</code></pre><p>To look up your DataSource in your <code class="literal">servlet/filter/etc.</code>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class MyClass {
+
+  public void myMethod() {
+
+    InitialContext ic = new InitialContext();
+    DataSource myDS = (DataSource)ic.lookup("java:comp/env/jdbc/myds");
+
+    ...
+  }
+}</code></pre><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>Careful! When configuring Resources, ensure that the type of object you configure matches the type of object you expect to look up in <code class="literal">java:comp/env</code>.
+For database connection factories, this means that the object you register as a Resource <span class="emphasis"><em>must</em></span> implement the <code class="literal">javax.sql.DataSource</code>&nbsp;interface.</p></div></blockquote></div><p>For more examples of datasource configurations, see <a class="xref" href="jndi-datasource-examples.html" title="Datasource Examples">Datasource Examples</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="configuring-jms-queues-topics-connectionfactories"></a>Configuring JMS Queues, Topics and ConnectionFactories</h3></div></div></div><p>Jetty can bind any implementation of the JMS destinations and connection factories.
+You just need to ensure the implementation Jars are available on Jetty&#8217;s classpath.
+Here is an example of binding an <a class="link" href="http://activemq.apache.org" target="_top">ActiveMQ</a> in-JVM connection factory:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id='wac' class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+  &lt;New id="cf" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+    &lt;Arg&gt;&lt;Ref refid='wac'/&gt;&lt;/Arg&gt;
+    &lt;Arg&gt;jms/connectionFactory&lt;/Arg&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.apache.activemq.ActiveMQConnectionFactory"&gt;
+        &lt;Arg&gt;vm://localhost?broker.persistent=false&lt;/Arg&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/New&gt;
+&lt;/Configure&gt;</code></pre><p>The entry in <code class="literal">web.xml</code> would be:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;resource-ref&gt;
+  &lt;res-ref-name&gt;jms/connectionFactory&lt;/res-ref-name&gt;
+  &lt;res-type&gt;javax.jms.ConnectionFactory&lt;/res-type&gt;
+  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+&lt;/resource-ref&gt;</code></pre><p>TODO: put in an example of a QUEUE from progress demo</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="configuring-mail-with-jndi"></a>Configuring Mail</h3></div></div></div><p>Jetty also provides infrastructure for access to <code class="literal">javax.mail.Sessions</code> from within an application:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id='wac' class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+  &lt;New id="mail" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+    &lt;Arg&gt;&lt;Ref refid="wac"/&gt;&lt;/Arg&gt;
+    &lt;Arg&gt;mail/Session&lt;/Arg&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.eclipse.jetty.jndi.factories.MailSessionReference"&gt;
+        &lt;Set name="user"&gt;fred&lt;/Set&gt;
+        &lt;Set name="password"&gt;OBF:1xmk1w261z0f1w1c1xmq&lt;/Set&gt;
+        &lt;Set name="properties"&gt;
+          &lt;New class="java.util.Properties"&gt;
+            &lt;Put name="mail.smtp.host"&gt;XXX&lt;/Put&gt;
+            &lt;Put name="mail.from"&gt;me@me&lt;/Put&gt;
+            &lt;Put name="mail.debug"&gt;true&lt;/Put&gt;
+          &lt;/New&gt;
+        &lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/New&gt;
+&lt;/Configure&gt;</code></pre><p>This setup creates an instance of the <code class="literal">org.eclipse.jetty.jndi.factories.MailSessionReference</code> class, calls it&#8217;s setter methods to set up the authentication for the mail system, and populates a set of Properties, setting them on the <code class="literal">MailSessionReference</code> instance.
+The result is that an application can look up <code class="literal">java:comp/env/mail/Session</code>&nbsp;at runtime and obtain access to a <code class="literal">javax.mail.Session</code>&nbsp;that has the necessary configuration to permit it to send email via SMTP.</p><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Tip</h3><p>You can set the password to be plain text, or use Jetty&#8217;s <a class="link" href="configuring-security-secure-passwords.html" title="Secure Password Obfuscation">Secure Password Obfuscation</a> (OBF:) mechanism to make the config file a little more secure from prying eyes.
+Remember that you cannot use the other Jetty encryption mechanisms of MD5 and Crypt because they do not allow you to recover the original password, which the mail system requires.</p></div></blockquote></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="configuring-xa-transactions"></a>Configuring XA Transactions</h3></div></div></div><p>If you want to perform distributed transactions with your resources, you need a <span class="emphasis"><em>transaction manager</em></span> that supports the JTA interfaces, and that you can look up as <code class="literal">java:comp/UserTransaction</code> in your webapp.
+Jetty does not ship with one as standard, but you can plug in the one you prefer.
+You can configure a transaction manager using the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/plus/jndi/Transaction.html" target="_top">JNDI Transaction</a> object in a Jetty config file.
+The following example configures the <a class="link" href="http://www.atomikos.com/" target="_top">Atomikos</a> transaction manager:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;New id="tx" class="org.eclipse.jetty.plus.jndi.Transaction"&gt;
+  &lt;Arg&gt;
+    &lt;New class="com.atomikos.icatch.jta.J2eeUserTransaction"/&gt;
+  &lt;/Arg&gt;
+&lt;/New&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="configuring-links"></a>Configuring Links</h3></div></div></div><p>Generally, the name you set for your <code class="literal">Resource</code> should be the same name you use for it in <code class="literal">web.xml</code>.
+For example:</p><p>In a context xml file:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id='wac' class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+  &lt;New id="myds" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+    &lt;Arg&gt;&lt;Ref refid="wac"/&gt;&lt;/Arg&gt;
+    &lt;Arg&gt;jdbc/mydatasource&lt;/Arg&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.apache.derby.jdbc.EmbeddedDataSource"&gt;
+        &lt;Set name="DatabaseName"&gt;test&lt;/Set&gt;
+        &lt;Set name="createDatabase"&gt;create&lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/New&gt;
+&lt;/Configure&gt;</code></pre><p>In a <code class="literal">web.xml</code> file:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;resource-ref&gt;
+  &lt;res-ref-name&gt;jdbc/mydatasource&lt;/res-ref-name&gt;
+  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+  &lt;injection-target&gt;
+    &lt;injection-target-class&gt;com.acme.JNDITest&lt;/injection-target-class&gt;
+    &lt;injection-target-name&gt;myDatasource&lt;/injection-target-name&gt;
+  &lt;/injection-target&gt;
+&lt;/resource-ref&gt;</code></pre><p>However, you can refer to it in <code class="literal">web.xml</code> by a different name, and link it to the name in your <code class="literal">org.eclipse.jetty.plus.jndi.Resource</code> by using an <code class="literal">org.eclipse.jetty.plus.jndi.Link</code>.
+For the example above, you can refer to the <code class="literal">jdbc/mydatasource</code> resource as <code class="literal">jdbc/mydatasource1</code> as follows:</p><p>In a context xml file declare <code class="literal">jdbc/mydatasource</code>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id='wac' class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+  &lt;New id="myds" class="org.eclipse.jetty.plus.jndi.Resource"&gt;
+    &lt;Arg&gt;&lt;Ref refid="wac"/&gt;&lt;/Arg&gt;
+    &lt;Arg&gt;jdbc/mydatasource&lt;/Arg&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.apache.derby.jdbc.EmbeddedDataSource"&gt;
+        &lt;Set name="DatabaseName"&gt;test&lt;/Set&gt;
+        &lt;Set name="createDatabase"&gt;create&lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/New&gt;
+&lt;/Configure&gt;</code></pre><p>Then in a <code class="literal">WEB-INF/jetty-env.xml</code> file, link the name <code class="literal">jdbc/mydatasource</code> to the name you want to reference it as in
+<code class="literal">web.xml</code>, which in this case is <code class="literal">jdbc/mydatasource1</code>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;New id="map1" class="org.eclipse.jetty.plus.jndi.Link"&gt;
+  &lt;Arg&gt;&lt;Ref refid='wac'/&gt;&lt;/Arg&gt;
+  &lt;Arg&gt;jdbc/mydatasource1&lt;/Arg&gt; &lt;!-- name in web.xml --&gt;
+  &lt;Arg&gt;jdbc/mydatasource&lt;/Arg&gt;  &lt;!-- name in container environment --&gt;
+&lt;/New&gt;</code></pre><p>Now you can refer to <code class="literal">jdbc/mydatasource1</code> in the <code class="literal">web.xml</code> like this:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;resource-ref&gt;
+  &lt;res-ref-name&gt;jdbc/mydatasource1&lt;/res-ref-name&gt;
+  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+  &lt;injection-target&gt;
+    &lt;injection-target-class&gt;com.acme.JNDITest&lt;/injection-target-class&gt;
+    &lt;injection-target-name&gt;myDatasource&lt;/injection-target-name&gt;
+  &lt;/injection-target&gt;
+&lt;/resource-ref&gt;</code></pre><p>This can be useful when you cannot change a JNDI resource directly in the <code class="literal">web.xml</code> but need to link it to a specific resource in your deployment environment.</p></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="using-jetty-jndi.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="jndi.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jndi-embedded.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Working with Jetty JNDI&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Using JNDI with Jetty Embedded</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

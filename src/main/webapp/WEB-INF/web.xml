@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app id="WebApp_ID" version="2.4" xmlns="https://java.sun.com/xml/ns/j2ee" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://java.sun.com/xml/ns/j2ee https://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>JasperReportsIntegration</display-name>
+	<!--=======================-->
+	<!--  CONTEXT PARAMS       -->
+	<!--=======================-->
+   	<!-- optionally define the oc.jasper.config.home --> 
+   	<context-param>
+     	<param-name>oc.jasper.config.home</param-name>
+     	<!-- 
+     	<param-value>/Users/daust/oc-jasper</param-value> 
+     	<param-value>D:\JasperReportsIntegration</param-value> 
+     	-->
+     	<param-value></param-value>
+   	</context-param>
+  	<context-param>
+   		<!-- the log4j default properties file is located within the web application -->
+   		<param-name>log4j-init-file</param-name>
+   		<param-value>log4j.properties</param-value>
+   	</context-param>
+	<!--=======================-->
+	<!--  SERVLETS             -->
+	<!--=======================-->
+	<servlet>
+		<description>
+		runs the tests for the JasperIntegration</description>
+		<display-name>
+		Test</display-name>
+		<servlet-name>Test</servlet-name>
+		<servlet-class>
+		de.oc.integration.jasper.webapp.Test</servlet-class>
+	</servlet>
+	<servlet>
+		<description></description>
+		<display-name>ReportWrapper</display-name>
+		<servlet-name>ReportWrapper</servlet-name>
+		<servlet-class>de.oc.integration.jasper.webapp.ReportWrapper</servlet-class>
+	</servlet>
+	<servlet>
+		<description></description>
+		<display-name>apex</display-name>
+		<servlet-name>apex</servlet-name>
+		<servlet-class>de.oc.integration.jasper.webapp.Apex</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>net.sf.jasperreports.j2ee.servlets.ImageServlet</servlet-class>
+	</servlet>
+	<!--=======================-->
+	<!--  SERVLET MAPPINGS     -->
+	<!--=======================-->
+	<servlet-mapping>
+		<servlet-name>Test</servlet-name>
+		<url-pattern>/test</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ReportWrapper</servlet-name>
+		<url-pattern>/report</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>apex</servlet-name>
+		<url-pattern>/apex</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>/report_image</url-pattern>
+	</servlet-mapping>
+	<!--=======================-->
+	<!--  WELCOME FILE LIST    -->
+	<!--=======================-->
+	<welcome-file-list>
+		<welcome-file>WebContent/index.jsp</welcome-file>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<!--=======================-->
+	<!--  LISTENER             -->
+	<!--=======================-->
+	<listener>
+  		<listener-class>
+  			de.oc.integration.jasper.webapp.AppServletContextListener
+  		</listener-class>
+  	</listener>	
+</web-app>

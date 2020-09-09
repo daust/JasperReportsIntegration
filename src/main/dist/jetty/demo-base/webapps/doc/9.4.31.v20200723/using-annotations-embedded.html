@@ -1,0 +1,155 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Using Annotations with Jetty Embedded</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="annotations.html" title="Chapter&nbsp;13.&nbsp;Annotations"><link rel="prev" href="using-annotations.html" title="Working with Annotations"><link rel="next" href="jmx-chapter.html" title="Chapter&nbsp;14.&nbsp;Java Management Extensions (JMX)"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Using Annotations with Jetty Embedded</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="using-annotations.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;13.&nbsp;Annotations<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jmx-chapter.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="using-annotations-embedded"></a>Using Annotations with Jetty Embedded</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="using-annotations-embedded.html#_setting_up_the_classpath_2">Setting up the Classpath</a></span></dt><dt><span class="section"><a href="using-annotations-embedded.html#_example">Example</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_setting_up_the_classpath_2"></a>Setting up the Classpath</h3></div></div></div><p>You will need to place the following Jetty jar files onto the classpath of your application.
+You can obtain them from the <a class="link" href="https://www.eclipse.org/jetty/download.html" target="_top">Jetty distribution</a>, or the <a class="link" href="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-annotations" target="_top">Maven repository</a>:</p><pre class="literallayout">jetty-plus.jar
+jetty-annotations.jar</pre><p>You will also need the <a class="link" href="http://asm.ow2.org/" target="_top">asm</a> jar, which you can obtain from <a class="link" href="https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/org.objectweb.asm/3.3.1.v201105211655/org.objectweb.asm-3.3.1.v201105211655.jar" target="_top">this link.</a></p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_example"></a>Example</h3></div></div></div><p>Here&#8217;s an example application that sets up a Jetty server, performs some setup to ensure that annotations are scanned, and then deploys a webapp that uses annotations.
+This example also uses the @Resource annotation which involves JNDI, so we would also <a class="link" href="jndi-embedded.html" title="Using JNDI with Jetty Embedded">add the necessary JNDI jars to the classpath</a>.
+The example also adds in the configuration classes that are responsible for JNDI (see line 19).</p><p>The code is as follows:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
+
+/**
+ * ServerWithAnnotations
+ *
+ *
+ */
+public class ServerWithAnnotations
+{
+    public static final void main(String args[]) throws Exception
+    {
+        //Create the server
+        Server server = new Server(8080);
+
+        //Enable parsing of jndi-related parts of web.xml and jetty-env.xml
+        org.eclipse.jetty.webapp.Configuration.ClassList classlist = org.eclipse.jetty.webapp.Configuration.ClassList.setServerDefault(server);
+        classlist.addAfter("org.eclipse.jetty.webapp.FragmentConfiguration", "org.eclipse.jetty.plus.webapp.EnvConfiguration", "org.eclipse.jetty.plus.webapp.PlusConfiguration");
+        classlist.addBefore("org.eclipse.jetty.webapp.JettyWebXmlConfiguration", "org.eclipse.jetty.annotations.AnnotationConfiguration");
+
+        //Create a WebApp
+        WebAppContext webapp = new WebAppContext();
+        webapp.setContextPath("/");
+        webapp.setWar("../../tests/test-webapps/test-servlet-spec/test-spec-webapp/target/test-spec-webapp-9.0.4-SNAPSHOT.war");
+        server.setHandler(webapp);
+
+        //Register new transaction manager in JNDI
+        //At runtime, the webapp accesses this as java:comp/UserTransaction
+        org.eclipse.jetty.plus.jndi.Transaction transactionMgr = new org.eclipse.jetty.plus.jndi.Transaction(new com.acme.MockUserTransaction());
+
+        //Define an env entry with webapp scope.
+        org.eclipse.jetty.plus.jndi.EnvEntry maxAmount = new org.eclipse.jetty.plus.jndi.EnvEntry (webapp, "maxAmount", new Double(100), true);
+
+
+        // Register a  mock DataSource scoped to the webapp
+        org.eclipse.jetty.plus.jndi.Resource mydatasource = new org.eclipse.jetty.plus.jndi.Resource(webapp, "jdbc/mydatasource", new com.acme.MockDataSource());
+
+        // Configure a LoginService
+        HashLoginService loginService = new HashLoginService();
+        loginService.setName("Test Realm");
+        loginService.setConfig("src/test/resources/realm.properties");
+        server.addBean(loginService);
+
+
+        server.start();
+        server.join();
+    }
+
+}</code></pre><p>On line 19 the configuration classes responsible for setting up JNDI and <code class="literal">java:comp/env</code> are added.</p><p>On line 20 we add in the configuration class that ensures annotations are inspected.</p><p>On lines 30, 33 and 37 JNDI resources that we will be able to reference with @Resource annotations are configured.</p><p>With the setup above, a servlet that uses annotations and Jetty will honour the annotations when the webapp is deployed can be created:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RunAs;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import javax.transaction.UserTransaction;
+
+/**
+ * AnnotationTest
+ *
+ * Use servlet 3.0 annotations from within Jetty.
+ *
+ * Also uses servlet 2.5 resource injection and lifecycle callbacks
+ */
+
+@RunAs("special")
+@WebServlet(urlPatterns = {"/","/test/*"}, name="AnnotationTest", initParams={@WebInitParam(name="fromAnnotation", value="xyz")})
+@DeclareRoles({"user","client"})
+public class AnnotationTest extends HttpServlet
+{
+    private DataSource myDS;
+
+    @Resource(mappedName="UserTransaction")
+    private UserTransaction myUserTransaction;
+
+    @Resource(mappedName="maxAmount")
+    private Double maxAmount;
+
+
+    @Resource(mappedName="jdbc/mydatasource")
+    public void setMyDatasource(DataSource ds)
+    {
+        myDS=ds;
+    }
+
+
+    @PostConstruct
+    private void myPostConstructMethod ()
+    {
+        System.err.println("PostConstruct called");
+    }
+
+
+    @PreDestroy
+    private void myPreDestroyMethod()
+    {
+        System.err.println("PreDestroy called");
+    }
+
+    public void init(ServletConfig config) throws ServletException
+    {
+        super.init(config);
+    }
+
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        doGet(request, response);
+    }
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        try
+        {
+            response.setContentType("text/html");
+            ServletOutputStream out = response.getOutputStream();
+            out.println("&lt;html&gt;");
+            out.println("&lt;body&gt;");
+            out.println("&lt;h1&gt;Results&lt;/h1&gt;");
+            out.println(myDS.toString());
+            out.println("&lt;br/&gt;");
+            out.println(maxAmount.toString());
+            out.println("&lt;/body&gt;");
+            out.println("&lt;/html&gt;");
+            out.flush();
+        }
+        catch (Exception e)
+        {
+            throw new ServletException(e);
+        }
+    }
+}</code></pre></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="using-annotations.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="annotations.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jmx-chapter.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Working with Annotations&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;14.&nbsp;Java Management Extensions (JMX)</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

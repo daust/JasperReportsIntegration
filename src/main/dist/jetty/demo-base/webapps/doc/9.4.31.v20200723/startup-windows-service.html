@@ -1,0 +1,173 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Startup via Windows Service</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="startup.html" title="Chapter&nbsp;9.&nbsp;Starting Jetty"><link rel="prev" href="startup-unix-service.html" title="Startup a Unix Service using jetty.sh"><link rel="next" href="startup-jpms.html" title="Startup using the Java Platform Module System (JPMS)"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Startup via Windows Service</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="startup-unix-service.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;9.&nbsp;Starting Jetty<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="startup-jpms.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="startup-windows-service"></a>Startup via Windows Service</h2></div></div></div><p>There are no components that ship with the Jetty Distribution to make it a formal Windows Service.</p><p>However, we recommend the use of <a class="link" href="https://commons.apache.org/proper/commons-daemon/procrun.html" target="_top">Apache ProcRun&#8217;s Daemon</a>.</p><p>The techniques outlined here are based on Windows 7 (64-bit), using JDK 8 (64-bit), running on an Intel i7 architecture machine.</p><p>Prepare some empty directories to work with.</p><div class="screenexample"><pre class="screen">C:\&gt; mkdir opt
+C:\&gt; cd opt
+C:\opt&gt; mkdir jetty
+C:\opt&gt; mkdir logs
+C:\opt&gt; mkdir myappbase
+C:\opt&gt; mkdir temp
+C:\opt&gt; dir
+ Volume in drive C has no label.
+ Volume Serial Number is DEAD-BEEF
+
+ Directory of C:\opt
+
+11/21/2013  04:06 PM    &lt;DIR&gt;          .
+11/21/2013  04:06 PM    &lt;DIR&gt;          ..
+11/21/2013  04:06 PM    &lt;DIR&gt;          jetty
+11/21/2013  04:06 PM    &lt;DIR&gt;          logs
+11/21/2013  04:06 PM    &lt;DIR&gt;          myappbase
+11/21/2013  04:06 PM    &lt;DIR&gt;          temp
+               0 File(s)              0 bytes</pre></div><p>The directory purposes are as follows:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">C:\opt</span></dt><dd>Where the service layer utilities, scripts, and binaries will eventually be.</dd><dt><span class="term">C:\opt\logs</span></dt><dd><p class="simpara">Where the logs for the service layer will put its own logs.</p><p class="simpara">Typically you will see the audit logs (install/update/delete), StdOutput, and StdError logs here.</p></dd><dt><span class="term">C:\opt\jetty</span></dt><dd>Where the Jetty Distribution will be unpacked into.</dd><dt><span class="term">C:\opt\myappbase</span></dt><dd>Where your specific set of webapps will be located, including all of the configuration required of the server to make them operational.</dd><dt><span class="term">C:\opt\temp</span></dt><dd><p class="simpara">This is the temporary directory assigned to Java by the Service Layer (this is what Java sees as the <code class="literal">java.io.tmpdir</code> System Property).</p><p class="simpara">This is intentionally kept separate from the standard temp directories of Windows, as this location doubles as the Servlet Spec work directory.</p></dd></dl></div><p>Or download Java 8 from: <a class="link" href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_top">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a></p><div class="screenexample"><pre class="screen">C:\opt&gt;java -version
+java version "1.7.0_45"
+Java(TM) SE Runtime Environment (build 1.7.0_45-b18)
+Java HotSpot(TM) 64-Bit Server VM (build 24.45-b08, mixed mode)</pre></div><p>Download a copy of the ZIP distribution from the <a class="link" href="quick-start-getting-started.html#jetty-downloading" title="Downloading Jetty">Official Eclipse Download Site</a></p><p>Extract the contents of the <code class="literal">jetty-distribution-{VERSION}</code> directory to <code class="literal">C:\opt\jetty</code></p><p>Once complete, the contents of the <code class="literal">C:\opt\jetty</code> directory should look like this:</p><div class="screenexample"><pre class="screen">C:\opt\jetty&gt;dir
+ Volume in drive C has no label.
+ Volume Serial Number is C8CF-820B
+
+ Directory of C:\opt\jetty
+
+11/21/2013  12:13 PM    &lt;DIR&gt;          .
+11/21/2013  12:13 PM    &lt;DIR&gt;          ..
+11/21/2013  12:13 PM    &lt;DIR&gt;          bin
+11/21/2013  12:13 PM    &lt;DIR&gt;          demo-base
+11/21/2013  12:13 PM    &lt;DIR&gt;          etc
+11/21/2013  12:13 PM    &lt;DIR&gt;          lib
+11/21/2013  12:13 PM            30,012 license-eplv10-aslv20.html
+11/21/2013  12:13 PM    &lt;DIR&gt;          logs
+11/21/2013  12:13 PM    &lt;DIR&gt;          modules
+11/21/2013  12:13 PM             6,262 notice.html
+11/21/2013  12:13 PM             1,249 README.TXT
+11/21/2013  12:13 PM    &lt;DIR&gt;          resources
+11/21/2013  12:13 PM    &lt;DIR&gt;          start.d
+11/21/2013  12:13 PM             2,126 start.ini
+11/21/2013  12:13 PM            72,226 start.jar
+11/21/2013  12:13 PM           341,784 VERSION.txt
+11/21/2013  12:13 PM    &lt;DIR&gt;          webapps
+               6 File(s)        453,659 bytes
+              11 Dir(s)  306,711,420,928 bytes free</pre></div><p>Download a copy of the <a class="link" href="https://commons.apache.org/proper/commons-daemon/binaries.html" target="_top">Apache ProcRun</a> native binaries.</p><p>You should have downloaded a file named <code class="literal">commons-daemon-1.0.15-bin-windows.zip</code> (the version might be different).
+Open the ZIP file and extract the <code class="literal">prunmgr.exe</code> and <code class="literal">prunsrv.exe</code> files into the <code class="literal">C:\opt</code> directory.</p><p>Make sure to get the right version of <code class="literal">prunsrv.exe</code> for your environment.
+The ZIP file has both 32 bit and 64 bit versions of this file.</p><p>Once you are complete, the contents of <code class="literal">C:\opt</code> directory should look like this:</p><div class="screenexample"><pre class="screen">C:\opt&gt; dir
+ Volume in drive C has no label.
+ Volume Serial Number is DEAD-BEEF
+
+ Directory of C:\opt
+
+11/21/2013  04:06 PM    &lt;DIR&gt;          .
+11/21/2013  04:06 PM    &lt;DIR&gt;          ..
+11/21/2013  04:06 PM    &lt;DIR&gt;          jetty
+11/21/2013  04:06 PM    &lt;DIR&gt;          logs
+11/21/2013  04:06 PM    &lt;DIR&gt;          myappbase
+11/21/2013  04:06 PM    &lt;DIR&gt;          temp
+11/21/2013  04:11 PM           104,448 prunmgr.exe
+11/21/2013  04:11 PM            80,896 prunsrv.exe
+               2 File(s)        185,344 bytes</pre></div><p>Now it&#8217;s time to setup your new <code class="literal">${jetty.base}</code> directory to have all of your WebApps and the configurations that they need.</p><p>We&#8217;ll start by specifying which modules we want to use (this will create a start.ini file and also create a few empty directories for you)</p><div class="screenexample"><pre class="screen">C:\opt\myappbase&gt;java -jar ..\jetty\start.jar --add-to-start=deploy,http,console-capture
+
+WARNING: deploy          initialised in ${jetty.base}\start.ini (appended)
+WARNING: deploy          enabled in     ${jetty.base}\start.ini
+MKDIR: ${jetty.base}\webapps
+WARNING: server          initialised in ${jetty.base}\start.ini (appended)
+WARNING: server          enabled in     ${jetty.base}\start.ini
+WARNING: http            initialised in ${jetty.base}\start.ini (appended)
+WARNING: http            enabled in     ${jetty.base}\start.ini
+WARNING: server          enabled in     ${jetty.base}\start.ini
+WARNING: logging         initialised in ${jetty.base}\start.ini (appended)
+WARNING: logging         enabled in     ${jetty.base}\start.ini
+MKDIR: ${jetty.base}\logs
+
+C:\opt\myappbase&gt;dir
+ Volume in drive C has no label.
+ Volume Serial Number is C8CF-820B
+
+ Directory of C:\opt\myappbase
+
+11/21/2013  12:49 PM    &lt;DIR&gt;          .
+11/21/2013  12:49 PM    &lt;DIR&gt;          ..
+11/21/2013  12:49 PM    &lt;DIR&gt;          logs
+11/21/2013  12:49 PM             1,355 start.ini
+11/21/2013  12:49 PM    &lt;DIR&gt;          webapps
+               1 File(s)          1,355 bytes
+               4 Dir(s)  306,711,064,576 bytes free</pre></div><p>At this point you have configured your <code class="literal">C:\opt\myappbase</code> to enable the following modules:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">deploy</span></dt><dd>This is the module that will perform deployment of web applications (WAR files or exploded directories), or Jetty IoC XML context deployables, from the <code class="literal">C:\opt\myappbase\webapps</code> directory.</dd><dt><span class="term">http</span></dt><dd><p class="simpara">This sets up a single Connector that listens for basic HTTP requests.</p><p class="simpara">See the created <code class="literal">start.ini</code> for configuring this connector.</p></dd><dt><span class="term">logging</span></dt><dd>When running Jetty as a service it is very important to have logging enabled.
+This module will enable the basic STDOUT and STDERR capture logging to the <code class="literal">C:\opt\myappbase\logs</code> directory.</dd></dl></div><p>See the section on <a class="xref" href="start-jar.html" title="Using start.jar">Using start.jar</a> for more details and options on setting up and configuring a <code class="literal">${jetty.base}</code> directory.</p><p>At this point you merely have to copy your WAR files into the <code class="literal">{$jetty.base}/webapps</code> directory.</p><div class="screenexample"><pre class="screen">C:\opt\myappbase&gt; copy C:\projects\mywebsite.war webapps\</pre></div><p>At this point you should have your directories, Java, the Jetty distribution, and your webapp specifics setup and ready for operation.</p><p>We will use the <a class="link" href="https://commons.apache.org/proper/commons-daemon/binaries.html" target="_top">Apache ProcRun&#8217;s prunsrv.exe</a> to install a Jetty Service.</p><p>The basic command line syntax is outlined in the link above.</p><p>A example <code class="literal">install-jetty-service.bat</code> is provided here as an example, based on the above directories.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>@echo off
+set SERVICE_NAME=JettyService
+set JETTY_HOME=C:\opt\jetty
+set JETTY_BASE=C:\opt\myappbase
+set STOPKEY=secret
+set STOPPORT=50001
+
+set PR_INSTALL=C:\opt\prunsrv.exe
+
+@REM Service Log Configuration
+set PR_LOGPREFIX=%SERVICE_NAME%
+set PR_LOGPATH=C:\opt\logs
+set PR_STDOUTPUT=auto
+set PR_STDERROR=auto
+set PR_LOGLEVEL=Debug
+
+@REM Path to Java Installation
+set JAVA_HOME=C:\Program Files\Java\jdk1.7.0_45
+set PR_JVM=%JAVA_HOME%\jre\bin\server\jvm.dll
+set PR_CLASSPATH=%JETTY_HOME%\start.jar;%JAVA_HOME%\lib\tools.jar
+
+@REM JVM Configuration
+set PR_JVMMS=128
+set PR_JVMMX=512
+set PR_JVMSS=4000
+set PR_JVMOPTIONS=-Duser.dir="%JETTY_BASE%";-Djava.io.tmpdir="C:\opt\temp";-Djetty.home="%JETTY_HOME%";-Djetty.base="%JETTY_BASE%"
+@REM Startup Configuration
+set JETTY_START_CLASS=org.eclipse.jetty.start.Main
+
+set PR_STARTUP=auto
+set PR_STARTMODE=java
+set PR_STARTCLASS=%JETTY_START_CLASS%
+set PR_STARTPARAMS=STOP.KEY="%STOPKEY%";STOP.PORT=%STOPPORT%
+
+@REM Shutdown Configuration
+set PR_STOPMODE=java
+set PR_STOPCLASS=%JETTY_START_CLASS%
+set PR_STOPPARAMS=--stop;STOP.KEY="%STOPKEY%";STOP.PORT=%STOPPORT%;STOP.WAIT=10
+
+"%PR_INSTALL%" //IS/%SERVICE_NAME% ^
+  --DisplayName="%SERVICE_NAME%" ^
+  --Install="%PR_INSTALL%" ^
+  --Startup="%PR_STARTUP%" ^
+  --LogPath="%PR_LOGPATH%" ^
+  --LogPrefix="%PR_LOGPREFIX%" ^
+  --LogLevel="%PR_LOGLEVEL%" ^
+  --StdOutput="%PR_STDOUTPUT%" ^
+  --StdError="%PR_STDERROR%" ^
+  --JavaHome="%JAVA_HOME%" ^
+  --Jvm="%PR_JVM%" ^
+  --JvmMs="%PR_JVMMS%" ^
+  --JvmMx="%PR_JVMMX%" ^
+  --JvmSs="%PR_JVMSS%" ^
+  --JvmOptions=%PR_JVMOPTIONS% ^
+  --Classpath="%PR_CLASSPATH%" ^
+  --StartMode="%PR_STARTMODE%" ^
+  --StartClass="%JETTY_START_CLASS%" ^
+  --StartParams="%PR_STARTPARAMS%" ^
+  --StopMode="%PR_STOPMODE%" ^
+  --StopClass="%PR_STOPCLASS%" ^
+  --StopParams="%PR_STOPPARAMS%"
+
+if not errorlevel 1 goto installed
+echo Failed to install "%SERVICE_NAME%" service.  Refer to log in %PR_LOGPATH%
+goto end
+
+:installed
+echo The Service "%SERVICE_NAME%" has been installed
+
+:end</code></pre><p>Configuration&#8217;s of note in this batch file:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">SERVICE_NAME</span></dt><dd>This is the name of the service that Windows sees.
+The name in the Services window will show this name.</dd><dt><span class="term">STOPKEY</span></dt><dd>This is the secret key (password) for the ShutdownMonitor, used to issue a formal command to stop the server.</dd><dt><span class="term">STOPPORT</span></dt><dd><p class="simpara">The port that the Shutdown Monitor listens on for the stop command.</p><p class="simpara">If you have multiple Jetty servers on the same machine, this port will need to be different for each Service.</p></dd></dl></div><p>Once you have run <code class="literal">prunsrv.exe //IS/&lt;service-name&gt;</code> (done for you in the above batch file) to install the service, you can use the standard Windows utilities to manage (start/stop/restart) the Jetty service.</p><p>Open the Service View and start your service.</p><p><span class="inlinemediaobject"><img src="images/windows-service-jetty.png" width="576" alt="image"></span></p></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="startup-unix-service.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="startup.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="startup-jpms.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Startup a Unix Service using jetty.sh&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Startup using the Java Platform Module System (JPMS)</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

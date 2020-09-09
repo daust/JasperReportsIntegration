@@ -1,0 +1,70 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Serving a WebApp from a Particular Port/Connector</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="configuring-contexts.html" title="Chapter&nbsp;5.&nbsp;Configuring Contexts"><link rel="prev" href="ref-temporary-directories.html" title="Temporary Directories"><link rel="next" href="custom-error-pages.html" title="Creating Custom Error Pages"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Serving a WebApp from a Particular Port/Connector</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ref-temporary-directories.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;5.&nbsp;Configuring Contexts<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="custom-error-pages.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="serving-webapp-from-particular-port"></a>Serving a WebApp from a Particular Port/Connector</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="serving-webapp-from-particular-port.html#creating-server-instances">Creating Multiple Server Instances</a></span></dt><dt><span class="section"><a href="serving-webapp-from-particular-port.html#alternative">Named Connectors</a></span></dt></dl></div><p>Sometimes it is required to serve different web applications from different ports/connectors.
+The simplest way to do this is to create multiple <code class="literal">Server</code> instances.
+However, if contexts need to share resources (eg data sources, authentication), or if the mapping of ports to web applications is not cleanly divided, then the named connector mechanism can be used.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="creating-server-instances"></a>Creating Multiple Server Instances</h3></div></div></div><p>Creating multiple server instances is a straight forward process that includes embedding Jetty code by creating multiples instances of the Server class and configuring them as needed.
+This is also easy to achieve if you are configuring Jetty servers via XML.
+The <code class="literal">id</code> field in the Configure element of <code class="literal">jetty.xml</code> files is used to identify the instance that the configuration applies to, so to run two instances of the Server, you can copy the <code class="literal">jetty.xml</code>, jetty-http.xml and other jetty configuration files used and change the "Server" id to a new name.
+This can be done in the same style and layout as the existing <code class="literal">jetty.xml</code> files or the multiple XML files may be combined to a single file.</p><p>When creating new configurations for alternative server:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Change all <code class="literal">id="Server"</code> to the new server name:</li></ul></div><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id="OtherServer" class="org.eclipse.jetty.server.Server"&gt;</code></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">For all connectors for the new server change the <code class="literal">refid</code> in the server argument:</li></ul></div><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Arg name="server"&gt;&lt;Ref refid="OtherServer" /&gt;&lt;/Arg&gt;</code></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Make sure that any references to properties like <code class="literal">jetty.http.port</code> are either renamed or replaced with absolute values.</li><li class="listitem">Make sure that any deployers <code class="literal">AppProviders</code> refer to a different "webapps" directory so that a different set of applications are deployed.</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="jetty-otherserver.xml"></a>Example Other Server XML</h4></div></div></div><p>The following example creates another server instance and configures it with a connector and deployer:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;?xml version="1.0"?&gt;&lt;!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd"&gt;
+
+&lt;Configure id="OtherServer" class="org.eclipse.jetty.server.Server"&gt;
+    &lt;Set name="handler"&gt;
+      &lt;New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection"&gt;
+        &lt;Set name="handlers"&gt;
+         &lt;Array type="org.eclipse.jetty.server.Handler"&gt;
+           &lt;Item&gt;
+             &lt;New id="OtherContexts" class="org.eclipse.jetty.server.handler.ContextHandlerCollection"/&gt;
+           &lt;/Item&gt;
+           &lt;Item&gt;
+             &lt;New class="org.eclipse.jetty.server.handler.DefaultHandler"/&gt;
+           &lt;/Item&gt;
+         &lt;/Array&gt;
+        &lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Set&gt;
+
+  &lt;Call name="addConnector"&gt;
+    &lt;Arg&gt;
+      &lt;New class="org.eclipse.jetty.server.ServerConnector"&gt;
+        &lt;Arg name="server"&gt;&lt;Ref refid="OtherServer" /&gt;&lt;/Arg&gt;
+        &lt;Set name="port"&gt;8888&lt;/Set&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/Call&gt;
+
+  &lt;Call name="addBean"&gt;
+    &lt;Arg&gt;
+      &lt;New id="DeploymentManager" class="org.eclipse.jetty.deploy.DeploymentManager"&gt;
+        &lt;Set name="contexts"&gt;
+          &lt;Ref refid="OtherContexts" /&gt;
+        &lt;/Set&gt;
+
+        &lt;Call id="webappprovider" name="addAppProvider"&gt;
+          &lt;Arg&gt;
+            &lt;New class="org.eclipse.jetty.deploy.providers.WebAppProvider"&gt;
+              &lt;Set name="monitoredDirName"&gt;&lt;Property name="jetty.base" default="." /&gt;/other-webapps&lt;/Set&gt;
+              &lt;Set name="defaultsDescriptor"&gt;&lt;Property name="jetty.home" default="." /&gt;/etc/webdefault.xml&lt;/Set&gt;
+              &lt;Set name="extractWars"&gt;true&lt;/Set&gt;
+              &lt;Set name="configurationManager"&gt;
+                &lt;New class="org.eclipse.jetty.deploy.PropertiesConfigurationManager"/&gt;
+              &lt;/Set&gt;
+            &lt;/New&gt;
+          &lt;/Arg&gt;
+        &lt;/Call&gt;
+      &lt;/New&gt;
+    &lt;/Arg&gt;
+  &lt;/Call&gt;
+&lt;/Configure&gt;</code></pre><p>To run the other server, add the extra configuration file(s) to the command line:</p><div class="screenexample"><pre class="screen">java -jar start.jar jetty-otherserver.xml</pre></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="alternative"></a>Named Connectors</h3></div></div></div><p>It is also possible to use an extension to the virtual host mechanism with named to connectors to make some web applications only accessible by specific connectors.
+If a connector has a name "MyConnector" set using the <code class="literal">setName</code> method, then this can be referenced with the special virtual host name "@MyConnector".</p></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ref-temporary-directories.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="configuring-contexts.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="custom-error-pages.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Temporary Directories&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Creating Custom Error Pages</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>
