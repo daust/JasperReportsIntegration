@@ -100,7 +100,9 @@ Once you have updated the property `jasperreportsVersion`, you can now call the 
 ./gradlew jriDownloadJasperLibraries
 ```
 
-This will download the files into the directory: lib/jasper-reports/\<version\> .
+This will download the files into the directory: `lib/jasper-reports/<version>` .
+
+## Building
 
 ### Building a version of the project
 
@@ -110,7 +112,7 @@ There are many different ways you can build the project ... depending on your ne
 * building the war file 
     * `./gradlew build`
 * building the distribution (without zip) into the build directory `build/install/JasperReportsIntegration`
-    * `./gradlew installDist
+    * `./gradlew installDist`
 * building the distribution as zip into the build directory: `build/distributions`
     * `./gradlew assembleDist`
 
@@ -118,6 +120,19 @@ The following naming conventions will be used: `JasperReportsIntegration-<projec
 
 A *.tar file will also be created. 
 
+## Testing / debugging
+
+* starting the built-in jetty (provided by gretty) - (faster) - will use an inplace web application and not compile the full war file. Thus the version numbers might not show properly. 
+    * `./gradlew appRun`
+* starting the built-in jetty (provided by gretty) - will actually build the war file first and run it
+    * `./gradlew appRunWar`
+
+## Development with Eclipse
+
+* the following task will create all required files for Eclipse
+    * `./gradlew eclipse`
+
+Then you can just start Eclipse and import the root directory into Eclipse as a gradle project. 
 
 
 

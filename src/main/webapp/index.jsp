@@ -30,7 +30,7 @@
 
 </head>
 <body>
-	<h1>JasperReportsIntegration-<%= appConfig.getApplicationVersion() %> + @project.version@ + @jasperreports.version@</h1>
+	<h1>JasperReportsIntegration-@project.version@-@jasperreports.version@</h1>
 	<h2>Configuration Info</h2>
 	<ul>
 		<li>The current configuration is loaded from: <span

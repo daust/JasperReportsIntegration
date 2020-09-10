@@ -10,13 +10,23 @@ There is a FORUM for getting help here: https://gitq.com/daust/JasperReportsInte
 
 The reports will be created using the JasperSoft Studio software: https://community.jaspersoft.com/project/jaspersoft-studio/releases. 
 
-## Links
+## Table of Contents
+
+* [Links](#links)
+* [technologies](#technologies) 
+
+## <a name="links"></a> Links
+
 * Release Notes: [ReleaseNotes.md](ReleaseNotes.md)
 * Download binary releases: https://github.com/daust/JasperReportsIntegration/releases
+    * The following naming convention will be used: `JasperReportsIntegration-<project.version>-<jasperreportsVersion>.zip`.
 * Download legacy releases: http://www.opal-consulting.de/downloads/free_tools/JasperReportsIntegration/
 * Forum: https://gitq.com/daust/JasperReportsIntegration
 * API docs: ... to be done
 * FAQ: ... to be done
+
+## <a name="links"></a> Links
+
 
 ## Include newer versions of the JasperReports libraries on your own
 

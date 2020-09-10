@@ -41,7 +41,6 @@ public class AppConfig {
 
 	//public static final String key1 = "Bar12345Bar12345"; // 128 bit key
 	public static final String key2 = "ThisIsASecretKet";
-	public final String applicationVersion = "2.6.0";
 
 	// ----------------------------------------------------
 	// public
@@ -488,9 +487,4 @@ public class AppConfig {
 		
 		return pwd;
 	}
-
-	public String getApplicationVersion() {
-		return applicationVersion;
-	}
-
 }
