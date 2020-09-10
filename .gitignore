@@ -10,3 +10,6 @@ bin/**
 .settings/**
 # ignore all build files from gradle
 build/**
+# ignore private custom file for each developer
+gradle.properties
+

@@ -167,10 +167,13 @@ war {
     //webInf { from 'src/conf/weblogic.xml' }  // adds a file-set to the WEB-INF dir.
 }
 
+distZip.setArchiveName("${archivesBaseName}-${project.version}-${jasperreportsVersion}.zip")
+distTar.setArchiveName("${archivesBaseName}-${project.version}-${jasperreportsVersion}.tar")
+
 distributions {
     main {
         distributionBaseName = 'JasperReportsIntegration'
-
+        println 'getName:' + Distribution.getName()
         contents {
             from('src/apex'){into 'apex'}
             from('src/sql'){into 'sql'}
@@ -248,11 +251,8 @@ task jriDownloadJasperLibraries{
     file(tempLocation).mkdirs()
 
     downloadRedirect( "$baseURLJasper/jasperreports-${jasperreportsVersion}-project.tar.gz", "$tempLocation/jasperreports.tar.gz")
-
     downloadRedirect( "$baseURLJasper/jasperreports-chart-themes-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-themes.jar")
-
     downloadRedirect( "$baseURLJasper/jasperreports-chart-customizers-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-customizers.jar")
-
     downloadRedirect( "$baseURLJasper/jasperreports-functions-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-functions.jar")
 
     // ungzip / untar files
