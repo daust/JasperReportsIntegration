@@ -8,11 +8,11 @@
    	<!-- optionally define the oc.jasper.config.home --> 
    	<context-param>
      	<param-name>oc.jasper.config.home</param-name>
+     	<param-value></param-value>
      	<!-- 
      	<param-value>/Users/daust/oc-jasper</param-value> 
      	<param-value>D:\JasperReportsIntegration</param-value> 
      	-->
-     	<param-value></param-value>
    	</context-param>
   	<context-param>
    		<!-- the log4j default properties file is located within the web application -->

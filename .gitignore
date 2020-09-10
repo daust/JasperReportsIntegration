@@ -2,3 +2,11 @@
 lib/jasper-reports/**
 # ignore all Mac OS specific hidden files
 **/.DS_Store
+# ignore all build files from eclipse
+bin/**
+# ignore all eclipse project files
+.project
+.classpath
+.settings/**
+# ignore all build files from gradle
+build/**

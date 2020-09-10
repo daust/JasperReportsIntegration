@@ -10,7 +10,6 @@
 plugins {
   id "war"
   id "eclipse"
-  id "application"
   id "distribution"
 }
 apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
@@ -46,7 +45,7 @@ repositories {
     maven {url "https://plugins.gradle.org/m2/"}
     maven {url "https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts"}
     mavenCentral()
-    flatDir {dirs 'lib/jasper-reports/$jasperreportsVersion'}
+    flatDir {dirs "lib/jasper-reports/$jasperreportsVersion"}
 }
 
 /* define specific maven dependencies */
@@ -71,7 +70,7 @@ dependencies {
     compile group: 'joda-time', name: 'joda-time', version: '2.4'
 
     // dependencies from jasperreports.proj
-    compile fileTree(dir: "/Users/daust/Dropbox/50.Projects/prj_JasperReportsIntegration/lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
+    compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
 }
 
 gretty {
@@ -144,21 +143,21 @@ def runCommand = { strList ->
 //-- task definitions for JasperReportsIntegration
 //-----------------------------------------------------------------------------
 
-println "\n***********************************************"
-println "Version: " + project.version
-println "Source-Compatibility: " + project.sourceCompatibility
-println "Project description: " + project.property("description")
-println "jasperreports version: " + jasperreportsVersion
-println "Generated filename: ${applicationName}-${version}.war"
-println "Environment OC_JASPER_CONFIG_HOME=" + System.getenv( "OC_JASPER_CONFIG_HOME")
-println "***********************************************\n\n"
-
 war {
+    archiveName = "${archivesBaseName}-${project.version}-${jasperreportsVersion}.war"
+
+    // replaces tokens in the respective files only for the assembly of the .war file:
+    // @project.version@ => 
+    // @jasperreports.version@ => 
+    filesMatching(["*.html", "*.jsp"]) {
+      filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])
+    }
+    
     //from 'src/rootContent' // adds a file-set to the root of the archive
     // all occurences of @project.version@ will be replaced with the current project version
     from('src/doc/User-Documentation'){
       into 'doc' 
-      filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])
+      //filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])
     } 
 
     //webInf { from 'src/additionalWebInf' }  // adds a file-set to the WEB-INF dir.
@@ -175,17 +174,42 @@ distributions {
         contents {
             from('src/apex'){into 'apex'}
             from('src/sql'){into 'sql'}
-            from('src/shell-scripts'){into 'bin'}
+            from('src/shell-scripts'){exclude '*ConfigDir.*'
+                                      //exclude 'deploy*'  
+                                      into 'bin'}
             from('src/conf/application.properties'){into 'conf'}
             from('src/conf/log4j.properties'){into 'conf'}
             from('src/doc/User-Documentation'){into 'doc' filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
             from('src/doc/User-Documentation/Index-Distribution.html'){rename 'Index-Distribution.html', 'Index.html' }
             from('src/reports'){into 'reports'}
-            from (war.outputs){into 'webapp' rename("${applicationName}-${version}.war" , "JasperReportsIntegration.war")}
-            from(configurations.default){into 'lib'}
+            from (war.outputs){into 'webapp' rename(war.archiveName , "JasperReportsIntegration.war")}
+
+            /*from (configurations.compile){
+              include(["commons-configuration-*.jar"
+                          , "commons-lang-*.jar" 
+                          , "commons-logging-*.jar"
+                          , "jasperreports-*.jar"])
+              into 'lib'
+            }*/
+
+            from ("lib/jasper-reports/$jasperreportsVersion"){include 'jasperreports*.jar' into 'lib'}
+            from (jar.outputs){into 'lib'}
+            from ('lib/additional'){into 'lib'}
+
+            // copy war file directly into jetty/webapps
+            // rather not, make zip distribution too large
+            //from (war.outputs){into 'jetty/webapps' rename(war.archiveName , "JasperReportsIntegration.war")}
         }
     }
 }
+println "\n***********************************************"
+println "Version: " + project.version
+println "Source-Compatibility: " + project.sourceCompatibility
+println "Project description: " + project.property("description")
+println "jasperreports version: " + jasperreportsVersion
+println "War file name: " + war.archiveName // this will pick up the modified name defined in war{}
+println "local environment OC_JASPER_CONFIG_HOME=" + System.getenv( "OC_JASPER_CONFIG_HOME")
+println "***********************************************\n\n"
 
 //-----------------------------------------------------------------------------
 //-- task definitions for developers

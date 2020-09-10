@@ -1,7 +1,6 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
-----------------------------------------------------------------------------------
 # Version 2.6.0
 
 ## Release Notes
