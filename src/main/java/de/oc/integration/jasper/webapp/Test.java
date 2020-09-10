@@ -120,7 +120,8 @@ public class Test extends HttpServlet {
 			// close handles
 			stmt.close();
 			rs.close();
-			conn.close();
+			conn.close();			
+			
 		} catch (SQLException e) {
 			Utils.throwRuntimeException("Error while selecting user objects: "
 					+ e.getMessage());

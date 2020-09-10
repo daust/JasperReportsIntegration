@@ -61,6 +61,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8
     implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '19.+'
+    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ucp
+    implementation group: 'com.oracle.database.jdbc', name: 'ucp', version: '19.+'
 
     // *** Only for TESTING
     testCompileOnly 'junit:junit:4.12'

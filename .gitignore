@@ -13,3 +13,5 @@ build/**
 # ignore private custom file for each developer
 gradle.properties
 
+/.gradle/
+/build/

@@ -22,18 +22,18 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import javax.sql.PooledConnection;
-
-import oracle.jdbc.pool.OracleConnectionPoolDataSource;
 
 import org.apache.log4j.Logger;
 
 import de.oc.integration.jasper.webapp.AppConfig;
 import de.oc.utils.Utils;
+import oracle.jdbc.pool.OracleDataSource;
+import oracle.ucp.jdbc.PoolDataSource;
+import oracle.ucp.jdbc.PoolDataSourceFactory;
 
 public class ConnectionUtility {
 	private static ConnectionUtility instance;
-	private HashMap<String, OracleConnectionPoolDataSource> dataSources = new HashMap<String, OracleConnectionPoolDataSource>();
+	private HashMap<String, PoolDataSource> dataSources = new HashMap<String, PoolDataSource>();
 	private static Logger logger = Logger.getLogger(ConnectionUtility.class
 			.getName());
 	private String jndiPrefix = "";
@@ -117,37 +117,39 @@ public class ConnectionUtility {
 			if (conn == null) {
 				logger.debug("use JDBC to lookup dataSource:" + dsName);
 
-				OracleConnectionPoolDataSource ocpds;
-				PooledConnection pc;
+				PoolDataSource poolDataSource;
 								
 				try {
 					logger.trace("retrieve connectionPoolDataSource from HashMap first");
-					ocpds = dataSources
+					poolDataSource = dataSources
 							.get(dsName);
 
-					if (ocpds == null) {
+					if (poolDataSource == null) {
 						logger.trace("dataSource not found in HashMap, initialize a new connection pool and store in HashMap");
 
-						// set cache properties
-					    java.util.Properties prop = new java.util.Properties();
-					    prop.setProperty("InitialLimit", "3");
-					    prop.setProperty("MinLimit", "3");
-					    prop.setProperty("MaxLimit", "50");
-
-					    ocpds = new OracleConnectionPoolDataSource();
-						ocpds.setURL(dataSourceDef.url);
-						ocpds.setUser(dataSourceDef.username);
-						ocpds.setPassword(dataSourceDef.password);
-						
-						// set connection parameters
-					    ocpds.setConnectionProperties(prop);
-					 					
-						dataSources.put(dsName, ocpds);
+					    //java.util.Properties prop = new java.util.Properties();
+					    
+					    poolDataSource = PoolDataSourceFactory.getPoolDataSource();
+					    poolDataSource.setConnectionFactoryClassName(OracleDataSource.class.getName());
+					    poolDataSource.setURL(dataSourceDef.url);
+					    poolDataSource.setUser(dataSourceDef.username);
+					    poolDataSource.setPassword(dataSourceDef.password);
+					    
+					    poolDataSource.setInitialPoolSize(5);
+					    poolDataSource.setMinPoolSize(5);
+					    poolDataSource.setMaxPoolSize(50);
+					    // remove additional connections from pool after 10min idle time
+					    poolDataSource.setInactiveConnectionTimeout(600);
+					    
+						dataSources.put(dsName, poolDataSource);
 					}
 
-					pc = ocpds.getPooledConnection();
-					conn = pc.getConnection();
+					conn = poolDataSource.getConnection();
 
+					logger.debug("initial pool size: " + poolDataSource.getInitialPoolSize());
+					logger.debug("min pool size: " + poolDataSource.getMinPoolSize());
+					logger.debug("max pool size: " + poolDataSource.getMaxPoolSize());
+				
 					logger.info("successfully connected to " + dataSourceDef.url
 							+ " with user: " + dataSourceDef.username);
 				} catch (SQLException e) {
