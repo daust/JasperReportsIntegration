@@ -13,7 +13,9 @@ The reports will be created using the JasperSoft Studio software: https://commun
 ## Table of Contents
 
 * [Links](#links)
-* [technologies](#technologies) 
+* [Include newer versions of the JasperReports libraries on your own](#updateLibs) 
+* [Contribute to the project as a developer](#contribute)
+* [Documentation](src/doc/User-Documentation/Index-Local.html)
 
 ## <a name="links"></a> Links
 
@@ -25,10 +27,7 @@ The reports will be created using the JasperSoft Studio software: https://commun
 * API docs: ... to be done
 * FAQ: ... to be done
 
-## <a name="links"></a> Links
-
-
-## Include newer versions of the JasperReports libraries on your own
+## <a name="updateLibs"></a> Include newer versions of the JasperReports libraries on your own
 
 One could say that the project consists of two main aspects: 
 * the JasperReportsIntegration software itself (the Java war file and the pl/sql apis)
@@ -38,7 +37,7 @@ Often a new release is required when a new version of the libraries is available
 
 Everybody can do this now. Please follow the instructions for developers: [src/doc/github/developers.md](src/doc/github/developers.md)
 
-## Contribute to the project as a developer
+## <a name="contribute"></a> Contribute to the project as a developer
 * [src/doc/github/developers.md](src/doc/github/developers.md)
 
 Cheers, 

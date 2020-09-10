@@ -1,3 +1,5 @@
+/* TODO ... update documentation */
+
 
 
 java -Done-jar.info=false -Done-jar.record=false -Done-jar.verbose=false -Done-jar.statistics=false -Done-jar.debug=false -Dlog4j.configuration=file:/Users/daust/Dropbox/Projekt/prj_JasperReportsIntegration/conf/log4j-quiet.properties -jar build/JasperReportsIntegration-2.2.0.0-onejar.war encryptPasswords build/dist/conf/application.properties 
