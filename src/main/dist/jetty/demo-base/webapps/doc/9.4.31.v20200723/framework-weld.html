@@ -1,0 +1,79 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Weld</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="frameworks.html" title="Chapter&nbsp;29.&nbsp;Frameworks"><link rel="prev" href="framework-jetty-osgi.html" title="OSGI"><link rel="next" href="framework-metro.html" title="Metro"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Weld</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="framework-jetty-osgi.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;29.&nbsp;Frameworks<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="framework-metro.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="framework-weld"></a>Weld</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="framework-weld.html#weld-setup-distro">Weld Setup</a></span></dt><dt><span class="section"><a href="framework-weld.html#weld-embedded">Embedded Jetty</a></span></dt></dl></div><p><a class="link" href="http://seamframework.org/Weld" target="_top">Weld</a> can be used to add support for CDI (Contexts and Dependency Injection) to Servlets, Listeners and Filters.
+It is easily configured with Jetty 9.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="weld-setup-distro"></a>Weld Setup</h3></div></div></div><p>The easiest way to configure weld is within the Jetty distribution itself.
+This can be accomplished either by enabling one of the startup <a class="link" href="startup-modules.html" title="Managing Startup Modules">modules</a> for Weld, or by creating/editing a <code class="literal">jetty-web.xml</code> descriptor (see also <a class="link" href="https://www.eclipse.org/jetty/documentation/current/jetty-web-xml-config.html" target="_top">Jetty XML Reference</a>).</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_jetty_weld_modules"></a>Jetty Weld Modules</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="_jetty_literal_cdi_decorate_literal_module"></a>Jetty <code class="literal">cdi-decorate</code> Module</h5></div></div></div><p>Since Jetty 9.4.20 and Weld 3.1.2.Final, the Weld/Jetty integration uses the jetty <code class="literal">cdi-decorate</code> module.
+To activate this module in Jetty the <code class="literal">cdi-decorate</code> module needs activated on the command line, which can be done as follows:</p><pre class="screen">cd $JETTY_BASE
+java -jar $JETTY_HOME/start.jar --add-to-start=cdi-decorate</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="_jetty_literal_cdi2_literal_module"></a>Jetty <code class="literal">cdi2</code> Module</h5></div></div></div><p>For versions prior to Jetty 9.4.20 and Weld 3.1.2, the Weld/Jetty integration required some internal Jetty APIs to be made visible to the web application.
+This can be done using the deprecated <code class="literal">cdi2</code> module either by activating the <code class="literal">cdi2</code> module:</p><pre class="screen">cd $JETTY_BASE
+java -jar $JETTY_HOME/start.jar --add-to-start=cdi2</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_jetty_web_xml"></a>Jetty-Web XML</h4></div></div></div><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd"&gt;
+&lt;Configure class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+   &lt;Call name="prependServerClass"&gt;
+      &lt;Arg&gt;-org.eclipse.jetty.util.Decorator&lt;/Arg&gt;
+   &lt;/Call&gt;
+   &lt;Call name="prependServerClass"&gt;
+      &lt;Arg&gt;-org.eclipse.jetty.util.DecoratedObjectFactory&lt;/Arg&gt;
+   &lt;/Call&gt;
+   &lt;Call name="prependServerClass"&gt;
+      &lt;Arg&gt;-org.eclipse.jetty.server.handler.ContextHandler.&lt;/Arg&gt;
+   &lt;/Call&gt;
+   &lt;Call name="prependServerClass"&gt;
+      &lt;Arg&gt;-org.eclipse.jetty.server.handler.ContextHandler&lt;/Arg&gt;
+   &lt;/Call&gt;
+   &lt;Call name="prependServerClass"&gt;
+      &lt;Arg&gt;-org.eclipse.jetty.servlet.ServletContextHandler&lt;/Arg&gt;
+   &lt;/Call&gt;
+&lt;/Configure&gt;</code></pre><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Tip</h3><p>Directly modifying the web application classpath via <code class="literal">jetty-web.xml</code> will not work for Jetty 10.0.0 and later.</p></div></blockquote></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_jetty_literal_cdi_spi_literal_module"></a>Jetty <code class="literal">cdi-spi</code> Module</h4></div></div></div><p>Since Jetty 9.4.20 the Jetty <code class="literal">cdi-spi</code> module has been available that integrates any compliant CDI implementation by directly calling the CDI SPI.
+Since Weld support specific Jetty integration, it is not recommended to use this module with Weld.</p><p>When you start up your Jetty distribution with the webapp you should see output similar to the following (providing your logging is the default configuration):</p><div class="screenexample"><pre class="screen">2015-06-18 12:13:54.924:INFO::main: Logging initialized @485ms
+2015-06-18 12:13:55.231:INFO:oejs.Server:main: jetty-9.4.31.v20200723
+2015-06-18 12:13:55.264:INFO:oejdp.ScanningAppProvider:main: Deployment monitor [file:///tmp/cdi-demo/webapps/] at interval 1
+2015-06-18 12:13:55.607:WARN:oeja.AnnotationConfiguration:main: ServletContainerInitializers: detected. Class hierarchy: empty
+Jun 18, 2015 12:13:55 PM org.jboss.weld.environment.servlet.EnhancedListener onStartup
+INFO: WELD-ENV-001008: Initialize Weld using ServletContainerInitializer
+Jun 18, 2015 12:13:55 PM org.jboss.weld.bootstrap.WeldStartup &lt;clinit&gt;
+INFO: WELD-000900: 2.2.9 (Final)
+Jun 18, 2015 12:13:55 PM org.jboss.weld.environment.servlet.deployment.WebAppBeanArchiveScanner scan
+WARN: WELD-ENV-001004: Found both WEB-INF/beans.xml and WEB-INF/classes/META-INF/beans.xml. It's not portable to use both locations at the same time. Weld is going to use file:/tmp/jetty-0.0.0.0-8080-cdi-webapp.war-_cdi-webapp-any-8161614308407422636.dir/webapp/WEB-INF/beans.xml.
+Jun 18, 2015 12:13:55 PM org.jboss.weld.bootstrap.WeldStartup startContainer
+INFO: WELD-000101: Transactional services not available. Injection of @Inject UserTransaction not available. Transactional observers will be invoked synchronously.
+Jun 18, 2015 12:13:55 PM org.jboss.weld.interceptor.util.InterceptionTypeRegistry &lt;clinit&gt;
+WARN: WELD-001700: Interceptor annotation class javax.ejb.PostActivate not found, interception based on it is not enabled
+Jun 18, 2015 12:13:55 PM org.jboss.weld.interceptor.util.InterceptionTypeRegistry &lt;clinit&gt;
+WARN: WELD-001700: Interceptor annotation class javax.ejb.PrePassivate not found, interception based on it is not enabled
+Jun 18, 2015 12:13:56 PM org.jboss.weld.bootstrap.MissingDependenciesRegistry handleResourceLoadingException
+Jun 18, 2015 12:13:56 PM org.jboss.weld.environment.servlet.WeldServletLifecycle findContainer
+INFO: WELD-ENV-001002: Container detection skipped - custom container class loaded: org.jboss.weld.environment.jetty.JettyContainer.
+Jun 18, 2015 12:13:56 PM org.jboss.weld.environment.jetty.JettyContainer initialize
+INFO: WELD-ENV-001200: Jetty 7.2+ detected, CDI injection will be available in Servlets and Filters. Injection into Listeners should work on Jetty 9.1.1 and newer.
+Jun 18, 2015 12:13:56 PM org.jboss.weld.environment.servlet.Listener contextInitialized
+INFO: WELD-ENV-001006: org.jboss.weld.environment.servlet.EnhancedListener used for ServletContext notifications
+Jun 18, 2015 12:13:56 PM org.jboss.weld.environment.servlet.EnhancedListener contextInitialized
+INFO: WELD-ENV-001009: org.jboss.weld.environment.servlet.Listener used for ServletRequest and HttpSession notifications
+2015-06-18 12:13:56.535:INFO:oejsh.ContextHandler:main: Started o.e.j.w.WebAppContext@6574b225{/cdi-webapp,file:///tmp/jetty-0.0.0.0-8080-cdi-webapp.war-_cdi-webapp-any-8161614308407422636.dir/webapp/,AVAILABLE}{/cdi-webapp.war}
+2015-06-18 12:13:56.554:INFO:oejs.ServerConnector:main: Started ServerConnector@7112f81c{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2015-06-18 12:13:56.587:INFO:oejus.SslContextFactory:main: x509={jetty.eclipse.org=jetty} wild={} alias=null for SslContextFactory@3214ee6(file:///tmp/cdi-demo/etc/keystore,file:///tmp/cdi-demo/etc/keystore)
+2015-06-18 12:13:56.821:INFO:oejs.ServerConnector:main: Started ServerConnector@69176a9b{SSL,[ssl, http/1.1]}{0.0.0.0:8443}
+2015-06-18 12:13:56.822:INFO:oejs.Server:main: Started @2383ms</pre></div><p>For use with the jetty-maven-plugin, the best idea is to make the org.jboss.weld.servlet:weld-servlet artifact a <span class="emphasis"><em>plugin</em></span> dependency (<span class="emphasis"><em>not</em></span> a webapp dependency).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="weld-embedded"></a>Embedded Jetty</h3></div></div></div><p>When starting embedded Jetty programmatically from the <code class="literal">main</code> method it is necessary to register Weld&#8217;s listener:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>public class Main {
+
+    public static void main(String[] args) throws Exception {
+        Server jetty = new Server(8080);
+        WebAppContext context = new WebAppContext();
+        context.setContextPath("/");
+        context.setResourceBase("src/main/resources");
+        jetty.setHandler(context);
+        context.addServlet(HelloWorldServlet.class, "/*");
+
+        context.addEventListener(new DecoratingListener()); </code></pre></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="framework-jetty-osgi.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="frameworks.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="framework-metro.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">OSGI&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Metro</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

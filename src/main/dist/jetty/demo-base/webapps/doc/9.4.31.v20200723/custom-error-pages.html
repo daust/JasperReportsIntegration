@@ -1,0 +1,88 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Creating Custom Error Pages</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="configuring-contexts.html" title="Chapter&nbsp;5.&nbsp;Configuring Contexts"><link rel="prev" href="serving-webapp-from-particular-port.html" title="Serving a WebApp from a Particular Port/Connector"><link rel="next" href="setting-form-size.html" title="Setting Max Form Size"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Creating Custom Error Pages</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="serving-webapp-from-particular-port.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;5.&nbsp;Configuring Contexts<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="setting-form-size.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="custom-error-pages"></a>Creating Custom Error Pages</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="custom-error-pages.html#_defining_error_pages_in_web_xml">Defining error pages in web.xml</a></span></dt><dt><span class="section"><a href="custom-error-pages.html#_configuring_error_pages_context_files">Configuring error pages context files</a></span></dt><dt><span class="section"><a href="custom-error-pages.html#_custom_errorhandler_class">Custom ErrorHandler class</a></span></dt><dt><span class="section"><a href="custom-error-pages.html#_server_level_404_error">Server level 404 error</a></span></dt></dl></div><p>The following sections describe several ways to create custom error pages in Jetty.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_defining_error_pages_in_web_xml"></a>Defining error pages in web.xml</h3></div></div></div><p>You can use the standard webapp configuration file located in <code class="literal">webapp/WEB-INF/web.xml</code> to map errors to specific URLs with the <code class="literal">error-page</code> element.
+This element creates a mapping between the error-code or exception-type to the location of a resource in the web application.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><code class="literal">error-code</code> - an integer value</li><li class="listitem"><code class="literal">exception-type</code> - a fully qualified class name of a Java Exception type</li><li class="listitem"><code class="literal">location</code> - location of the resource in the webapp relative to the root of the web application. Value should start with <code class="literal">/</code>.</li></ul></div><p>Error code example:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;error-page&gt;
+  &lt;error-code&gt;404&lt;/error-code&gt;
+  &lt;location&gt;/jspsnoop/ERROR/404&lt;/location&gt;
+&lt;/error-page&gt;</code></pre><p>Exception example:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;error-page&gt;
+  &lt;exception-type&gt;java.io.IOException&lt;/exception-type&gt;
+  &lt;location&gt;/jspsnoop/IOException&lt;/location&gt;
+&lt;/error-page&gt;</code></pre><p>The error page mappings created with the error-page element will redirect to a normal URL within the web application and will be handled as a normal request to that location and thus may be static content, a JSP or a filter and/or servlet.
+When handling a request generated by an error redirection, the following request attributes are set and are available to generate dynamic content:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">javax.servlet.error.exception</span></dt><dd>The exception instance that caused the error (or null).</dd><dt><span class="term">javax.servlet.error.exception_type</span></dt><dd>The class name of the exception instance that caused the error (or null).</dd><dt><span class="term">javax.servlet.error.message</span></dt><dd>The error message.</dd><dt><span class="term">javax.servlet.error.request_uri</span></dt><dd>The URI of the request with an error.</dd><dt><span class="term">javax.servlet.error.servlet_name</span></dt><dd>The Servlet name of the servlet that the request was
+dispatched to.</dd><dt><span class="term">javax.servlet.error.status_code</span></dt><dd>The status code of the error (e.g. 404, 500 etc.).</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_configuring_error_pages_context_files"></a>Configuring error pages context files</h3></div></div></div><p>You can use context IoC XML files to configure the default error page mappings with more flexibility than is available with <code class="literal">web.xml</code>, specifically with the support of error code ranges.
+Context files are normally located in <code class="literal">${jetty.base}/webapps/</code> (see <code class="literal">DeployerManager</code> for more details) and an example of more flexible error page mapping is below:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd"&gt;
+
+&lt;Configure class="org.eclipse.jetty.webapp.WebAppContext"&gt;
+  &lt;Set name="contextPath"&gt;/test&lt;/Set&gt;
+  &lt;Set name="war"&gt;
+    &lt;SystemProperty name="jetty.base" default="."/&gt;/webapps/test
+  &lt;/Set&gt;
+
+  &lt;!-- by Code --&gt;
+  &lt;Get name="errorHandler"&gt;
+    &lt;Call name="addErrorPage"&gt;
+      &lt;Arg type="int"&gt;404&lt;/Arg&gt;
+      &lt;Arg type="String"&gt;/jspsnoop/ERROR/404&lt;/Arg&gt;
+    &lt;/Call&gt;
+  &lt;/Get&gt;
+
+  &lt;!-- by Exception --&gt;
+  &lt;Get name="errorHandler"&gt;
+    &lt;Call name="addErrorPage"&gt;
+      &lt;Arg&gt;
+        &lt;Call class="java.lang.Class" name="forName"&gt;
+          &lt;Arg type="String"&gt;java.io.IOException&lt;/Arg&gt;
+        &lt;/Call&gt;
+      &lt;/Arg&gt;
+      &lt;Arg type="String"&gt;/jspsnoop/IOException&lt;/Arg&gt;
+    &lt;/Call&gt;
+  &lt;/Get&gt;
+
+  &lt;!-- by Code Range --&gt;
+  &lt;Get name="errorHandler"&gt;
+    &lt;Call name="addErrorPage"&gt;
+      &lt;Arg type="int"&gt;500&lt;/Arg&gt;
+      &lt;Arg type="int"&gt;599&lt;/Arg&gt;
+      &lt;Arg type="String"&gt;/dump/errorCodeRangeMapping&lt;/Arg&gt;
+    &lt;/Call&gt;
+  &lt;/Get&gt;
+&lt;/Configure&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_custom_errorhandler_class"></a>Custom ErrorHandler class</h3></div></div></div><p>If no error page mapping is defined, or if the error page resource itself has an error, then the error page will be generated by an instance of <code class="literal">ErrorHandler</code> configured either the Context or the Server.
+An <code class="literal">ErrorHandler</code> may extend the <code class="literal">ErrorHandler</code> class and may totally replace the handle method to generate an error page, or it can implement some or all of the following methods to partially modify the error pages:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException
+void handleErrorPage(HttpServletRequest request, Writer writer, int code, String message) throws IOException
+void writeErrorPage(HttpServletRequest request, Writer writer, int code, String message, boolean showStacks) throws IOException
+void writeErrorPageHead(HttpServletRequest request, Writer writer, int code, String message) throws IOException
+void writeErrorPageBody(HttpServletRequest request, Writer writer, int code, String message, boolean showStacks) throws IOException
+void writeErrorPageMessage(HttpServletRequest request, Writer writer, int code, String message, String uri) throws IOException
+void writeErrorPageStacks(HttpServletRequest request, Writer writer) throws IOException</code></pre><p>An <code class="literal">ErrorHandler</code> instance may be set on a Context by calling the <code class="literal">ContextHandler.setErrorHandler</code> method. This can be done by embedded code or via context IoC XML.
+For example:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure class="org.eclipse.jetty.server.handler.ContextHandler"&gt;
+  ...
+  &lt;Set name="errorHandler"&gt;
+    &lt;New class="com.acme.handler.MyErrorHandler"/&gt;
+  &lt;/Set&gt;
+  ...
+&lt;/Configure&gt;</code></pre><p>An <code class="literal">ErrorHandler</code> instance may be set on the entire server by setting it as a dependent bean on the Server instance.
+This can be done by calling <code class="literal">Server.addBean(Object)</code> via embedded code or in <code class="literal">jetty.xml</code> IoC XML:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;Configure id="Server" class="org.eclipse.jetty.server.Server"&gt;
+  ...
+  &lt;Call name="addBean"&gt;
+    &lt;Arg&gt;
+      &lt;New class="com.acme.handler.MyErrorHandler"/&gt;
+    &lt;/Arg&gt;
+  &lt;/Call&gt;
+  ...
+&lt;/Configure&gt;</code></pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_server_level_404_error"></a>Server level 404 error</h3></div></div></div><p>It is possible to get a <span class="emphasis"><em>page not found</em></span> when a request is made to the server for a resource that is outside of any registered contexts.
+As an example, you have a domain name pointing to your public server IP, yet no context is registered with Jetty to serve pages for that domain.
+As a consequence, the server, by default, gives a listing of all contexts running on the server.</p><p>One of the quickest ways to avoid this behavior is to create a catch all context.
+Create a "root" web app mapped to the "/" URI, and use the <code class="literal">index.html</code> redirect to whatever place with a header directive.</p></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="serving-webapp-from-particular-port.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="configuring-contexts.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="setting-form-size.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Serving a WebApp from a Particular Port/Connector&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Setting Max Form Size</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

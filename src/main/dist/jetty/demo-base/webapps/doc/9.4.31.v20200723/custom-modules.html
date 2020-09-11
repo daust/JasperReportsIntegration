@@ -1,0 +1,183 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Custom Modules</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="startup.html" title="Chapter&nbsp;9.&nbsp;Starting Jetty"><link rel="prev" href="startup-modules.html" title="Managing Startup Modules"><link rel="next" href="startup-xml-config.html" title="Managing XML Based Startup Configuration"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Custom Modules</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="startup-modules.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;9.&nbsp;Starting Jetty<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="startup-xml-config.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="custom-modules"></a>Custom Modules</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="custom-modules.html#custom-module-properties">Module Properties</a></span></dt><dt><span class="section"><a href="custom-modules.html#custom-module-location">Location of Modules</a></span></dt><dt><span class="section"><a href="custom-modules.html#custom-module-examples">Creating Custom Modules</a></span></dt><dt><span class="section"><a href="custom-modules.html#_dependencies">Dependencies</a></span></dt></dl></div><p>In addition to the modules that come packaged with the Jetty distribution, users are able to create and define their own custom modules for use with their Jetty implementation.
+Custom modules can be used for a number of reasons - they can extend features in Jetty, add new features, manage additional libraries available to the server&#8230;&#8203;etc.</p><p>At the heart of a Jetty module is the <code class="literal">{name}.mod</code> file itself.
+A jetty <code class="literal">.mod</code> file defines the following:</p><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>It is important to note that when creating your own module, none of these sections are required - simply use those which are applicable to your implementation.</p></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">Module Description - <code class="literal">[description]</code></span></dt><dd>The description of the module.
+This will be showing when viewing the <code class="literal">.mod</code> file itself or using the <code class="literal">--list-modules</code> command.</dd><dt><span class="term">List of Dependent Modules - <code class="literal">[depend]</code></span></dt><dd><p class="simpara">All modules can declare that they depend on other modules with the <code class="literal">[depend]</code> section.
+The list of dependencies is used to transitively resolve other modules that are deemed to be required based on the modules that you activate.
+The order of modules defined in the graph of active modules is used to determine various execution order for configuration, such as Jetty IoC XML configurations, and to resolve conflicting property declarations.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">Optional Modules - <code class="literal">[optional]</code></span></dt><dd>Of note: there is a special section <code class="literal">[optional]</code> used to describe structurally dependent modules that are not technically required, but might be of use to your specific configuration.</dd></dl></div></dd><dt><span class="term">List of Libraries - <code class="literal">[lib]</code></span></dt><dd>Modules can optionally declare that they have libraries that they need to function properly.
+The <code class="literal">[lib]</code> section declares a set of pathnames that follow the <a class="link" href="startup-base-and-home.html#base-vs-home-resolution">Jetty Base and Jetty Home path resolution rules</a>.</dd><dt><span class="term">List of Jetty IoC XML Configurations - <code class="literal">[xml]</code></span></dt><dd>A Module can optionally declare a list of Jetty IoC XML configurations used to wire up the functionality that this module defines.
+The <code class="literal">[xml]</code> section declares a set of pathnames that follow the <a class="link" href="startup-base-and-home.html#base-vs-home-resolution">Jetty Base and Jetty Home path resolution rules</a>.
+Ideally, all XML files are parameterized to accept properties to configure the various elements of the standard configuration.
+Allowing for a simplified configuration of Jetty for the vast majority of deployments.
+The execution order of the Jetty IoC XML configurations is determined by the graph of active module dependencies resolved via the <code class="literal">[depend]</code> sections.
+If the default XML is not sufficient to satisfy your needs, you can override this XML by making your own in the <code class="literal">${jetty.base}/etc/</code> directory, with the same name.
+The resolution steps for Jetty Base and Jetty Home will ensure that your copy from <code class="literal">${jetty.base}</code> will be picked up over the default one in <code class="literal">${jetty.home}</code>.</dd><dt><span class="term">List of Module Tags - <code class="literal">[tags]</code></span></dt><dd>For ease of sorting, modules can be assigned tags.
+When using the <code class="literal">--list-modules</code> command, modules will be groups by the first tag that exists in this section.
+Modules can also be listed specifically by these tags using <code class="literal">--list-modules=&lt;tag name&gt;</code> on the command line.</dd><dt><span class="term">Ini Variables - <code class="literal">[ini]</code></span></dt><dd>The <code class="literal">[ini]</code> section is used to add or change server parameters at startup.
+The <code class="literal">[ini]</code> section can also include a the path of a file or several files which should be made available to the server only.
+This is helpful when you want to control what jars are available to deployed webapps.</dd><dt><span class="term">Jetty INI Template - <code class="literal">[ini-template]</code></span></dt><dd>Each module can optionally declare a startup ini template that is used to insert/append/inject sample configuration elements into the <code class="literal">start.ini</code> or <code class="literal">start.d/*.ini</code> files when using the <code class="literal">--add-to-start=&lt;name&gt;</code> command line argument in <code class="literal">start.jar</code>.
+Commonly used to present some of the parameterized property options from the Jetty IoC XML configuration files also referenced in the same module.</dd><dt><span class="term">Required Files and Directories - <code class="literal">[files]</code></span></dt><dd><p class="simpara">If the activation of a module requires some paths to exist, the <code class="literal">[files]</code> section defines them.
+There are 2 modes of operation of the entries in this section.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">Ensure Directory Exists</span></dt><dd>If you add a pathname that ends in <code class="literal">"/"</code> (slash), such as <code class="literal">"webapps/"</code>, then that directory will be created if it does not yet exist in <code class="literal">${jetty.base}/&lt;pathname&gt;</code> (eg: <code class="literal">"webapps/"</code> will result in <code class="literal">${jetty.base}/webapps/</code> being created).</dd><dt><span class="term">Download File</span></dt><dd>There is a special syntax to allow you to download a file into a specific location if it doesn&#8217;t exist yet: <code class="literal">&lt;url&gt;:&lt;pathname&gt;</code>.
+Currently, the <code class="literal">&lt;url&gt;</code> must be a <code class="literal">http://</code> scheme URL (please <a class="link" href="bugs.html" title="Issues, Features, and Bugs">let us know</a> if you need more schemes supported).
+The <code class="literal">&lt;pathname&gt;</code> portion follows the <a class="link" href="startup-base-and-home.html#base-vs-home-resolution">Jetty Base and Jetty Home path resolution rules</a>.
+Example: <code class="literal">http://repo.corp.com/maven/corp-security-policy-1.0.jar:lib/corp-security-policy.jar</code>
+This will check for the existence of <code class="literal">lib/corp-security-policy.jar</code>, and if it doesn&#8217;t exist, it will download the jar file from <code class="literal">http://repo.corp.com/maven/corp-security-policy-1.0.jar</code></dd></dl></div></dd><dt><span class="term">Licenses - <code class="literal">[license]</code></span></dt><dd>If you are implementing a software/technology that has a license, it&#8217;s text can be placed here.
+When a user attempts to activate the module they will be asked if they accept the license agreement.
+If a user does not accept the license agreement, the module will not be activated.</dd><dt><span class="term">Additional Startup Commands - <code class="literal">[exec]</code></span></dt><dd>The <code class="literal">[exec]</code> section is used to define additional parameters specific to the module.
+These commands are added to the server startup.</dd><dt><span class="term">JPMS Module-Path Definitions - <code class="literal">[jpms]</code></span></dt><dd>The <code class="literal">[jpms]</code> section is used to add <a class="link" href="startup-jpms.html" title="Startup using the Java Platform Module System (JPMS)">JPMS modules</a> to the module-path for startup when using the <code class="literal">--jpms</code> command.</dd></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="custom-module-properties"></a>Module Properties</h3></div></div></div><p>Properties are used to parameterize:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">XML files using the <code class="literal">&lt;Property name="pname"/&gt;</code> element</li><li class="listitem">Module files using the <code class="literal">${pname}</code> syntax</li></ul></div><p>Properties and System Properties may be set on the command line, in a ini file or in a <code class="literal">[ini]</code> section of a module using the following syntax.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">name=value</code></span></dt><dd>Set a property that can be expanded in XML files with the &lt;Property&gt; element.</dd><dt><span class="term"><code class="literal">name+=value</code></span></dt><dd>Append value to an existing property value.</dd><dt><span class="term"><code class="literal">name+=,value</code></span></dt><dd>Append value to an existing property value, using a comma separator if needed.</dd><dt><span class="term"><code class="literal">name?=value</code></span></dt><dd>Set a property only if it is not already set.</dd></dl></div><p>If any of the previous formats is preceded by <code class="literal">-D</code>, then a system property is set as well as a start property.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="custom-module-location"></a>Location of Modules</h3></div></div></div><p>Jetty comes with dozens of modules as part of the distribution package.
+By default these are located in the <code class="literal">${JETTY_HOME}/modules</code> directory.
+These modules should not be modified.
+In the unlikely circumstance you need to make changes to a stock module, copy it to your <code class="literal">${JETTY_BASE}</code> in a <code class="literal">modules</code> directory.</p><p>Custom modules should also be maintained separately as part of the <code class="literal">${JETTY_BASE}/modules</code> directory, though you can optionally place them in <code class="literal">${JETTY_HOME}/modules</code> for convenience if you have several <code class="literal">{$JETTY_BASE}</code> locations in your implementation.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="custom-module-examples"></a>Creating Custom Modules</h3></div></div></div><p>As shown above, there are several options that can be utilized when creating custom module files.
+This may seem daunting, but the good news is that creating custom modules is actually quite easy.</p><p>For example, here is a look at the <code class="literal">http.mod</code> file which defines parameters for enabling HTTP features for the server:</p><div class="screenexample"><pre class="screen"># DO NOT EDIT - See: https://www.eclipse.org/jetty/documentation/current/startup-modules.html
+
+[description]
+Enables an HTTP connector on the server.
+By default HTTP/1 is support, but HTTP2C can
+be added to the connector with the http2c module.
+
+[tags]
+connector
+http
+
+[depend]
+server
+
+[xml]
+etc/jetty-http.xml
+
+[ini-template]
+### HTTP Connector Configuration
+
+## Connector host/address to bind to
+# jetty.http.host=0.0.0.0
+
+## Connector port to listen on
+# jetty.http.port=8080
+
+## Connector idle timeout in milliseconds
+# jetty.http.idleTimeout=30000
+
+## Number of acceptors (-1 picks default based on number of cores)
+# jetty.http.acceptors=-1
+
+## Number of selectors (-1 picks default based on number of cores)
+# jetty.http.selectors=-1
+
+## ServerSocketChannel backlog (0 picks platform default)
+# jetty.http.acceptQueueSize=0
+
+## Thread priority delta to give to acceptor threads
+# jetty.http.acceptorPriorityDelta=0
+
+## The requested maximum length of the queue of incoming connections.
+# jetty.http.acceptQueueSize=0
+
+## Enable/disable the SO_REUSEADDR socket option.
+# jetty.http.reuseAddress=true
+
+## Enable/disable TCP_NODELAY on accepted sockets.
+# jetty.http.acceptedTcpNoDelay=true
+
+## The SO_RCVBUF option to set on accepted sockets. A value of -1 indicates that it is left to its default value.
+# jetty.http.acceptedReceiveBufferSize=-1
+
+## The SO_SNDBUF option to set on accepted sockets. A value of -1 indicates that it is left to its default value.
+# jetty.http.acceptedSendBufferSize=-1
+
+## Connect Timeout in milliseconds
+# jetty.http.connectTimeout=15000
+
+## HTTP Compliance: RFC7230, RFC7230_LEGACY, RFC2616, RFC2616_LEGACY, LEGACY or CUSTOMn
+# jetty.http.compliance=RFC7230_LEGACY</pre></div><p>You&#8217;ll notice that the <code class="literal">http.mod</code> file only includes a handful of the possible sections available - <code class="literal">[description]</code>, <code class="literal">[tags]</code>, <code class="literal">[depend]</code>, <code class="literal">[xml]</code>, and <code class="literal">[ini-template]</code>.
+When configuring your own modules, you are free to pick and choose what you include.</p><p>As an example, below is a module file that defines a custom XML and lib, and activates a number of additional modules.
+A module like this could be used to enable a set of standard modules and resources for a new JETTY_BASE without having to define them all manually.</p><div class="screenexample"><pre class="screen">[description]
+Enables the standard set of modules and resources for ACME Corp servers.
+
+[tags]
+core
+
+[depend]
+server
+client
+http
+http2
+jsp
+console-capture
+requestlog
+stats
+gzip
+deploy
+jmx
+
+[files]
+basehome:modules/acme/acme.xml|etc/acme.xml
+
+[lib]
+lib/acme/ACMECustom.jar</pre></div><p>Activating this module will activate all the dependent modules, create any required directories and copy in any required files:</p><div class="screenexample"><pre class="screen">java -jar ../start.jar --add-to-start=acme
+
+ALERT: There are enabled module(s) with licenses.
+The following 1 module(s):
+ + contains software not provided by the Eclipse Foundation!
+ + contains software not covered by the Eclipse Public License!
+ + has not been audited for compliance with its license
+
+ Module: alpn-impl/alpn-8
+  + ALPN is a hosted at github under the GPL v2 with ClassPath Exception.
+  + ALPN replaces/modifies OpenJDK classes in the sun.security.ssl package.
+  + http://github.com/jetty-project/jetty-alpn
+  + http://openjdk.java.net/legal/gplv2+ce.html
+
+Proceed (y/N)? y
+INFO  : webapp          transitively enabled, ini template available with --add-to-start=webapp
+INFO  : server          transitively enabled, ini template available with --add-to-start=server
+INFO  : requestlog      transitively enabled, ini template available with --add-to-start=requestlog
+INFO  : alpn            transitively enabled, ini template available with --add-to-start=alpn
+INFO  : jsp             transitively enabled
+INFO  : servlet         transitively enabled
+INFO  : alpn-impl/alpn-8 dynamic dependency of alpn
+INFO  : annotations     transitively enabled
+INFO  : gzip            transitively enabled, ini template available with --add-to-start=gzip
+INFO  : ssl             transitively enabled, ini template available with --add-to-start=ssl
+INFO  : plus            transitively enabled
+INFO  : deploy          transitively enabled, ini template available with --add-to-start=deploy
+INFO  : alpn-impl/alpn-1.8.0_92 dynamic dependency of alpn-impl/alpn-8
+INFO  : security        transitively enabled
+INFO  : jmx             transitively enabled
+INFO  : apache-jsp      transitively enabled
+INFO  : stats           transitively enabled, ini template available with --add-to-start=stats
+INFO  : acme            initialized in ${jetty.base}/start.d/acme.ini
+INFO  : jndi            transitively enabled
+INFO  : console-capture transitively enabled, ini template available with --add-to-start=console-capture
+INFO  : client          transitively enabled
+INFO  : http            transitively enabled, ini template available with --add-to-start=http
+INFO  : http2           transitively enabled, ini template available with --add-to-start=http2
+MKDIR : ${jetty.base}/logs
+MKDIR : ${jetty.base}/lib
+MKDIR : ${jetty.base}/lib/alpn
+MKDIR : ${jetty.base}/etc
+COPY  : ${jetty.home}/modules/ssl/keystore to ${jetty.base}/etc/keystore
+MKDIR : ${jetty.base}/webapps
+DOWNLD: https://repo1.maven.org/maven2/org/mortbay/jetty/alpn/alpn-boot/8.1.8.v20160420/alpn-boot-8.1.8.v20160420.jar to ${jetty.base}/lib/alpn/alpn-boot-8.1.8.v20160420.jar
+COPY  : ${jetty.home}/modules/acme/acme.xml to ${jetty.base}/etc/acme.xml
+INFO  : Base directory was modified</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_dependencies"></a>Dependencies</h3></div></div></div><p>When dependent modules are enabled, they are done so transitively by default.
+This means that any <code class="literal">ini</code> files for dependent modules are not created in the <code class="literal">${JETTY_BASE}/start.d</code> directory (or added to <code class="literal">${JETTY_BASE}/start.ini</code>) and are as such not configurable.</p><p>For Jetty to create/add the <code class="literal">ini-template</code> parameters to <code class="literal">start.d</code> or <code class="literal">start.ini</code> the associated module must be enabled explicitly.</p><p>For example, if I activate the <code class="literal">http</code> module, it will be enabled, and the <code class="literal">server</code> module will be enabled transitively:</p><div class="screenexample"><pre class="screen">$ java -jar ../start.jar --add-to-start=http
+INFO  : server          transitively enabled, ini template available with --add-to-start=server
+INFO  : http            initialized in ${jetty.base}/start.d/http.ini
+INFO  : Base directory was modified</pre></div><p>You&#8217;ll notice that Jetty informs you of what modules were enabled, and where there associated ini files are located (when applicable).
+It also tells the user what command they would need to run to enable any missing or desired ini files for the selected modules, in this case <code class="literal">--add-to-start=server</code>.</p><div class="screenexample"><pre class="screen">$ java -jar ../start.jar --add-to-start=server
+INFO  : server          initialized in ${jetty.base}/start.d/server.ini
+INFO  : Base directory was modified</pre></div><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>It is important to keep in mind that when activating a dependency, Jetty does not just go one layer down.
+If a dependent module also has dependencies they too will be enabled.</p></div></blockquote></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="startup-modules.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="startup.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="startup-xml-config.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Managing Startup Modules&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Managing XML Based Startup Configuration</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

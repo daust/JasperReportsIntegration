@@ -1,0 +1,83 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Startup using the Java Platform Module System (JPMS)</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="startup.html" title="Chapter&nbsp;9.&nbsp;Starting Jetty"><link rel="prev" href="startup-windows-service.html" title="Startup via Windows Service"><link rel="next" href="session-management.html" title="Chapter&nbsp;10.&nbsp;Session Management"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Startup using the Java Platform Module System (JPMS)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="startup-windows-service.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;9.&nbsp;Starting Jetty<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="session-management.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="startup-jpms"></a>Startup using the Java Platform Module System (JPMS)</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="startup-jpms.html#jpms-module-path">Starting Jetty on the module-path</a></span></dt><dt><span class="section"><a href="startup-jpms.html#jpms-advanced-config">Advanced JPMS Configuration</a></span></dt><dt><span class="section"><a href="startup-jpms.html#jpms-module-path-alternative">Alternative way to start Jetty on the module-path</a></span></dt></dl></div><p>Jetty modules also act as automatic <a class="link" href="https://en.wikipedia.org/wiki/Java_Platform_Module_System" target="_top">JPMS</a> modules via the <code class="literal">Automatic-Module-Name</code> attribute in the jar&#8217;s <code class="literal">MANIFEST.MF</code> file.</p><p>This makes possible to run Jetty from the module-path, rather than the class-path.</p><p>We recommend using JDK 11 or greater due to the fact that JDK 11 removed all the "enterprise" modules from the JDK,
+and therefore it guarantees a more stable platform to base your application&#8217;s dependencies on.
+The classes in these "enterprise" modules were bundled with JDK 8, and present in "enterprise" modules in JDK 9 and JDK 10.
+With JDK 11, these "enterprise" classes are either not available in the JDK (because their corresponding module was removed), or they are present in a different module.</p><p>Because some of these "enterprise" classes are required by Jetty or by applications running in Jetty, it is better to use a stable source for those classes - in this case by using JDK 11
+or greater, and explicitly referencing the "enterprise" classes as dependencies, rather than assuming they are bundled with the JDK.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jpms-module-path"></a>Starting Jetty on the module-path</h3></div></div></div><p>To start Jetty on the module-path rather than the class-path, it is enough to add the <code class="literal">--jpms</code> option to the command line, for example:</p><div class="screenexample"><pre class="screen">$ mkdir my-jetty-base
+$ cd my-jetty-base
+$ java -jar $JETTY_HOME/start.jar --add-to-start=http
+INFO  : server          transitively enabled, ini template available with --add-to-start=server
+INFO  : http            initialized in ${jetty.base}/start.ini
+INFO  : threadpool      transitively enabled, ini template available with --add-to-start=threadpool
+INFO  : Base directory was modified
+$ java -jar $JETTY_HOME/start.jar --jpms</pre></div><p>The example above creates a <a class="link" href="startup-base-and-home.html" title="Managing Jetty Base and Jetty Home">Jetty base directory</a> and enables the <code class="literal">http</code> module using the <code class="literal">--add-to-start</code> command.
+The server then starts Jetty on the module-path using the <code class="literal">--jpms</code> option.</p><pre class="screen">[NOTE]
+When running on the module-path using the `--jpms` option, the Jetty start mechanism will fork a second JVM passing it the right JVM options to run on the module-path.
+You will have two JVMs running: one that runs `start.jar` and one that runs Jetty on the module-path.</pre><p>If you are interested in the details of how the command line to run Jetty on the module-path looks like, you can add the <code class="literal">--dry-run</code> option:</p><div class="screenexample"><pre class="screen">$ java -jar $JETTY_HOME/start.jar --jpms --dry-run</pre></div><p>This will give an output looking something like this (broken in sections for clarity):</p><div class="screenexample"><pre class="screen">/opt/openjdk-11+28/bin/java
+--module-path /opt/jetty/lib/servlet-api-3.1.jar:/opt/jetty/lib/jetty-schemas-3.1.jar:/opt/jetty/lib/jetty-http-9.4.13-SNAPSHOT.jar:...
+--patch-module servlet.api=/opt/jetty/lib/jetty-schemas-3.1.jar
+--module org.eclipse.jetty.xml/org.eclipse.jetty.xml.XmlConfiguration /opt/jetty/etc/jetty-threadpool.xml /opt/jetty/etc/jetty.xml ...</pre></div><p>The <code class="literal">--module-path</code> option specifies the list of Jetty jars.
+This list depends on the Jetty modules that have been enabled via the <a class="link" href="startup-modules.html" title="Managing Startup Modules"><code class="literal">--add-to-start</code></a> command.</p><p>The <code class="literal">--patch-module</code> option is necessary for Servlet and JSP Containers to find XML DTDs and XML Schemas required to validate the various XML files present in web applications (such as <code class="literal">web.xml</code> and others).</p><p>The <code class="literal">--module</code> option tells the JVM to run main class <code class="literal">XmlConfiguration</code> from the <code class="literal">org.eclipse.jetty.xml</code> module, with the given XML files as program arguments.</p><p>When the JVM starts, module <code class="literal">org.eclipse.jetty.xml</code> is added to the set of JPMS <span class="emphasis"><em>root modules</em></span>; all other Jetty modules, being automatic, will be resolved and added to the module graph.
+JAR files that are not modules, such as <code class="literal">servlet-api-3.1.jar</code>, are on the module-path and therefore will be made automatic modules by the JVM (hence the derived module name <code class="literal">servlet.api</code> for this jar, referenced by the <code class="literal">--patch-module</code> command line option above).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jpms-advanced-config"></a>Advanced JPMS Configuration</h3></div></div></div><p>Web applications may need additional services from the Servlet Container, such as JDBC <code class="literal">DataSource</code> references or JTA <code class="literal">UserTransaction</code> references.</p><p>For example, for JDBC it is typical to store, in JNDI, a reference to the connection pool&#8217;s <code class="literal">DataSource</code> (such as <code class="literal">com.zaxxer.hikari.HikariDataSource</code>) or a reference directly to the JDBC driver&#8217;s <code class="literal">DataSource</code> (<code class="literal">com.mysql.jdbc.jdbc2.optional.MysqlDataSource</code>).
+Jetty needs to be able to instantiate those classes and therefore needs to be able to load those classes and all their super-classes, among which includes <code class="literal">javax.sql.DataSource</code>.</p><p>When Jetty runs on the class-path, this is easily achieved by using a <a class="link" href="custom-modules.html" title="Custom Modules">custom module</a>:</p><p><b>mysql.mod.&nbsp;</b>
+</p><div class="screenexample"><pre class="screen">[description]
+MySQL module
+
+[lib]
+lib/mysql/mysql-connector-java-*.jar</pre></div><p>
+</p><p>However, when running on the module-path, things are quite different.</p><p>Class <code class="literal">javax.sql.DataSource</code> is in a JDK bundled module named <code class="literal">java.sql</code>, which is not automatic (it&#8217;s a proper JPMS module) and it is not in the <span class="emphasis"><em>root modules</em></span> set.
+Because it is not an automatic module, it is not added to the module graph, and therefore needs to be added explicitly using the JVM command line <code class="literal">--add-modules</code>.</p><p>To add the JPMS module <code class="literal">java.sql</code> to the module graph, you need to modify your custom module in the following way, using our <code class="literal">mysql.mod</code> as an example:</p><p><b>mysql.mod.&nbsp;</b>
+</p><div class="screenexample"><pre class="screen">[description]
+MySQL module
+
+[lib]
+lib/mysql/mysql-connector-java-*.jar
+
+[jpms]
+add-modules: java.sql</pre></div><p>
+</p><p>The new <code class="literal">[jpms]</code> section is only used when Jetty is started on the module-path via the <code class="literal">--jpms</code> command line option.</p><p>Assuming that <code class="literal">mysql-connector-java-*.jar</code> is a non JPMS modular jar, or an automatic JPMS modular jar, the Jetty start mechanism will add <code class="literal">mysql-connector-java-*.jar</code> to the module-path, and will add the JVM command line option <code class="literal">--add-modules java.sql</code>.</p><p>If <code class="literal">mysql-connector-java-*.jar</code> were a proper JPMS modular jar with name (for example) <code class="literal">com.mysql.jdbc</code>, then it would need to be explicitly added to the module graph, in this way:</p><p><b>mysql.mod.&nbsp;</b>
+</p><div class="screenexample"><pre class="screen">[description]
+MySQL module
+
+[lib]
+lib/mysql/mysql-connector-java-*.jar
+
+[jpms]
+add-modules: com.mysql.jdbc</pre></div><p>
+</p><p>The JPMS module <code class="literal">java.sql</code> does not need to be explicitly added because it would be a dependency of the <code class="literal">com.mysql.jdbc</code> module and therefore automatically added to the module graph.</p><p>The <code class="literal">[jpms]</code> section has the following format:</p><div class="screenexample"><pre class="screen">[jpms]
+add-modules: &lt;module name&gt;(,&lt;module name&gt;)*
+patch-module: &lt;module&gt;=&lt;file&gt;(:&lt;file&gt;)*
+add-opens: &lt;module&gt;/&lt;package&gt;=&lt;target-module&gt;(,&lt;target-module&gt;)*
+add-exports: &lt;module&gt;/&lt;package&gt;=&lt;target-module&gt;(,&lt;target-module&gt;)*
+add-reads: &lt;module&gt;=&lt;target-module&gt;(,&lt;target-module&gt;)*</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jpms-module-path-alternative"></a>Alternative way to start Jetty on the module-path</h3></div></div></div><p>The section above uses the <code class="literal">--jpms</code> command line option to start Jetty on the module-path.
+An alternative way of achieving the same result is to use a Jetty module, <code class="literal">$JETTY_BASE/modules/jpms.mod</code>,
+that specifies that you want to run using JPMS (and possibly add some JPMS specific configuration).</p><p><b>jpms.mod.&nbsp;</b>
+</p><div class="screenexample"><pre class="screen">[ini]
+--jpms
+
+[jpms]
+# Additional JPMS configuration.</pre></div><p>
+</p><p>The <code class="literal">[ini]</code> section is equivalent to passing the <code class="literal">--jpms</code> option to the command line.
+The <code class="literal">[jpms]</code> section (see also the <a class="link" href="startup-jpms.html#jpms-advanced-config" title="Advanced JPMS Configuration">advanced JPMS configuration section</a>)
+allows you specify additional JPMS configuration.</p><div class="screenexample"><pre class="screen">$ mkdir jetty-base-jpms
+$ cd jetty-base-jpms
+$ mkdir modules
+# Copy the jpms.mod file above into the $JETTY_BASE/modules/ directory.
+$ cp /tmp/jpms.mod modules/
+# Add both the http and the jpms modules.
+$ java -jar $JETTY_HOME/start.jar --add-to-start=http,jpms
+# Jetty will start on the module-path.
+$ java -jar $JETTY_HOME/start.jar</pre></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="startup-windows-service.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="startup.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="session-management.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Startup via Windows Service&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;10.&nbsp;Session Management</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

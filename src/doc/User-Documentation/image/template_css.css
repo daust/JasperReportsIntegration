@@ -1,0 +1,490 @@
+
+/********************************************************************
+ * JOOMLA 1.0.X TEMPLATE CSS FILE
+ * ----------------------------------------------------------------
+ * Copyright (C) 2007 JoomlaShine.com. All Rights Reserved.
+ * @license - Copyrighted Commercial Software
+ * Author: JoomlaShine.com
+ * Websites:  http://www.joomlashine.com
+ * ----------------------------------------------------------------
+ * 
+ * STANDARD JOOMLA ELEMENTS:
+ * Settings for standard typography like headings, paragraphs, etc.
+ * and standard Joomla elements like content heading, mosimage,
+ * read more button, etc.
+ *
+*********************************************************************/
+
+/** GENERAL TAGS **/
+html, body {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	
+}
+
+body {
+	/*font: 75%/1.5 "Lucida Grande",Geneva,Arial,Verdana,sans-serif;*/
+	font: 85%/1.5 Geneva,Arial,Verdana,sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 0.3em 0;
+	font-weight: bold;
+}
+
+h1 {
+	/*font-size: 20px;*/
+	font-size: 160%;
+}
+
+h2 {
+	/*font-size: 18px;*/
+	font-size: 140%;
+}
+
+h3 {
+	/*font-size: 16px;*/
+	font-size: 120%;
+}
+
+h4 {
+	/*font-size: 12px;*/
+	font-size: 100%;
+}
+
+h5, h6 {
+	/*font-size: 12px;*/
+	font-size: 100%;
+}
+
+p, pre, blockquote, form, label, ul, ol, dl, fieldset, address {
+	margin: 0.35em 0 .8em 0;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+caption, th {
+	text-align: left;
+}
+
+fieldset {
+	padding: .5em;
+}
+
+ul {
+	padding: 0;
+}
+
+ul li {
+	margin: .3em 0 .3em 1.5em;
+	padding: 0;
+}
+
+a:link,
+a:visited {
+	text-decoration: none;
+	outline: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a img {
+	border: none;
+}
+
+small {
+	font-size: .85em;
+}
+
+img {
+	border: none;
+}
+
+sup {
+	position: relative;
+	bottom: 0.3em;
+	vertical-align: baseline;
+}
+
+sub {
+	position: relative;
+	bottom: -0.2em;
+	vertical-align: baseline;
+}
+
+acronym, abbr {
+	border-bottom: 1px dashed;
+	letter-spacing: 1px;
+	cursor: help;
+}
+
+/*** JOOMLA BUILD-IN ***/
+/** PATHWAY **/
+/* Path way container */
+span.pathway {
+	font-weight: bold;
+	font-size: 0.9em;
+}
+
+a.pathway:link,
+a.pathway:visited {
+	padding: 0 .35em;
+	font-weight: normal;
+	text-decoration: none;
+}
+
+a.pathway:hover {
+	text-decoration: underline;
+}
+
+/** HEADING AREA **/
+/* page heading */
+.componentheading,
+.contentheading {
+	font-size: 18px;
+}
+
+/* Content title link */
+a.contentpagetitle:link,
+a.contentpagetitle:visited {
+	text-decoration: none;
+}
+
+a.contentpagetitle:hover {
+	text-decoration: underline;
+}
+
+/** CONTENT AREA **/
+/* Blog page main wrapper */
+table.blog {
+	width: 100%;
+}
+
+table.blog td {
+	padding-right: .4em;
+}
+
+/* Content container */
+table.contentpane,
+table.contentpaneopen {
+}
+
+/* Separator after each content container TD */
+span.article_seperator {
+	display: block;
+	height: 1px;
+}
+
+table.blog span.article_seperator {
+	height: 1.5em;
+}
+
+/* 3 buttons */
+td.buttonheading {
+	padding: 0 2px;
+}
+
+/* Data & written by area */
+span.small,
+td.createdate,
+td.modifydate {
+	color: #999999;
+	font-size: 0.9em;
+	padding-bottom: .6em;
+}
+
+/* Page counter */
+div.pagenavcounter {
+	margin: .5em 0;
+	color: #595959;
+	font-size: .9em;
+	font-weight: bold;
+}
+
+/* Table of content */
+table.contenttoc {
+	margin: 1em;
+	border: 1px solid #D9D9D9;
+	padding: 0 .5em;
+	background: #F5F5F5;
+}
+
+table.contenttoc th {
+	padding: .4em;
+	background: url(grey_dot.html) bottom repeat-x;
+	font-weight: bold;
+	text-align: center;
+}
+
+table.contenttoc td {
+	padding: .2em .5em;
+}
+
+a.toclink:link,
+a.toclink:visited {
+	font-size: .9em;
+}
+
+a.toclink:hover {
+}
+
+div.mosimage {
+	padding: .3em;
+	margin: .8em;
+	color: #595959;
+}
+
+div.mosimage_caption {
+	padding: .2em;
+	font-weight: bold;
+	font-size: 0.9em;
+}
+
+/* Read more */
+a.readon:link,
+a.readon:visited {
+	padding: 3px 6px 3px 22px;
+	text-decoration: none;
+}
+
+a.readon:hover {
+	text-decoration: none;
+}
+
+/** COMPONENT AND CONTENT TABLE PAGE **/
+/* Description in content table and component page */
+td.contentdescription {
+	padding: .5em 0;
+}
+
+/* Links in Section Table page */
+a.category:link,
+a.category:visited {
+	font-weight: bold;
+}
+
+a.category:hover {
+}
+
+/* table in category table page */
+td.sectiontableheader {
+	padding: .5em 1em;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+/* table's row 1 */
+tr.sectiontableentry1 td {
+	padding: .5em .8em;
+	background: #F5F5F5;
+}
+
+/* table's row 2 */
+tr.sectiontableentry2 td {
+	padding: .5em .8em;
+	background: none;
+}
+
+.smalldark {
+}
+
+/** "MORE..." AREA **/
+/* "More..." panel */
+div.blog_more {
+}
+
+/* "More..." panel heading text */
+div.blog_more div {
+	padding-bottom: .3em;
+}
+
+/* "More..." block links */
+div.blog_more ul {
+}
+
+div.blog_more li{
+}
+
+/* "More..." panel links */
+a.blogsection:link, a.blogsection:visited {
+	text-decoration: none;
+}
+
+a.blogsection:hover {
+	text-decoration: underline;
+}
+
+/** BOTTOM NAVIGATION BAR **/
+/* content page nav */
+div.pagenavbar div {
+	color: #999999;
+	font-weight: bold;
+	font-size: .9em;
+}
+
+div.pagenavbar a:link, 
+div.pagenavbar a:visited {
+	text-decoration: none;
+}
+
+div.pagenavbar a:hover {
+	text-decoration: underline;
+}
+
+/* content item rolling nav */
+th.pagenav_prev, th.pagenav_next {
+	color: #999999;
+	font-size: .9em;
+	font-weight: bold;
+}
+
+th.pagenav_prev a:link, th.pagenav_prev a:visited,
+th.pagenav_next a:link, th.pagenav_next a:visited {
+	text-decoration: none;
+}
+
+th.pagenav_prev a:hover, th.pagenav_next a:hover {
+	text-decoration: underline;
+}
+
+/* blog pages nav */
+.pagenav {
+	padding: 0 .5em;
+	margin-top: 1em;
+	color: #999999;
+	font-size: .9em;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+/* blog pages nav link */
+a.pagenav:link, a.pagenav:visited {
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+a.pagenav:hover {
+	text-decoration: underline;
+}
+
+/* Back button */
+div.back_button {
+	margin: .5em 0;
+	padding: .4em 0;
+	font-weight: bold;
+}
+
+div.back_button a:link,
+div.back_button a:visited {
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+div.back_button a:hover{
+	text-decoration: underline;
+}
+
+.hd {
+	display: none;
+}
+
+/** COMMON FORM **/
+input.button {
+}
+
+input.inputbox {
+}
+
+input.inputbox:hover,
+input.button:hover {
+}
+
+input.inputbox:focus {
+}
+
+/** POP UP FORMS **/
+body.contentpane {
+	padding: 1em;
+	color: #000000;
+	background: #FFFFFF;
+}
+
+/** SEARCH MODULE **/
+/* Search wrapper */
+div.search {
+}
+
+/* Search input box */
+input#mod_search_searchword {
+}
+
+span.highlight {
+	padding: .2em;
+}
+
+/** LOGIN MODULE **/
+input#mod_login_username {
+	width: 120px;
+}
+
+input#mod_login_password {
+	width: 120px;
+}
+
+input#mod_login_remember {
+	border: none;
+	background: none;
+	vertical-align: middle;
+}
+
+/** LATEST NEWS & POPULAR MODULE **/
+ul.latestnews,
+ul.mostread {
+}
+
+ul.latestnews li,
+ul.mostread li {
+}
+
+/** POLL MODULE **/
+/* poll's table */
+td.poll {
+}
+
+/* poll's question */
+td.poll thead td {
+}
+
+/* poll's answers */
+table.poll td {
+	text-align: left;
+}
+
+/* poll's answers table */
+table.pollstableborder {
+	margin: .5em 0;
+	text-align: left;
+}
+
+table.pollstableborder td{
+	font-size: .9em;
+}
+
+/* poll's answer row 1 */
+td.sectiontableentry1 {
+	padding: .3em .2em;
+	background: #F5F5F5;
+}
+
+/* poll's answer row 2 */
+td.sectiontableentry2 {
+	padding: .3em .2em;
+	background: none;
+}
+

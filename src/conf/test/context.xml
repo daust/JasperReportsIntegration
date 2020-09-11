@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- The following line was added to stop the error in Eclipse: "No grammar constraints (DTD or XML Schema) referenced in the document" -->
+<!DOCTYPE something>
+
+<Context path="/JasperReportsIntegration" debug="5" reloadable="true"
+         crossContext="true">
+
+    <!-- default data source, when no _dataSource parameter is given -->
+    <!-- parameter definition: http://commons.apache.org/dbcp/configuration.html -->
+    <!-- minimum connections in pool: 3 -->
+    <!-- check valid session: each 5 minutes  -->
+    <Resource name="jdbc/jndi-oracle" auth="Container" type="javax.sql.DataSource"
+              driverClassName="oracle.jdbc.OracleDriver"
+              maxActive="20" maxIdle="10" maxWait="-1"
+              initialSize="4" minIdle="3" validationQuery="select user from dual"
+              testWhileIdle="true" testOnBorrow="true" timeBetweenEvictionRunsMillis="300000"
+              numTestsPerEvictionRun="100" minEvictableIdleTimeMillis="10000"
+
+              url="jdbc:oracle:thin:@192.168.2.51:1521:XE" 
+              username="test"
+              password="oracle1" 
+              />
+                            
+</Context>
+
+              

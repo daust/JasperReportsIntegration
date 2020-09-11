@@ -1,0 +1,283 @@
+/*
+  File    : build.gradle
+  Purpose : Build file for the JasperReportsIntegration project on 
+
+  Date        Author    Comment
+  --------------------------------------------------
+  08.09.2020  D. Aust   initial creation
+ */
+
+plugins {
+  id "war"
+  id "eclipse"
+  id "distribution"
+}
+apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
+//for Ant filter
+import org.apache.tools.ant.filters.ReplaceTokens
+
+// import groovy helper functions
+//  println "$project.projectDir/src/groovy/tools.groovy"
+//  evaluate(new File("$project.projectDir/src/groovy/tools.groovy"))
+
+//-----------------------------------------------------------------------------
+//-- Configuration: typically the JRI version and version of jasperreports 
+//-- are changed
+//-----------------------------------------------------------------------------
+
+  project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
+  project.version           = '2.6.0'
+  
+  sourceCompatibility       = 1.8
+  targetCompatibility       = 1.8
+
+  archivesBaseName          = "JasperReportsIntegration"
+
+  // version of jasperreports to be used
+  def jasperreportsVersion  ='6.14.0'  
+
+//-----------------------------------------------------------------------------
+//-- Groovy helper functions
+//-----------------------------------------------------------------------------
+
+/* define repositories to look for maven modules */
+repositories {
+    maven {url "https://plugins.gradle.org/m2/"}
+    maven {url "https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts"}
+    mavenCentral()
+    flatDir {dirs "lib/jasper-reports/$jasperreportsVersion"}
+}
+
+/* define specific maven dependencies */
+dependencies {
+    // *** Only for compilation, NOT distributed
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+
+    // https://mvnrepository.com/artifact/log4j/log4j
+    implementation group: 'log4j', name: 'log4j', version: '1.2.16'
+
+    // https://mvnrepository.com/artifact/commons-configuration/commons-configuration
+    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.8'
+
+    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8
+    implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '19.+'
+    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ucp
+    implementation group: 'com.oracle.database.jdbc', name: 'ucp', version: '19.+'
+
+    // *** Only for TESTING
+    testCompileOnly 'junit:junit:4.12'
+
+    // joda time because auf 
+    // https://mvnrepository.com/artifact/joda-time/joda-time
+    compile group: 'joda-time', name: 'joda-time', version: '2.4'
+
+    // dependencies from jasperreports.proj
+    compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
+}
+
+gretty {
+  //servletContainer = 'tomcat9'
+  httpPort = 8080
+  //initParameter 'oc.jasper.config.home', "/tmp/jri"
+  jvmArgs = ['-Djava.awt.headless=true']
+} 
+
+//-----------------------------------------------------------------------------
+//-- Groovy helper functions
+//-----------------------------------------------------------------------------
+
+/* download the required libraries for jasperreports from the official repositories and 
+   store them locally (also following redirect instructions) */
+def downloadRedirect( String url, String filename ) {
+  while( url ) {
+    new URL( url ).openConnection().with { conn ->
+      conn.instanceFollowRedirects = false
+      url = conn.getHeaderField( "Location" )      
+      if( !url ) {
+        new File( filename ).withOutputStream { out ->
+          conn.inputStream.with { inp ->
+            out << inp
+            inp.close()
+          }
+        }
+      }
+    }
+  }
+}
+
+/* download files without redirection */
+def download(String remoteUrl, String localUrl) {
+  new File("$localUrl").withOutputStream { out ->
+      new URL(remoteUrl).withInputStream { from ->  out << from; }
+  }
+}
+
+// a wrapper closure around executing a string                                  
+// can take either a string or a list of strings (for arguments with spaces)    
+// prints all output, complains and halts on error                              
+def runCommand = { strList ->
+/*
+  assert ( strList instanceof String ||
+           ( strList instanceof List && strList.each{ it instanceof String } ) \
+)
+*/
+  def proc = strList.execute()
+  proc.in.eachLine { line -> println line }
+  proc.out.close()
+  proc.waitFor()
+
+  print "[INFO] ( "
+  if(strList instanceof List) {
+    strList.each { print "${it} " }
+  } else {
+    print strList
+  }
+  println " )"
+
+  if (proc.exitValue()) {
+    println "gave the following error: "
+    println "[ERROR] ${proc.getErrorStream()}"
+  }
+  assert !proc.exitValue()
+}
+
+//-----------------------------------------------------------------------------
+//-- task definitions for JasperReportsIntegration
+//-----------------------------------------------------------------------------
+
+war {
+    archiveName = "${archivesBaseName}-${project.version}-${jasperreportsVersion}.war"
+
+    // replaces tokens in the respective files only for the assembly of the .war file:
+    // @project.version@ => 
+    // @jasperreports.version@ => 
+    filesMatching(["*.html", "*.jsp"]) {
+      filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])
+    }
+    
+    //from 'src/rootContent' // adds a file-set to the root of the archive
+    // all occurences of @project.version@ will be replaced with the current project version
+    from('src/doc/User-Documentation'){
+      into 'doc' 
+      //filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])
+    } 
+
+    //webInf { from 'src/additionalWebInf' }  // adds a file-set to the WEB-INF dir.
+    //classpath fileTree('additionalLibs') // adds a file-set to the WEB-INF/lib dir.
+    //classpath configurations.moreLibs // adds a configuration to the WEB-INF/lib dir.
+    //webXml = file('src/conf/web.xml') // copies a file to WEB-INF/web.xml
+    //webInf { from 'src/conf/weblogic.xml' }  // adds a file-set to the WEB-INF dir.
+}
+
+distZip.setArchiveName("${archivesBaseName}-${project.version}-${jasperreportsVersion}.zip")
+distTar.setArchiveName("${archivesBaseName}-${project.version}-${jasperreportsVersion}.tar")
+
+distributions {
+    main {
+        distributionBaseName = 'JasperReportsIntegration'
+        println 'getName:' + Distribution.getName()
+        contents {
+            from('src/apex'){into 'apex'}
+            from('src/sql'){into 'sql'}
+            from('src/shell-scripts'){exclude '*ConfigDir.*'
+                                      //exclude 'deploy*'  
+                                      into 'bin'}
+            from('src/conf/application.properties'){into 'conf'}
+            from('src/conf/log4j.properties'){into 'conf'}
+            from('src/doc/User-Documentation'){into 'doc' filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
+            from('src/doc/User-Documentation/Index-Distribution.html'){rename 'Index-Distribution.html', 'Index.html' }
+            from('src/reports'){into 'reports'}
+            from (war.outputs){into 'webapp' rename(war.archiveName , "JasperReportsIntegration.war")}
+
+            /*from (configurations.compile){
+              include(["commons-configuration-*.jar"
+                          , "commons-lang-*.jar" 
+                          , "commons-logging-*.jar"
+                          , "jasperreports-*.jar"])
+              into 'lib'
+            }*/
+
+            from ("lib/jasper-reports/$jasperreportsVersion"){include 'jasperreports*.jar' into 'lib'}
+            from (jar.outputs){into 'lib'}
+            from ('lib/additional'){into 'lib'}
+
+            // copy war file directly into jetty/webapps
+            // rather not, make zip distribution too large
+            //from (war.outputs){into 'jetty/webapps' rename(war.archiveName , "JasperReportsIntegration.war")}
+        }
+    }
+}
+println "\n***********************************************"
+println "Version: " + project.version
+println "Source-Compatibility: " + project.sourceCompatibility
+println "Project description: " + project.property("description")
+println "jasperreports version: " + jasperreportsVersion
+println "War file name: " + war.archiveName // this will pick up the modified name defined in war{}
+println "local environment OC_JASPER_CONFIG_HOME=" + System.getenv( "OC_JASPER_CONFIG_HOME")
+println "***********************************************\n\n"
+
+//-----------------------------------------------------------------------------
+//-- task definitions for developers
+//-- setting up the developer environment and downloading new JRI libraries 
+//-- for a new JasperReports release
+//-----------------------------------------------------------------------------
+
+/* create a local environment with configuration files and reports and logs for developers
+   Please register path in gradle.properties file */
+task jriCreateLocalEnvironment{
+  description = "create a local environment with configuration files and reports and logs. Please register path in gradle.properties file"
+
+  doLast{
+    println "Create local developer environment at jriLocalPath=" + jriLocalPath
+    file(jriLocalPath).mkdirs()
+
+    copy{from ('src/reports') into "$jriLocalPath/reports"}
+    copy{from ('src/main/dist/logs') into "$jriLocalPath/logs"}
+    copy{from ('src/conf/application.properties') into "$jriLocalPath/conf"}
+    copy{from ('src/conf/log4j.properties') into "$jriLocalPath/conf"}
+  }
+}
+
+task jriDownloadJasperLibraries{
+  description = "This will download the libraries for version $jasperreportsVersion to a local directory. Needs to be done only once when you upgrade to a new jasperreports version."
+
+  doLast{
+    def tempLocation    ="$project.projectDir/build/download/$jasperreportsVersion"
+    def tempLocation2   ="$tempLocation/jasperreports-$jasperreportsVersion"
+    def targetLocation  ="$project.projectDir/lib/jasper-reports/$jasperreportsVersion"
+    def baseURLJasper   ="https://sourceforge.net/projects/jasperreports/files/jasperreports/JasperReports%20${jasperreportsVersion}"
+
+    println " download files and install in target location: " + targetLocation
+
+    file(targetLocation).mkdirs()
+    file(tempLocation).mkdirs()
+
+    downloadRedirect( "$baseURLJasper/jasperreports-${jasperreportsVersion}-project.tar.gz", "$tempLocation/jasperreports.tar.gz")
+    downloadRedirect( "$baseURLJasper/jasperreports-chart-themes-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-themes.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-chart-customizers-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-customizers.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-functions-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-functions.jar")
+
+    // ungzip / untar files
+    copy {
+            from tarTree(resources.gzip("$tempLocation/jasperreports.tar.gz"))
+            into "$tempLocation"
+        }
+    // run build.xml file to download all libraries and build the jasperreport libraries
+    runCommand.call("ant -f $tempLocation2/build.xml retrievelibs")
+    runCommand.call("ant -f $tempLocation2/build.xml jar")
+
+    // copy all libraries to target location to: lib/jasper-reports/<version>
+    copy {
+            from "$tempLocation2"
+            from "$tempLocation2/dist"
+            from "$tempLocation2/dist/lib"
+            into "$targetLocation"
+            include "*.jar"
+            exclude "net.tascalate.asmx*jar"
+            exclude "net.tascalate.javaflow*jar"
+            exclude "testng*jar"
+    }
+  }
+}   
+
+

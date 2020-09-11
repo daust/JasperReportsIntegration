@@ -1,0 +1,383 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Chapter&nbsp;24.&nbsp;Ant and Jetty</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="jetty-dev-guide.html" title="Part&nbsp;IV.&nbsp;Jetty Development Guide"><link rel="prev" href="jetty-jspc-maven-plugin.html" title="Jetty Jspc Maven Plugin"><link rel="next" href="jetty-handlers.html" title="Chapter&nbsp;25.&nbsp;Handlers"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter&nbsp;24.&nbsp;Ant and Jetty</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jetty-jspc-maven-plugin.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Jetty Development Guide<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jetty-handlers.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="ant-and-jetty"></a>Chapter&nbsp;24.&nbsp;Ant and Jetty</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="ant-and-jetty.html#jetty-ant">Ant Jetty Plugin</a></span></dt></dl></div><p>This chapter explains how to use Jetty with Ant and the Jetty Ant tasks.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jetty-ant"></a>Ant Jetty Plugin</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="ant-and-jetty.html#jetty-ant-preparation">Preparing Your Project</a></span></dt><dt><span class="section"><a href="ant-and-jetty.html#_preparing_the_literal_build_xml_literal_file">Preparing the <code class="literal">build.xml</code> file</a></span></dt><dt><span class="section"><a href="ant-and-jetty.html#_starting_jetty_via_ant">Starting Jetty via Ant</a></span></dt><dt><span class="section"><a href="ant-and-jetty.html#_configuring_the_jetty_container">Configuring the Jetty Container</a></span></dt><dt><span class="section"><a href="ant-and-jetty.html#_deploying_a_web_application">Deploying a Web Application</a></span></dt></dl></div><p>The Ant Jetty plugin is a part of Jetty 9 under the <code class="literal">jetty-ant</code> module.
+This plugin makes it possible to start a Jetty web server directly from the Ant build script, and to embed the Jetty web server inside your build process.
+Its purpose is to provide almost the same functionality as the Jetty plugin for Maven: dynamic application reloading, working directly on web application sources, and tightly integrating with the build system.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;dependency&gt;
+   &lt;groupId&gt;org.eclipse.jetty&lt;/groupId&gt;
+   &lt;artifactId&gt;jetty-ant&lt;/artifactId&gt;
+ &lt;/dependency&gt;</code></pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jetty-ant-preparation"></a>Preparing Your Project</h3></div></div></div><p>To set up your project for Ant to run Jetty, you need a Jetty distribution and the jetty-ant Jar:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><a class="link" href="https://www.eclipse.org/jetty/download.html" target="_top">Download</a> a Jetty distribution and unpack it in the local filesystem.</li><li class="listitem"><a class="link" href="https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-ant/" target="_top">Get</a> the jetty-ant Jar.</li><li class="listitem">Make a directory in your project called <code class="literal">jetty-lib/</code>.</li><li class="listitem">Copy all of the Jars in your Jetty distribution&#8217;s <code class="literal">lib</code> directory, and all its subdirectories, into your new <code class="literal">jetty-lib</code> dir.
+When copying the Jars, <span class="emphasis"><em>don&#8217;t</em></span> preserve the Jetty distribution&#8217;s lib dir hierarchy &#8211; all the jars should be directly inside your ` jetty-lib` dir.</li><li class="listitem">Also copy the jetty-ant Jar you downloaded earlier into the <code class="literal">jetty-lib</code> dir.</li><li class="listitem">Make a directory in your project called <code class="literal">jetty-temp</code>.</li></ol></div><p>Now you&#8217;re ready to edit or create your Ant <code class="literal">build.xml</code> file.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_preparing_the_literal_build_xml_literal_file"></a>Preparing the <code class="literal">build.xml</code> file</h3></div></div></div><p>Begin with an empty <code class="literal">build.xml</code>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+&lt;/project&gt;</code></pre><p>Add a <code class="literal">&lt;taskdef&gt;</code> that imports all available Jetty tasks:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+     &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+  &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+&lt;/project&gt;</code></pre><p>Now you are ready to add a new target for running Jetty:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+  &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run /&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre><p>This is the minimal configuration you need. You can now start Jetty on the default port of 8080.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_starting_jetty_via_ant"></a>Starting Jetty via Ant</h3></div></div></div><p>At the command line enter:</p><div class="screenexample"><pre class="screen">&gt; ant jetty.run</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_configuring_the_jetty_container"></a>Configuring the Jetty Container</h3></div></div></div><p>A number of configuration options can help you set up the Jetty environment so that your web application has all the resources it needs:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">ports and connectors</span></dt><dd><p class="simpara">To configure the port that Jetty starts on you need to define a connector.
+First you need to configure a <code class="literal">&lt;typedef&gt;</code> for the Connector class and then define the connector in the Jetty tags:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+  &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;typedef name="connector" classname="org.eclipse.jetty.ant.types.Connector"
+           classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;connectors&gt;
+        &lt;connector port="8090"/&gt;
+      &lt;/connectors&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Tip</h3><p>You can set the port to 0, which starts the Jetty server connector on an arbitrary available port.
+You can then access these values from system properties <code class="literal">jetty.ant.server.port</code> and <code class="literal">jetty.ant.server.host</code>.</p></div></blockquote></div></dd><dt><span class="term">login services</span></dt><dd><p class="simpara">If your web application requires authentication and authorization services, you can configure these on the Jetty container.
+Here&#8217;s an example of how to set up an <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/security/HashLoginService.html" target="_top">org.eclipse.jetty.security.HashLoginService</a>:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="hashLoginService" classname="org.eclipse.jetty.security.HashLoginService"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;loginServices&gt;
+        &lt;hashLoginService name="Test Realm" config="${basedir}/realm.properties"/&gt;
+      &lt;/loginServices&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">request log</span></dt><dd><p class="simpara">The <code class="literal">requestLog</code> option allows you to specify a request logger for the Jetty instance.
+You can either use the <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/server/NCSARequestLog.html" target="_top">org.eclipse.jetty.server.NCSARequestLog</a> class, or supply the name of your custom class:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run requestLog="com.acme.MyFancyRequestLog"&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">temporary directory</span></dt><dd><p class="simpara">You can configure a directory as a temporary file store for uses such as expanding files and compiling JSPs by supplying the <code class="literal">tempDirectory</code> option:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run tempDirectory="${basedir}/jetty-temp"&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">other context handlers</span></dt><dd><p class="simpara">You may need to configure some other context handlers to run at the same time as your web application.
+You can specify these other context handlers using the <code class="literal">&lt;contextHandlers&gt;</code> element.
+You need to supply a <code class="literal">&lt;typedef&gt;</code> for it before you can use it:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath"
+          resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="contextHandlers" classname="org.eclipse.jetty.ant.types.ContextHandlers"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+     &lt;contextHandlers&gt;
+       &lt;contextHandler resourceBase="${basedir}/stuff" contextPath="/stuff"/&gt;
+     &lt;/contextHandlers&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">system properties</span></dt><dd><p class="simpara">As a convenience, you can configure system properties by using the <code class="literal">&lt;systemProperties&gt;</code> element.
+Be aware that, depending on the purpose of the system property, setting it from within the Ant execution may mean that it is evaluated too late, as the JVM evaluates some system properties on entry.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;systemProperties&gt;
+        &lt;systemProperty name="foo" value="bar"/&gt;
+      &lt;/systemProperties&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">jetty XML file</span></dt><dd><p class="simpara">If you have a lot of configuration to apply to the Jetty container, it can be more convenient to put it into a standard Jetty XML configuration file and have the Ant plugin apply it before starting Jetty:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run jettyXml="${basedir}/jetty.xml"&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">scanning for changes</span></dt><dd><p class="simpara">The most useful mode in which to run the Ant plugin is for it to continue to execute Jetty and automatically restart your web application if any part of it changes (for example, your IDE
+recompiles the classes of the web application).
+The <code class="literal">scanIntervalSeconds</code> option controls how frequently the <code class="literal">&lt;jetty.run&gt;</code> task scans your web application/WAR file for changes.
+The default value of <code class="literal">0</code> disables scanning. Here&#8217;s an example where Jetty checks for changes every five seconds:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run scanIntervalSeconds="5"&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">stopping</span></dt><dd><p class="simpara">In normal mode (<code class="literal">daemon="false"</code>), the <code class="literal">&lt;jetty.run&gt;</code> task runs until you <code class="literal">cntrl-c</code> it. It may be useful to script both the stop AND the start of Jetty.
+For such a case, we provide the <code class="literal">&lt;jetty.stop&gt;</code> task.
++
+To use it, you need to provide a port and an identifying string to both the ` &lt;jetty.run&gt;` and the <code class="literal">&lt;jetty.stop&gt;</code> tasks, where <code class="literal">&lt;jetty.run&gt;</code> listens on the given port for a stop message containing the given string, and cleanly stops Jetty when it is received.
+The <code class="literal">&lt;jetty.stop&gt;</code> task sends this stop message.
+You can also optionally provide a <code class="literal">stopWait</code> value (in seconds), which is the length of time the <code class="literal">&lt;jetty.stop&gt;</code> task waits for confirmation that the stop succeeded:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run stopPort="9999" stopKey="9999"&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+  &lt;target name="jetty.stop"&gt;
+   &lt;jetty.stop stopPort="9999" stopKey="9999" stopWait="10"/&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre><p class="simpara">To stop jetty via Ant, enter:</p><div class="screenexample"><pre class="screen">&gt; ant jetty.stop</pre></div></dd><dt><span class="term">execution without pausing ant</span></dt><dd><p class="simpara">Usually, the <code class="literal">&lt;jetty.run&gt;</code> task runs until you <code class="literal">cntrl-c</code> it, pausing the execution of Ant as it does so. In some cases, it may be useful to let Ant continue executing.
+For example, to run your unit tests you may need other tasks to execute while Jetty is running.
+For this case, we provide the <code class="literal">daemon</code> option.
+This defaults to <code class="literal">false</code>. For <code class="literal">true</code>, Ant continues to execute after starting Jetty.
+If Ant exits, so does Jetty. Understand that this option does <span class="emphasis"><em>not</em></span> fork a new process for Jetty.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run daemon="true"&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_deploying_a_web_application"></a>Deploying a Web Application</h3></div></div></div><p>Add a <code class="literal">&lt;typedef&gt;</code> for the <code class="literal">org.eclipse.jetty.ant.AntWebAppContext</code> class with name <span class="emphasis"><em>webApp</em></span>, then add a <code class="literal">&lt;webApp&gt;</code> element to <code class="literal">&lt;jetty.run&gt;</code> to describe your web application.
+The following example deploys a web application that is expanded in the local directory <code class="literal">foo/</code> to context path ` / `:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="webApp" classname="org.eclipse.jetty.ant.AntWebAppContext"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;webApp war="${basedir}/foo" contextPath="/"/&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre><div class="variablelist"><dl class="variablelist"><dt><span class="term">deploying a WAR file</span></dt><dd><p class="simpara">It is not necessary to expand the web application into a directory.
+It is fine to deploy it as a WAR file:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="webApp" classname="org.eclipse.jetty.ant.AntWebAppContext"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;webApp war="${basedir}/foo.war" contextPath="/"/&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">deploying more than one web application</span></dt><dd><p class="simpara">You can also deploy more than one web application:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="webApp" classname="org.eclipse.jetty.ant.AntWebAppContext"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;webApp war="${basedir}/foo.war" contextPath="/"/&gt;
+      &lt;webApp war="${basedir}/other    contextPath="/other"/&gt;
+      &lt;webApp war="${basedir}/bar.war" contextPath="/bar"/&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd></dl></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_configuring_the_web_application"></a>Configuring the Web Application</h4></div></div></div><p>As the <code class="literal">org.eclipse.jetty.ant.AntWebAppContext</code> class is an extension of
+the
+<a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/webapp/WebAppContext.html" target="_top"><code class="literal">org.eclipse.jetty.webapp.WebAppContext</code></a>
+class, you can configure it by adding attributes of the same name
+(without the <code class="literal">set</code> or <code class="literal">add</code> prefix) as the setter methods.</p><p>Here&#8217;s an example that specifies the location of the <code class="literal">web.xml</code> file (equivalent to method <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/webapp/WebAppContext.html#setDescriptor%28java.lang.String%29" target="_top"><code class="literal">AntWebAppContext.setDescriptor()</code></a>) and the web application&#8217;s temporary directory (equivalent to method <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/webapp/WebAppContext.html#setTempDirectory%28java.io.File%29" target="_top"><code class="literal">AntWebAppContext.setTempDirectory()</code></a>):</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="webApp" classname="org.eclipse.jetty.ant.AntWebAppContext"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;webApp descriptor="${basedir}/web.xml" tempDirectory="${basedir}/my-temp" war="${basedir}/foo" contextPath="/"/&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre><p>Other extra configuration options for the AntWebAppContext include:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">extra classes and Jars</span></dt><dd><p class="simpara">If your web application&#8217;s classes and Jars do not reside inside <code class="literal">WEB-INF</code> of the resource base directory, you can use the &lt;classes&gt; and &lt;jar&gt; elements to tell Ant where to find them. Here&#8217;s an example:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="webApp" classname="org.eclipse.jetty.ant.AntWebAppContext"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;webApp descriptor="${basedir}/web.xml" tempDirectory="${basedir}/my-temp" war="${basedir}/foo" contextPath="/"&gt;
+        &lt;classes dir="${basedir}/classes"&gt;
+          &lt;include name="**/*.class"/&gt;
+          &lt;include name="**/*.properties"/&gt;
+        &lt;/classes&gt;
+        &lt;lib dir="${basedir}/jars"&gt;
+          &lt;include name="**/*.jar"/&gt;
+          &lt;exclude name="**/*.dll"/&gt;
+        &lt;/lib&gt;
+      &lt;/webApp&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">context attributes</span></dt><dd><p class="simpara">Jetty allows you to set up ServletContext attributes on your web application.
+You configure them in a context XML file that is applied to your WebAppContext instance prior to starting it.
+For convenience, the Ant plugin permits you to configure these directly in the build file.
+Here&#8217;s an example:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="webApp" classname="org.eclipse.jetty.ant.AntWebAppContext"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;webApp war="${basedir}/foo" contextPath="/"&gt;
+        &lt;attributes&gt;
+          &lt;attribute name="my.param" value="123"/&gt;
+        &lt;/attributes&gt;
+      &lt;/webApp&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term"><code class="literal">jetty-env.xml</code> file</span></dt><dd><p class="simpara">If you are using features such as JNDI with your web application, you may need to configure a <code class="literal">WEB-INF/jetty-env.xml</code> file to define resources. If the structure of your web application project is such that the source of <code class="literal">jetty-env.xml</code> file resides somewhere other than <code class="literal">WEB-INF</code>, you can use the <code class="literal">jettyEnvXml</code> attribute to tell Ant where to find it:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="webApp" classname="org.eclipse.jetty.ant.AntWebAppContext"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;webApp war="${basedir}/foo" contextPath="/" jettyEnvXml="${basedir}/jetty-env.xml"&gt;
+        &lt;attributes&gt;
+      &lt;/webApp&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd><dt><span class="term">context XML file</span></dt><dd><p class="simpara">You may prefer or even require to do some advanced configuration of your web application outside of the Ant build file.
+In this case, you can use a standard context XML configuration file which the Ant plugin applies to your web application before it is deployed.
+Be aware that the settings from the context XML file <span class="emphasis"><em>override</em></span> those of the attributes and nested elements you defined in the build file.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>project name="Jetty-Ant integration test" basedir="."&gt;
+
+  &lt;path id="jetty.plugin.classpath"&gt;
+    &lt;fileset dir="jetty-lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+ &lt;taskdef classpathref="jetty.plugin.classpath" resource="tasks.properties" loaderref="jetty.loader" /&gt;
+
+ &lt;typedef name="webApp" classname="org.eclipse.jetty.ant.AntWebAppContext"
+          classpathref="jetty.plugin.classpath" loaderref="jetty.loader" /&gt;
+
+  &lt;target name="jetty.run"&gt;
+    &lt;jetty.run&gt;
+      &lt;webApp war="${basedir}/foo" contextPath="/" contextXml="${basedir}/jetty-env.xml"&gt;
+        &lt;attributes&gt;
+      &lt;/webApp&gt;
+    &lt;/jetty.run&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;</code></pre></dd></dl></div></div></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jetty-jspc-maven-plugin.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="jetty-dev-guide.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jetty-handlers.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Jetty Jspc Maven Plugin&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;25.&nbsp;Handlers</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

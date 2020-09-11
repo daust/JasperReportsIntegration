@@ -1,0 +1,79 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Common Continuation Patterns</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="continuations.html" title="Chapter&nbsp;28.&nbsp;Continuations"><link rel="prev" href="continuations-using.html" title="Using Continuations"><link rel="next" href="frameworks.html" title="Chapter&nbsp;29.&nbsp;Frameworks"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Common Continuation Patterns</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="continuations-using.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;28.&nbsp;Continuations<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="frameworks.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="continuations-patterns"></a>Common Continuation Patterns</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="continuations-patterns.html#_suspend_resume_pattern">Suspend Resume Pattern</a></span></dt><dt><span class="section"><a href="continuations-patterns.html#_suspend_continue_pattern">Suspend Continue Pattern</a></span></dt><dt><span class="section"><a href="continuations-patterns.html#_examples">Examples</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_suspend_resume_pattern"></a>Suspend Resume Pattern</h3></div></div></div><p>The suspend/resume style is used when a servlet and/or filter is used to generate the response after an asynchronous wait that is terminated by an asynchronous handler.
+Typically a request attribute is used to pass results and to indicate if the request has already been suspended.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>void doGet(HttpServletRequest request, HttpServletResponse response)
+{
+     // if we need to get asynchronous results
+     Object results = request.getAttribute("results");
+     if (results==null)
+     {
+       final Continuation continuation = ContinuationSupport.getContinuation(request);
+
+       // if this is not a timeout
+       if (continuation.isExpired())
+       {
+         sendMyTimeoutResponse(response);
+         return;
+       }
+
+       // suspend the request
+       continuation.suspend(); // always suspend before registration
+
+       // register with async service.  The code here will depend on the
+       // the service used (see Jetty HttpClient for example)
+       myAsyncHandler.register(new MyHandler()
+       {
+          public void onMyEvent(Object result)
+          {
+            continuation.setAttribute("results",results);
+            continuation.resume();
+          }
+       });
+       return; // or continuation.undispatch();
+     }
+
+     // Send the results
+     sendMyResultResponse(response,results);
+}</code></pre><p>This style is very good when the response needs the facilities of the servlet container (e.g., it uses a web framework) or if one event may resume many requests so the container&#8217;s thread pool can be used to handle each of them.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_suspend_continue_pattern"></a>Suspend Continue Pattern</h3></div></div></div><p>The suspend/complete style is used when an asynchronous handler is used to generate the response:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>void doGet(HttpServletRequest request, HttpServletResponse response)
+{
+     final Continuation continuation = ContinuationSupport.getContinuation(request);
+
+     // if this is not a timeout
+     if (continuation.isExpired())
+     {
+       sendMyTimeoutResponse(request,response);
+       return;
+     }
+
+     // suspend the request
+     continuation.suspend(); // response may be wrapped.
+
+     // register with async service.  The code here will depend on the
+     // the service used (see Jetty HttpClient for example)
+     myAsyncHandler.register(new MyHandler()
+     {
+       public void onMyEvent(Object result)
+       {
+         sendMyResultResponse(continuation.getServletResponse(),results);
+         continuation.complete();
+       }
+     });
+}</code></pre><p>This style is very good when the response does not need the facilities of the servlet container (e.g., it does not use a web framework) and if an event will resume only one continuation.
+If many responses are to be sent (e.g., a chat room), then writing one response may block and cause a DOS on the other responses.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_examples"></a>Examples</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">The <a class="link" href="https://github.com/eclipse/jetty.project/blob/jetty-8/test-jetty-webapp/src/main/java/com/acme/ChatServlet.java" target="_top">ChatServlet example</a> shows how the suspend/resume style can be used to directly code a chat room (See similar <a class="link" href="https://github.com/eclipse/jetty.project/blob/master/tests/test-webapps/test-jetty-webapp/src/main/java/com/acme/ChatServlet.java" target="_top">example</a> using Async Servlets).
+The same principles are applied to frameworks like <a class="link" href="http://cometd.org/" target="_top">cometd</a> which provide an richer environment for such applications, based on Continuations.</li><li class="listitem"><p class="simpara">The <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/servlets/QoSFilter.html" target="_top">QoSFilter</a> uses suspend/resume style to limit the number of requests simultaneously within the filter.
+This can be used to protect a JDBC connection pool or other limited resource from too many simultaneous requests.</p><p class="simpara">If too many requests are received, the extra requests wait for a short time on a semaphore, before being suspended.
+As requests within the filter return, they use a priority queue to resume the suspended requests.
+This allows your authenticated or priority users to get a better share of your server&#8217;s resources when the machine is under load.</p></li><li class="listitem"><p class="simpara">The <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/servlets/DoSFilter.html" target="_top">DosFilter</a> is similar to the QoSFilter, but protects a web application from a denial of service attack, as much as is possible from within a web application.</p><p class="simpara">If too many requests are detected coming from one source, then those requests are suspended and a warning generated.
+This works on the assumption that the attacker may be written in simple blocking style, so by suspending you are hopefully consuming their resources. True protection from DOS can only be achieved by network devices (or eugenics :)).</p></li><li class="listitem">The <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/proxy/ProxyServlet.html" target="_top">ProxyServlet</a> uses the suspend/complete style and the Jetty asynchronous HTTP client to implement a scalable Proxy server (or transparent proxy).</li></ul></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="continuations-using.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="continuations.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="frameworks.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Using Continuations&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;29.&nbsp;Frameworks</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

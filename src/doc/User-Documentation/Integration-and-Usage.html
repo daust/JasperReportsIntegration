@@ -1,0 +1,468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <!---- COMMON START -------------------------->
+    <link href="image/template_css.css" rel="stylesheet" type="text/css"
+      media="screen">
+    <link href="image/jsn_layout.css" rel="stylesheet" type="text/css"
+      media="screen">
+    <link href="image/jsn_typography.css" rel="stylesheet"
+      type="text/css" media="screen">
+    <link href="image/jsn_style.css" rel="stylesheet" type="text/css"
+      media="screen">
+    <link href="image/jasper-integration.css" rel="stylesheet"
+      type="text/css" media="screen">
+    <!--[if lte IE 6]>
+
+<link href="/i/themes/theme_oc/css/jsn_fixie6.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+
+img { behavior: url(image/iepngfix.htc); }
+
+</style><!--[endif]--><!--[if lte IE 7]>
+
+<script type="text/javascript" src="image/suckerfish.js"></script>
+
+<![endif]--><!--[if IE 7]>
+
+<link href="image/jsn_fixie7.css" rel="stylesheet" type="text/css" />
+
+<![endif]-->
+    <link rel="stylesheet" href="image/oc.css" type="text/css">
+    <!---- COMMON END -------------------------->
+    <title>JasperReportsIntegration - Integration and Usage</title>
+    <style>
+.myTable {
+margin-left: 5px;
+margin-right: 5px;
+width:95%;
+/*border: thin solid #000000;*/
+border-collapse:collapse;
+}
+.myTable td, .myTable th{ border: 1px solid black;
+padding: 2px;
+}
+.myTable th{ background-color:#CCCCCC;
+}
+  </style>
+  </head>
+  <body>
+    <div class="moduletable-plain header-arrow">
+      <h2>Integration and Usage</h2>
+      <h3>Call Interface</h3>
+      <p>The package <span class="formattedCode">XLIB_JASPERREPORTS</span>
+        is the interface which accepts the parameters, generates the url
+        and
+        calls the integration on the locally installed J2EE server. </p>
+      <p>e.g.: </p>
+      <div class="formattedCode" style="width: 90%; margin-left: 25px;">
+        <p>declare<br>
+          &nbsp;&nbsp;&nbsp; l_additional_parameters varchar2(32767);<br>
+          <meta charset="utf-8">
+        </p>
+        <p>begin<br>
+          &nbsp;&nbsp;&nbsp;
+xlib_jasperreports.set_report_url('http://localhost:8080/JasperReportsIntegration/report');<br>
+        </p>
+        <p>&nbsp;&nbsp;&nbsp; -- construct addional parameter list<br>
+          &nbsp;&nbsp;&nbsp; l_additional_parameters := 'parameter1=' ||
+          apex_util.url_encode(:p1_filter_object_name);<br>
+          &nbsp;&nbsp;&nbsp; l_additional_parameters :=
+          l_additional_parameters || '&amp;parameter2=' ||
+          apex_util.url_encode(:p1_filter_object_type);<br>
+        </p>
+        <p>
+          <meta charset="utf-8">
+        </p>
+        <p>&nbsp;&nbsp;&nbsp; -- call the J2EE application and display
+          the returned file <br>
+          &nbsp;&nbsp;&nbsp; xlib_jasperreports.show_report (p_rep_name
+          =&gt; :p5_rep_name,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_rep_format&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          =&gt; :p5_rep_format,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_data_source&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          =&gt; :p5_data_source,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_out_filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt;
+          :p5_out_filename,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_rep_locale&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          =&gt; :p5_rep_locale,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_rep_encoding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt;
+          :p5_rep_encoding,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_additional_params&nbsp;&nbsp; =&gt; l_additional_parameters,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_print_is_enabled&nbsp;&nbsp;&nbsp; =&gt; case when
+          :p5_print_is_enabled='1' then true else false end,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_print_printer_name&nbsp; =&gt; :p5_print_printer_name,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_print_media&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          =&gt; :p5_print_media,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_print_copies&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt;
+          :p5_print_copies,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_print_duplex&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt;
+          case when :p5_print_duplex='1' then true else false end,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_print_collate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt; case
+          when :p5_print_collate='1' then true else false end,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_save_is_enabled&nbsp;&nbsp;&nbsp;&nbsp; =&gt; case when
+          :p5_save_is_enabled='1' then true else false end,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_save_filename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt;
+          :p5_save_filename,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          p_rep_time_zone&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =&gt;
+          :p5_rep_time_zone<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<br>
+          <br>
+          &nbsp;&nbsp;&nbsp; -- stop rendering of the current APEX page
+          (APEX version up until version 4.0)<br>
+          &nbsp;&nbsp;&nbsp; -- apex_application.stop_apex_engine;<br>
+          &nbsp;&nbsp;&nbsp; -- stop rendering of the current APEX page
+          (APEX version 4.1 and higher)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;apex_application.stop_apex_engine;<br>
+          end;</p>
+      </div>
+      <p><br>
+        Here is a description of the input parameters: </p>
+      <table class="myTable" border="0">
+        <tbody>
+          <tr>
+            <th>parameter</th>
+            <th>description</th>
+            <th>default value </th>
+            <th>required?</th>
+          </tr>
+          <tr>
+            <td>p_rep_name<br>
+            </td>
+            <td>name of the report (needs a name.jasper file deployed on
+              the server)</td>
+            <td>test</td>
+            <td>
+              <div align="center">*</div>
+            </td>
+          </tr>
+          <tr>
+            <td>p_rep_format<br>
+            </td>
+            <td>format of the generated format: see constants in package
+              XLIB_JASPERREPORTS, e.g. pdf, html, html2, rtf, xls, jxl,
+              csv, xlsx,
+              pptx or docx</td>
+            <td>pdf</td>
+            <td>
+              <div align="center">*</div>
+            </td>
+          </tr>
+          <tr>
+            <td>p_data_source</td>
+            <td>data source name, needs to be configured
+              application.poperties file<br>
+            </td>
+            <td>default</td>
+            <td>
+              <div align="center">*</div>
+            </td>
+          </tr>
+          <tr>
+            <td>p_out_filename</td>
+            <td>a filename can be specified for the download for the
+              "save
+              as" dialog </td>
+            <td>&nbsp;</td>
+            <td>
+              <div align="center">&nbsp; </div>
+            </td>
+          </tr>
+          <tr>
+            <td>p_rep_locale</td>
+            <td>
+              <p>Locale string (e.g. de_DE or en_US), composed of the <br>
+                <a
+                  href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt"
+                  target="_blank">ISO language code</a> and <br>
+                <a
+                  href="http://www.chemie.fu-berlin.de/diverse/doc/ISO_3166.html"
+                  target="_blank">ISO country code</a> </p>
+            </td>
+            <td>de_DE</td>
+            <td>
+              <div align="center">&nbsp; </div>
+            </td>
+          </tr>
+          <tr>
+            <td>p_rep_encoding<br>
+            </td>
+            <td>
+              <p>the "charset" parameter for the content_type, a list of
+                valid
+                entries can be found <a
+                  href="http://www.iana.org/assignments/character-sets"
+                  target="_blank">here</a>. <br>
+                E.g.: ISO-8859-15, UTF-8, Windows-1252 </p>
+            </td>
+            <td>UTF-8</td>
+            <td>
+              <div align="center">&nbsp; </div>
+            </td>
+          </tr>
+          <tr>
+            <td>p_additional_parameters </td>
+            <td>all parameters are passed directly to the report
+              (excluding
+              the the internal ones (prefixed with "_", e.g.:
+              p1=1&amp;p2=2)</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">p_print_is_enabled<br>
+            </td>
+            <td style="vertical-align: top;">shall the report be sent to
+              the printer directly?<br>
+            </td>
+            <td style="vertical-align: top;">false<br>
+            </td>
+            <td style="vertical-align: top;"><br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">p_print_printer_name<br>
+            </td>
+            <td valign="top">name of the printer (only when
+              p_print_is_enabled=true)<br>
+            </td>
+            <td valign="top"><br>
+            </td>
+            <td valign="top"><br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">p_print_media<br>
+            </td>
+            <td valign="top">media used, either the paper size or the
+              tray (only when p_print_is_enabled=true)</td>
+            <td valign="top"><br>
+            </td>
+            <td valign="top"><br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">p_print_copies<br>
+            </td>
+            <td valign="top">number of copies to be printed (only when
+              p_print_is_enabled=true)</td>
+            <td valign="top"><br>
+            </td>
+            <td valign="top"><br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">p_print_duplex<br>
+            </td>
+            <td valign="top">duplex printing? (only when
+              p_print_is_enabled=true)</td>
+            <td valign="top"><br>
+            </td>
+            <td valign="top"><br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">p_print_collate<br>
+            </td>
+            <td valign="top">sorting the print output? (only when
+              p_print_is_enabled=true)</td>
+            <td valign="top"><br>
+            </td>
+            <td valign="top"><br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">p_save_is_enabled<br>
+            </td>
+            <td valign="top">shall the generated file be saved on the
+              application server, too?<br>
+            </td>
+            <td valign="top"><br>
+            </td>
+            <td valign="top"><br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">p_save_filename<br>
+            </td>
+            <td valign="top">fully specified path to the filename where
+              the output should be saved on the server (only when
+              p_save_is_enabled=true)</td>
+            <td valign="top"><br>
+            </td>
+            <td valign="top"><br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">p_rep_time_zone<br>
+            </td>
+            <td valign="top">"time zone" parameter for the execution of
+              the report, <br>
+              a list of valid entries can be found here: <a
+                href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
+                target="_blank">https://en.wikipedia.org/wiki/List_of_tz_database_time_zones</a><br>
+              e.g.: Europe/Berlin, UCT, US/Central, US/Pacific,
+              Etc/Greenwich, Europe/London<br>
+            </td>
+            <td valign="top"><br>
+            </td>
+            <td valign="top"><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <h3>Deployment of reports</h3>
+      <p>The report files will have to be stored on the application
+        server.
+        Copy
+        the compiled version (<span class="formattedCode">report.jasper</span>)
+        of your report definition file (<span class="formattedCode">test.jrxml</span>)
+        into the
+        directory <span class="formattedCode">OC_JASPER_CONFIG_HOME/reports/</span>.
+        <br>
+      </p>
+      <p>You can also create subdirectories to organize your reports.
+        For
+        example if you have different reports in your application
+        application1
+        for sales and for controlling: <br>
+      </p>
+      <ol>
+        <li>reports/test.jasper</li>
+        <li>reports/application1/sales/sales-report.jasper</li>
+        <li>reports/application1/controlling/controlling-report.jasper</li>
+      </ol>
+      You would use as a p_rep_name the following values: <br>
+      <ol>
+        <li>p_rep_name =&gt; 'test'</li>
+        <li>p_rep_name =&gt; 'application1/sales/sales-report'</li>
+        <li>p_rep_name =&gt;
+          'application1/controlling/controlling-report'</li>
+      </ol>
+      <h3>Input parameter for the reports </h3>
+      <p>You can specify input parameters for the reports and use them
+        as a
+        filter. <strong>They have to be defined as <span
+            class="formattedCode">STRING</span></strong>,
+        they cannot be number or any other data type. This is due to how
+        the
+        integration calls the reports. See the report <span
+          class="formattedCode">demo/orders.jrxml</span> or <span
+          class="formattedCode">demo/top_orders.jrxml</span> as a
+        sample. Both
+        use the input parameter <span class="formattedCode">pAppUser</span>
+        for filtering the data set.<br>
+      </p>
+      <h3>Configuration of export properties&nbsp; </h3>
+      <p>You can control the behaviour when exporting the report into
+        the
+        different report formats like&nbsp;pdf, html, rtf, xls, jxl,
+        csv, xlsx,
+        pptx or docx.&nbsp;</p>
+      You can find the configuration reference at:<br>
+      <br>
+      <a
+href="http://jasperforge.org/uploads/publish/jasperreportswebsite/trunk/config.reference.html">http://jasperforge.org/uploads/publish/jasperreportswebsite/trunk/config.reference.html<br>
+      </a><br>
+      There are two ways how to set export properties.<br>
+      <br>
+      1. Global export configuration properties<br>
+      =========================================<br>
+      JasperReports will load the "<span class="formattedCode">jasperreports.properties</span>"
+      from classpath. <br>
+      <br>
+      In case you are using Tomcat, the properties file can be placed in
+      this
+      <br>
+      directory (it will be initially installed here anyway):<br>
+      &nbsp;&nbsp;&nbsp; <br>
+      &nbsp;&nbsp;&nbsp;<span class="formattedCode">
+$TOMCAT_HOME/webapps/JasperReportsIntegration/WEB-INF/classes/jasperreports.properties</span><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br>
+      Example <span class="formattedCode">jasperreports.properties</span>:<br>
+--------------------------------------------------------------------------------<br>
+      <div class="formattedCode" style="width: 90%; margin-left: 25px;">
+        #<br>
+        # You can find all possible configuration parameters here: <br>
+        #
+http://jasperforge.org/uploads/publish/jasperreportswebsite/trunk/config.reference.html<br>
+        #<br>
+        <br>
+        # general export properties<br>
+        #net.sf.jasperreports.export.ignore.page.margins=true<br>
+        <br>
+        # docx export properties<br>
+        net.sf.jasperreports.export.docx.frames.as.nested.tables=true<br>
+        <br>
+        # xls export properties (also for xlsx)<br>
+        net.sf.jasperreports.export.xls.white.page.background=true<br>
+        net.sf.jasperreports.export.xls.one.page.per.sheet=true<br>
+#net.sf.jasperreports.export.xls.remove.empty.space.between.columns=true<br>
+#net.sf.jasperreports.export.xls.remove.empty.space.between.rows=true<br>
+        <br>
+        # csv export properties<br>
+        net.sf.jasperreports.csv.field.delimiter=\t<br>
+        <br>
+        # html export properties<br>
+        net.sf.jasperreports.export.html.output.images.to.dir=true<br>
+        net.sf.jasperreports.export.html.images.dir=/reports/tmp<br>
+net.sf.jasperreports.export.html.output.images.uri=/JasperReportsIntegration/reports/tmp/<br>
+        <br>
+      </div>
+--------------------------------------------------------------------------------<br>
+      <br>
+      2. Individual export configuration properties per report<br>
+      ========================================================<br>
+      Properties can also be set in the jrxml file for each individual
+      report. Therefore it is possible to use<br>
+      different sets of properties for one JasperReportsIntegretion
+      instance,
+      because<br>
+      all necessary properties are set in the compiled jasper file.<br>
+      <br>
+      Example<br>
+--------------------------------------------------------------------------------<br>
+      <div class="formattedCode" style="width: 90%; margin-left: 25px;">
+        &lt;jasperReport
+        xmlns="http://jasperreports.sourceforge.net/jasperreports" <br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        &nbsp;&nbsp;&nbsp; isSummaryNewPage="true"
+        isIgnorePagination="true"&gt;<br>
+        &nbsp;&nbsp;&nbsp; …<br>
+        &nbsp;&nbsp;&nbsp; <br>
+        &nbsp;&nbsp;&nbsp; &lt;property
+        name="net.sf.jasperreports.export.xls.white.page.background" <br>
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; value="false"/&gt;<br>
+        &lt;/jasperReport&gt;<br>
+      </div>
+--------------------------------------------------------------------------------<br>
+      <br>
+      You can find the configuration settings in iReport in the
+      properties
+      view of the report (root node)<br>
+      <br>
+      <span style="font-weight: bold;"> Individual report settings will
+        always override global settings.</span><br>
+      <br>
+    </div>
+  </body>
+</html>

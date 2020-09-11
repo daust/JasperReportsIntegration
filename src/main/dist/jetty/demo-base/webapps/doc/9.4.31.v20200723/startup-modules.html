@@ -1,0 +1,1037 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Managing Startup Modules</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="startup.html" title="Chapter&nbsp;9.&nbsp;Starting Jetty"><link rel="prev" href="startup-classpath.html" title="Managing Server Classpath"><link rel="next" href="custom-modules.html" title="Custom Modules"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Managing Startup Modules</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="startup-classpath.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;9.&nbsp;Starting Jetty<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="custom-modules.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="startup-modules"></a>Managing Startup Modules</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="startup-modules.html#enabling-modules">Enabling Modules</a></span></dt><dt><span class="section"><a href="startup-modules.html#start-vs-startd">Start.ini vs. Start.d</a></span></dt><dt><span class="section"><a href="startup-modules.html#startup-configuring-modules">Configuring Modules</a></span></dt><dt><span class="section"><a href="startup-modules.html#startup-disable-module">Disabling Modules</a></span></dt><dt><span class="section"><a href="startup-modules.html#startup-listing-modules">Listing Available and Active Modules</a></span></dt></dl></div><p>The standard Jetty Distribution ships with several modules defined in <code class="literal">${jetty.home}/modules/</code>.
+Modules interact with Jetty XML files to configure options and parameters for the server and are the primary configuration method for Jetty distributions.
+Modules allow flexibility for implementations and their plug-and-play nature makes adding or removing server functionality virtually painless.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="enabling-modules"></a>Enabling Modules</h3></div></div></div><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Tip</h3><p>The default distribution has a co-mingled <code class="literal">${jetty.home}</code> and <code class="literal">${jetty.base}</code> where the directories for <code class="literal">${jetty.home}</code> and <code class="literal">${jetty.base}</code> point to the same location.
+It is highly encouraged that you learn about the differences in <a class="link" href="startup-base-and-home.html" title="Managing Jetty Base and Jetty Home">Jetty Base vs Jetty Home</a> and take full advantage of this setup.</p></div></blockquote></div><p>Enabling a module is a simple process: simply add the <code class="literal">--add-to-start=&lt;module-name1&gt;,&lt;module-name2&gt;,...etc.</code> syntax on the command line.
+Doing this will enable the specified module and any dependent modules.</p><p>An example of this with a new, empty, base directory:</p><p>If we try to start the Jetty server with no configuration or modules enabled, it will promptly exit:</p><div class="screenexample"><pre class="screen">[jetty]$ mkdir mybase
+[jetty]$ cd mybase
+[mybase]$ ls -la
+total 0
+drwxr-xr-x   2 staff  staff   68 Jul 12 17:29 .
+drwxr-xr-x  20 staff  staff  680 Jul 12 17:29 ..
+
+[mybase]$ java -jar $JETTY_HOME/start.jar
+WARNING: Nothing to start, exiting ...
+
+Usage: java -jar start.jar [options] [properties] [configs]
+       java -jar start.jar --help  # for more information</pre></div><p>By using the <code class="literal">--list-config</code> parameter to our startup command, we can see that there are no modules enabled and no Jetty XML files are active:</p><div class="screenexample"><pre class="screen">[mybase]$ java -jar $JETTY_HOME/start.jar --list-config
+
+Java Environment:
+-----------------
+ java.home = /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre
+ java.vm.vendor = Oracle Corporation
+ java.vm.version = 25.92-b14
+ java.vm.name = Java HotSpot(TM) 64-Bit Server VM
+ java.vm.info = mixed mode
+ java.runtime.name = Java(TM) SE Runtime Environment
+ java.runtime.version = 1.8.0_92-b14
+ java.io.tmpdir = /var/folders/h6/yb_lbnnn11g0y1jjlvqg631h0000gn/T/
+ user.dir = /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723/mybase
+ user.language = en
+ user.country = US
+
+Jetty Environment:
+-----------------
+ jetty.version = 9.4.31.v20200723
+ jetty.tag.version = master
+ jetty.home = /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723
+ jetty.base = /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723/mybase
+
+Config Search Order:
+--------------------
+ &lt;command-line&gt;
+ ${jetty.base} -&gt; /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723/mybase
+ ${jetty.home} -&gt; /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723
+
+
+JVM Arguments:
+--------------
+ (no jvm args specified)
+
+System Properties:
+------------------
+ (no system properties specified)
+
+Properties:
+-----------
+ java.version = 1.8.0_92
+
+Jetty Server Classpath:
+-----------------------
+No classpath entries and/or version information available show.
+
+Jetty Active XMLs:
+------------------
+ (no xml files specified)</pre></div><p>Let&#8217;s try adding some basic support for webapps, with automatic deploy (hot deploy), and a single basic HTTP/1.1 connector.</p><div class="screenexample"><pre class="screen">[mybase]$ java -jar $JETTY_HOME/start.jar --add-to-start=http,webapp,deploy
+INFO  : webapp          initialized in ${jetty.base}/start.ini
+INFO  : server          transitively enabled, ini template available with --add-to-start=server
+INFO  : security        transitively enabled
+INFO  : servlet         transitively enabled
+INFO  : http            initialized in ${jetty.base}/start.ini
+INFO  : deploy          initialized in ${jetty.base}/start.ini
+MKDIR : ${jetty.base}/webapps
+INFO  : Base directory was modified</pre></div><p>This creates the webapps directory in our <code class="literal">mybase</code> directory and appended the <code class="literal">start.ini</code> file with the ini template arguments from the associated module files.
+Additionally, where needed, Jetty enabled any module dependencies.</p><p>Now that we have added some modules to our server, let&#8217;s run <code class="literal">--list-config</code> again to review our new configuration.</p><div class="screenexample"><pre class="screen">[mybase]$ java -jar $JETTY_HOME/start.jar --list-config
+
+Java Environment:
+-----------------
+ java.home = /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre
+ java.vm.vendor = Oracle Corporation
+ java.vm.version = 25.92-b14
+ java.vm.name = Java HotSpot(TM) 64-Bit Server VM
+ java.vm.info = mixed mode
+ java.runtime.name = Java(TM) SE Runtime Environment
+ java.runtime.version = 1.8.0_92-b14
+ java.io.tmpdir = /var/folders/h6/yb_lbnnn11g0y1jjlvqg631h0000gn/T/
+ user.dir = /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723/mybase
+ user.language = en
+ user.country = US
+
+Jetty Environment:
+-----------------
+ jetty.version = 9.4.31.v20200723
+ jetty.tag.version = master
+ jetty.home = /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723
+ jetty.base = /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723/mybase
+
+Config Search Order:
+--------------------
+ &lt;command-line&gt;
+ ${jetty.base} -&gt; /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723/mybase
+ ${jetty.home} -&gt; /Users/staff/installs/repository/jetty-distribution-9.4.31.v20200723
+
+
+JVM Arguments:
+--------------
+ (no jvm args specified)
+
+System Properties:
+------------------
+ (no system properties specified)
+
+Properties:
+-----------
+ java.version = 1.8.0_92
+
+Jetty Server Classpath:
+-----------------------
+Version Information on 11 entries in the classpath.
+Note: order presented here is how they would appear on the classpath.
+      changes to the --module=name command line options will be reflected here.
+ 0:                    3.1.0 | ${jetty.home}/lib/servlet-api-3.1.jar
+ 1:                 3.1.0.M0 | ${jetty.home}/lib/jetty-schemas-3.1.jar
+ 2:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-http-9.4.31.v20200723.jar
+ 3:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-server-9.4.31.v20200723.jar
+ 4:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-xml-9.4.31.v20200723.jar
+ 5:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-util-9.4.31.v20200723.jar
+ 6:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-io-9.4.31.v20200723.jar
+ 7:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-security-9.4.31.v20200723.jar
+ 8:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-servlet-9.4.31.v20200723.jar
+ 9:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-webapp-9.4.31.v20200723.jar
+10:           9.4.31.v20200723 | ${jetty.home}/lib/jetty-deploy-9.4.31.v20200723.jar
+
+Jetty Active XMLs:
+------------------
+${jetty.home}/etc/jetty.xml
+${jetty.home}/etc/jetty-webapp.xml
+${jetty.home}/etc/jetty-deploy.xml
+${jetty.home}/etc/jetty-http.xml</pre></div><p>You now have a configured and functional server, albeit with no webapps deployed.
+At this point you can place a webapp (war file) in the <code class="literal">mybase/webapps/</code> directory and and start Jetty.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="start-vs-startd"></a>Start.ini vs. Start.d</h3></div></div></div><p>In the above example, when a module is activated the contents of that module file are added in <code class="literal">${jetty.base}/start.ini</code>.
+As additional modules are added, their contents are appended to this file.
+This can be beneficial if you want all of your module configurations in a single file, but for large server instances with lots of modules it can pose a challenge to quickly find and make changes or to remove a module.</p><p>As an alternative to a single <code class="literal">start.ini</code> file you can opt to house modules in a <code class="literal">${jetty.base}/start.d</code> directory.
+Modules activated when a <code class="literal">start.d</code> directory exists will be stored as a single file per module.
+Below is an example of a fresh <code class="literal">${jetty.base}</code> that will create a <code class="literal">start.d</code> directory and activate several modules.</p><div class="screenexample"><pre class="screen">[jetty.home]$ mkdir mybase
+[jetty.home]$ cd mybase/
+[mybase]$ java -jar ../start.jar --create-startd
+INFO : Base directory was modified
+[mybase]$ ls -all
+total 0
+drwxr-xr-x   3 staff  staff  102 Aug 29 15:16 .
+drwxr-xr-x@ 26 staff  staff  884 Aug 29 15:16 ..
+drwxr-xr-x   6 staff  staff  204 Aug 29 15:19 start.d
+
+[mybase]$ java -jar ../start.jar --add-to-start=server,client,webapp,websocket
+INFO : webapp          initialised in ${jetty.base}/start.d/webapp.ini
+INFO : server          initialised in ${jetty.base}/start.d/server.ini
+INFO : websocket       initialised in ${jetty.base}/start.d/websocket.ini
+INFO : client          initialised in ${jetty.base}/start.d/client.ini
+INFO : Base directory was modified
+[mybase]$ cd start.d/
+[mybase]$ ls -all
+total 32
+drwxr-xr-x  6 staff  staff   204 Aug 29 15:19 .
+drwxr-xr-x  3 staff  staff   102 Aug 29 15:16 ..
+-rw-r--r--  1 staff  staff   175 Aug 29 15:19 client.ini
+-rw-r--r--  1 staff  staff  2250 Aug 29 15:19 server.ini
+-rw-r--r--  1 staff  staff   265 Aug 29 15:19 webapp.ini
+-rw-r--r--  1 staff  staff   177 Aug 29 15:19 websocket.ini</pre></div><p>In the example, we first create a new <code class="literal">${jetty.base}</code> and then create the <code class="literal">start.d</code> directory with the <code class="literal">--create-startd</code> command.
+Next, we use the <code class="literal">--add-to-start</code> command which activates the modules and creates their respective ini files in the <code class="literal">start.d</code> directory.</p><p>If you have an existing <code class="literal">start.ini</code> file but would like to use the <code class="literal">start.d</code> structure for additional modules, you can use the <code class="literal">--create-startd</code> command as well.
+Doing this will create the <code class="literal">start.d</code> directory and copy your existing <code class="literal">start.ini</code> file in to it.
+Any new modules added to the server will have their own <code class="literal">&lt;module name&gt;.ini</code> file created in the <code class="literal">start.d</code> directory.</p><div class="screenexample"><pre class="screen">[mybase]$ java -jar ../start.jar --add-to-start=server,client,webapp,websocket
+INFO : webapp          initialised in ${jetty.base}/start.ini
+INFO : server          initialised in ${jetty.base}/start.ini
+INFO : websocket       initialised in ${jetty.base}/start.ini
+INFO : client          initialised in ${jetty.base}/start.ini
+INFO : Base directory was modified
+
+[mybase]$ java -jar ../start.jar --create-startd
+INFO : Base directory was modified
+[mybase]$ tree
+.
+&#9492;&#9472;&#9472; start.d
+    &#9492;&#9472;&#9472; start.ini
+
+[mybase]$ java -jar ../start.jar --add-to-start=ssl
+INFO : ssl             initialised in ${jetty.base}/start.d/ssl.ini
+INFO : Base directory was modified
+[mybase]$ tree
+.
+&#9500;&#9472;&#9472; etc
+&#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; keystore
+&#9492;&#9472;&#9472; start.d
+    &#9500;&#9472;&#9472; ssl.ini
+    &#9492;&#9472;&#9472; start.ini</pre></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>It is <span class="strong"><strong>not</strong></span> recommended to use both a <code class="literal">${jetty.base}/start.ini</code> file and a <code class="literal">${jetty.base}/start.d</code> directory at the same time and doing so can cause issues.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="startup-configuring-modules"></a>Configuring Modules</h3></div></div></div><p>Once a module has been enabled for the server, it can be further configured to meet your needs.
+This is done by editing the associated ini file for the module.
+If your server setup is using a centralized ini configuration, you will edit the <code class="literal">${jetty.base}/server.ini</code> file.
+If you have elected to manage each module within it&#8217;s own ini file, you can find these files in the <code class="literal">${jetty.base}/start.d</code> directory.</p><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-plus" aria-hidden="true"></i> Important</h3><p>It is important that you <span class="strong"><strong>do not</strong></span> modify the module files in the <code class="literal">$JETTY_HOME/modules</code> directory.
+$JETTY_HOME should always remain a standard of truth.
+If you want to make a change to an actual module file (not the values in its <code class="literal">ini-template</code>), either edit its associated <code class="literal">ini</code> file in the <code class="literal">$JETTY_BASE/start.d</code> directory or make a copy of the desired module file and copy it to the <code class="literal">$JETTY_BASE</code> directory and edit it there.
+The start.jar reads local <code class="literal">$JETTY_BASE/modules</code> files (if they exist) before scanning <code class="literal">$JETTY_HOME</code>.</p></div></blockquote></div><p>When a module is activated, a number of properties are set by default.
+To view these defaults, open up the associated ini file.
+Listed in the ini file is the associated module file and any properties that can be set.</p><p>Below is an example of the <code class="literal">requestlog.ini</code> file:</p><div class="screenexample"><pre class="screen"># ---------------------------------------
+# Module: requestlog
+--module=requestlog
+
+## Logging directory (relative to $jetty.base)
+# jetty.requestlog.dir=logs
+
+## File path
+# jetty.requestlog.filePath=${jetty.requestlog.dir}/yyyy_mm_dd.request.log
+
+## Date format for rollovered files (uses SimpleDateFormat syntax)
+# jetty.requestlog.filenameDateFormat=yyyy_MM_dd
+
+## How many days to retain old log files
+# jetty.requestlog.retainDays=90
+
+## Whether to append to existing file
+# jetty.requestlog.append=true
+
+## Whether to use the extended log output
+# jetty.requestlog.extended=true
+
+## Whether to log http cookie information
+# jetty.requestlog.cookies=true
+
+## Timezone of the log entries
+# jetty.requestlog.timezone=GMT
+
+## Whether to log LogLatency
+# jetty.requestlog.loglatency=false</pre></div><p>The first lines name the module file being called (located in <code class="literal">{$jetty.home/modules}</code>).
+Subsequent lines list properties that can be changed as well as a description for each property.
+To edit a property, first un-comment the line by deleting the <code class="literal">#</code> at the start of the line, then make the change after <code class="literal">=</code> sign (such as changing a <code class="literal">true</code> value to <code class="literal">false</code>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="startup-disable-module"></a>Disabling Modules</h3></div></div></div><p>Disabling a module is an easy process.
+To disable a module, comment out the <code class="literal">--module=</code> line in the associated ini file.
+Deleting the ini file associated with module is another option, but may not be practical in all situations.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="startup-listing-modules"></a>Listing Available and Active Modules</h3></div></div></div><p>To see which modules are <span class="emphasis"><em>available</em></span>, use the <code class="literal">--list-modules</code> command line argument.
+This command will also show you which modules are <span class="emphasis"><em>enabled</em></span>.
+Modules are sorted by the value in the <code class="literal">[tags]</code> section of the associated <code class="literal">.mod</code> file.
+If there are multiple entries in the <code class="literal">[tags]</code> section, it sorts by the first tag in the list.</p><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>By default, the <code class="literal">--list-modules</code> command line argument shows all modules that do not include <code class="literal">internal</code> in the <code class="literal">[tags]</code> section of the associated <code class="literal">.mod</code> file.
+If you would like to see <span class="strong"><strong>all</strong></span> modules, use <code class="literal">--list-all-modules</code></p></div></blockquote></div><p>Here&#8217;s an example of the <code class="literal">--list-modules</code> command:</p><div class="screenexample"><pre class="screen">[mybase]$ java -jar ../start.jar --list-modules
+
+Available Modules:
+==================
+tags: [-internal]
+
+Modules for tag '*':
+--------------------
+
+     Module: alpn
+           : Enables the ALPN (Application Layer Protocol Negotiation) TLS extension.
+     Depend: ssl, alpn-impl
+        LIB: lib/jetty-alpn-client-${jetty.version}.jar
+        LIB: lib/jetty-alpn-server-${jetty.version}.jar
+        XML: etc/jetty-alpn.xml
+
+     Module: alpn-impl
+           : Selects an ALPN (Application Layer Protocol Negotiation) implementation by java version.
+     Depend: alpn-impl/alpn-${java.version.platform}
+
+     Module: annotations
+           : Enables Annotation scanning for deployed webapplications.
+     Depend: plus
+        LIB: lib/jetty-annotations-${jetty.version}.jar
+        LIB: lib/annotations/*.jar
+        XML: etc/jetty-annotations.xml
+    Enabled: ${jetty.base}\start.d\annotations.ini
+
+     Module: apache-jsp
+           : Enables use of the apache implementation of JSP
+        LIB: lib/apache-jsp/*.jar
+    Enabled: transitive provider of apache-jsp for jsp
+
+     Module: apache-jstl
+           : Enables the apache version of JSTL
+        LIB: lib/apache-jstl/*.jar
+    Enabled: transitive provider of apache-jstl for jstl
+
+     Module: cdi2
+           : Jetty setup to support Weld/CDI2 with WELD inside the webapp
+     Depend: deploy
+        XML: etc/cdi2/jetty-cdi2.xml
+
+     Module: client
+           : Adds the Jetty HTTP client to the server classpath.
+        LIB: lib/jetty-client-${jetty.version}.jar
+    Enabled: ${jetty.base}\start.d\client.ini
+
+     Module: continuation
+           : Enables support for Continuation style asynchronous
+           : Servlets.  Now deprecated in favour of Servlet 3.1
+           : API
+        LIB: lib/jetty-continuation-${jetty.version}.jar
+    Enabled: ${jetty.base}\start.d\continuation.ini
+
+     Module: deploy
+           : Enables webapplication deployment from the webapps directory.
+     Depend: webapp
+        LIB: lib/jetty-deploy-${jetty.version}.jar
+        XML: etc/jetty-deploy.xml
+    Enabled: ${jetty.base}\start.d\deploy.ini
+
+     Module: fcgi
+           : Adds the FastCGI implementation to the classpath.
+     Depend: servlet, client
+        LIB: lib/jetty-proxy-${jetty.version}.jar
+        LIB: lib/fcgi/*.jar
+
+     Module: flight-recorder
+     Depend: server
+        JVM: -XX:+UnlockCommercialFeatures
+        JVM: -XX:+FlightRecorder
+
+     Module: global-webapp-common
+           : Enables Deployer to apply common configuration to all webapp deployments
+     Depend: deploy
+        XML: etc/global-webapp-common.xml
+
+     Module: hazelcast-embedded-sessions
+     Depend: annotations, webapp
+        LIB: lib/hazelcast/*.jar
+        XML: etc/sessions/hazelcast/default.xml
+
+     Module: hazelcast-remote-sessions
+     Depend: annotations, webapp
+        LIB: lib/hazelcast/*.jar
+        XML: etc/sessions/hazelcast/remote.xml
+
+     Module: home-base-warning
+           : Generates a warning that server has been run from $JETTY_HOME
+           : rather than from a $JETTY_BASE.
+        XML: etc/home-base-warning.xml
+
+     Module: jaas
+           : Enable JAAS for deployed webapplications.
+     Depend: server
+        LIB: lib/jetty-jaas-${jetty.version}.jar
+        XML: etc/jetty-jaas.xml
+    Enabled: ${jetty.base}\start.d\demo.ini
+
+     Module: jaspi
+           : Enable JASPI authentication for deployed webapplications.
+     Depend: security
+        LIB: lib/jetty-jaspi-${jetty.version}.jar
+        LIB: lib/jaspi/*.jar
+
+     Module: jmx
+           : Enables JMX instrumentation for server beans and
+           : enables JMX agent.
+     Depend: server
+        LIB: lib/jetty-jmx-${jetty.version}.jar
+        XML: etc/jetty-jmx.xml
+
+     Module: jmx-remote
+           : Enables remote RMI access to JMX
+     Depend: jmx
+        XML: etc/jetty-jmx-remote.xml
+
+     Module: jndi
+           : Adds the Jetty JNDI implementation to the classpath.
+     Depend: server, mail
+        LIB: lib/jetty-jndi-${jetty.version}.jar
+        LIB: lib/jndi/*.jar
+    Enabled: ${jetty.base}\start.d\jndi.ini
+
+     Module: jsp
+           : Enables JSP for all webapplications deployed on the server.
+     Depend: servlet, annotations, apache-jsp
+    Enabled: ${jetty.base}\start.d\jsp.ini
+
+     Module: jstl
+           : Enables JSTL for all webapplications deployed on the server
+     Depend: jsp, apache-jstl
+    Enabled: ${jetty.base}\start.d\jstl.ini
+
+     Module: jvm
+           : A noop module that creates an ini template useful for
+           : setting JVM arguments (eg -Xmx )
+
+     Module: lowresources
+           : Enables a low resource monitor on the server
+           : that can take actions if threads and/or connections
+           : cross configured threshholds.
+     Depend: server
+        XML: etc/jetty-lowresources.xml
+
+     Module: mail
+           : Adds the javax.mail implementation to the classpath.
+        LIB: lib/mail/*.jar
+    Enabled: transitive provider of mail for jndi
+
+     Module: plus
+           : Enables JNDI and resource injection for webapplications
+           : and other servlet 3.x features not supported in the core
+           : jetty webapps module.
+     Depend: server, security, jndi, webapp, transactions
+        LIB: lib/jetty-plus-${jetty.version}.jar
+        XML: etc/jetty-plus.xml
+    Enabled: transitive provider of plus for annotations
+
+     Module: proxy
+           : Enable the Jetty Proxy, that allows the server to act
+           : as a non-transparent proxy for browsers.
+     Depend: servlet, client
+        LIB: lib/jetty-proxy-${jetty.version}.jar
+        XML: etc/jetty-proxy.xml
+
+     Module: proxy-protocol
+           : Enables the Proxy Protocol on the HTTP Connector.
+           : http://www.haproxy.org/download/1.5/doc/proxy-protocol.txt
+           : This allows a proxy operating in TCP mode to
+           : transport details of the proxied connection to
+           : the server.
+           : Both V1 and V2 versions of the protocol are supported.
+     Depend: http
+        XML: etc/jetty-proxy-protocol.xml
+
+     Module: quickstart
+           : Enables the Jetty Quickstart module for rapid
+           : deployment of preconfigured webapplications.
+     Depend: server, plus, annotations
+        LIB: lib/jetty-quickstart-${jetty.version}.jar
+
+     Module: rewrite
+           : Enables the jetty-rewrite handler.  Specific rewrite
+           : rules must be added to either to etc/jetty-rewrite.xml or a custom xml/module
+     Depend: server
+        LIB: lib/jetty-rewrite-${jetty.version}.jar
+        XML: etc/jetty-rewrite.xml
+    Enabled: ${jetty.base}\start.d\demo.ini
+
+     Module: rewrite-compactpath
+           : Add a rule to the rewrite module to compact paths so that double slashes
+           : in the path are treated as a single slash.
+     Depend: rewrite
+        XML: etc/rewrite-compactpath.xml
+
+     Module: rewrite-customizer [rewrite]
+           : Enables a rewrite Rules container as a request customizer on
+           : the servers default HttpConfiguration instance
+     Depend: server
+        LIB: lib/jetty-rewrite-${jetty.version}.jar
+        XML: etc/jetty-rewrite-customizer.xml
+
+     Module: security
+           : Adds servlet standard security handling to the classpath.
+     Depend: server
+        LIB: lib/jetty-security-${jetty.version}.jar
+    Enabled: transitive provider of security for webapp
+    Enabled: transitive provider of security for plus
+
+     Module: server
+           : Enables the core Jetty server on the classpath.
+     Depend: threadpool
+   Optional: jvm, ext, resources, logging
+        LIB: lib/servlet-api-3.1.jar
+        LIB: lib/jetty-schemas-3.1.jar
+        LIB: lib/jetty-http-${jetty.version}.jar
+        LIB: lib/jetty-server-${jetty.version}.jar
+        LIB: lib/jetty-xml-${jetty.version}.jar
+        LIB: lib/jetty-util-${jetty.version}.jar
+        LIB: lib/jetty-io-${jetty.version}.jar
+        XML: etc/jetty.xml
+    Enabled: ${jetty.base}\start.d\server.ini
+
+     Module: servlet
+           : Enables standard Servlet handling.
+     Depend: server
+        LIB: lib/jetty-servlet-${jetty.version}.jar
+    Enabled: transitive provider of servlet for webapp
+    Enabled: transitive provider of servlet for servlets
+    Enabled: transitive provider of servlet for jsp
+
+     Module: servlets
+           : Puts a collection of jetty utility servlets and filters
+           : on the server classpath (CGI, CrossOriginFilter, DosFilter,
+           : MultiPartFilter, PushCacheFilter, QoSFilter, etc.) for
+           : use by all webapplications.
+     Depend: servlet
+        LIB: lib/jetty-servlets-${jetty.version}.jar
+    Enabled: ${jetty.base}\start.d\servlets.ini
+
+     Module: setuid
+           : Enables the unix setUID configuration so that the server
+           : may be started as root to open privileged ports/files before
+           : changing to a restricted user (eg jetty).
+     Depend: server
+        LIB: lib/setuid/jetty-setuid-java-1.0.3.jar
+        XML: etc/jetty-setuid.xml
+
+     Module: spring
+           : Enable spring configuration processing so all jetty style
+           : xml files can optionally be written as spring beans
+     Depend: server
+        LIB: lib/spring/*.jar
+
+     Module: stop
+           : This module causes jetty to stop immediately after starting. This is good for testing configuration and/or precompiling quickstart webapps
+        XML: etc/jetty-stop.xml
+
+     Module: threadpool
+           : Enables the Server thread pool.
+        XML: etc/jetty-threadpool.xml
+    Enabled: ${jetty.base}\start.d\threadpool.ini
+
+     Module: transactions
+           : Puts javax.transaction api on the classpath
+        LIB: lib/transactions/*.jar
+    Enabled: transitive provider of transactions for plus
+
+     Module: webapp
+           : Adds support for servlet specification webapplication to the server
+           : classpath.  Without this, only Jetty specific handlers may be deployed.
+     Depend: servlet, security
+        LIB: lib/jetty-webapp-${jetty.version}.jar
+        XML: etc/jetty-webapp.xml
+    Enabled: transitive provider of webapp for plus
+    Enabled: transitive provider of webapp for deploy
+
+     Module: websocket
+           : Enable websockets for deployed web applications
+     Depend: client, annotations
+        LIB: lib/websocket/*.jar
+    Enabled: ${jetty.base}\start.d\demo.ini
+
+Modules for tag '3rdparty':
+---------------------------
+
+     Module: conscrypt [alpn-impl]
+           : Installs the Conscrypt JSSE provider
+       Tags: 3rdparty
+     Depend: ssl
+        LIB: lib/conscrypt/**.jar
+        LIB: lib/jetty-alpn-conscrypt-server-${jetty.version}.jar
+        XML: etc/conscrypt.xml
+
+     Module: gcloud
+           : Control GCloud API classpath
+       Tags: 3rdparty, gcloud
+        LIB: lib/gcloud/*.jar
+
+     Module: gcloud-datastore
+           : Enables GCloud Datastore API and implementation
+       Tags: 3rdparty, gcloud
+     Depend: gcloud, jcl-slf4j, jul-impl
+
+     Module: hawtio
+           : Deploys the Hawtio console as a webapplication.
+       Tags: 3rdparty
+     Depend: stats, deploy, jmx
+        XML: etc/hawtio.xml
+
+     Module: jamon
+           : Deploys the JAMon webapplication
+       Tags: 3rdparty
+     Depend: stats, deploy, jmx, jsp
+        LIB: lib/jamon/**.jar
+        XML: etc/jamon.xml
+
+     Module: jminix
+           : Deploys the Jminix JMX Console within the server
+       Tags: 3rdparty
+     Depend: stats, jmx, jcl-api, jcl-impl
+        LIB: lib/jminix/**.jar
+        XML: etc/jminix.xml
+
+     Module: jolokia
+           : Deploys the Jolokia console as a web application.
+       Tags: 3rdparty
+     Depend: stats, deploy, jmx
+        XML: etc/jolokia.xml
+
+Modules for tag 'classpath':
+----------------------------
+
+     Module: ext
+           : Adds all jar files discovered in $JETTY_HOME/lib/ext
+           : and $JETTY_BASE/lib/ext to the servers classpath.
+       Tags: classpath
+        LIB: lib/ext/**.jar
+    Enabled: ${jetty.base}\start.d\ext.ini
+
+     Module: resources
+           : Adds the $JETTY_HOME/resources and/or $JETTY_BASE/resources
+           : directory to the server classpath. Useful for configuration
+           : property files (eg jetty-logging.properties)
+       Tags: classpath
+        LIB: resources/
+    Enabled: ${jetty.base}\start.d\resources.ini
+
+Modules for tag 'connector':
+----------------------------
+
+     Module: acceptratelimit
+           : Enable a server wide accept rate limit
+       Tags: connector
+     Depend: server
+        XML: etc/jetty-acceptratelimit.xml
+
+     Module: connectionlimit
+           : Enable a server wide connection limit
+       Tags: connector
+     Depend: server
+        XML: etc/jetty-connectionlimit.xml
+
+     Module: http
+           : Enables a HTTP connector on the server.
+           : By default HTTP/1 is support, but HTTP2C can
+           : be added to the connector with the http2c module.
+       Tags: connector, http
+     Depend: server
+        XML: etc/jetty-http.xml
+    Enabled: ${jetty.base}\start.d\http.ini
+
+     Module: http-forwarded
+           : Adds a forwarded request customizer to the HTTP Connector
+           : to process forwarded-for style headers from a proxy.
+       Tags: connector
+     Depend: http
+        XML: etc/jetty-http-forwarded.xml
+
+     Module: http2
+           : Enables HTTP2 protocol support on the TLS(SSL) Connector,
+           : using the ALPN extension to select which protocol to use.
+       Tags: connector, http2, http, ssl
+     Depend: ssl, alpn
+        LIB: lib/http2/*.jar
+        XML: etc/jetty-http2.xml
+
+     Module: http2c
+           : Enables the HTTP2C protocol on the HTTP Connector
+           : The connector will accept both HTTP/1 and HTTP/2 connections.
+       Tags: connector, http2, http
+     Depend: http
+        LIB: lib/http2/*.jar
+        XML: etc/jetty-http2c.xml
+
+     Module: https
+           : Adds HTTPS protocol support to the TLS(SSL) Connector
+       Tags: connector, https, http, ssl
+     Depend: ssl
+   Optional: http-forwarded, http2
+        XML: etc/jetty-https.xml
+    Enabled: ${jetty.base}\start.d\https.ini
+
+     Module: proxy-protocol-ssl
+           : Enables the Proxy Protocol on the TLS(SSL) Connector.
+           : http://www.haproxy.org/download/1.5/doc/proxy-protocol.txt
+           : This allows a Proxy operating in TCP mode to transport
+           : details of the proxied connection to the server.
+           : Both V1 and V2 versions of the protocol are supported.
+       Tags: connector, ssl
+     Depend: ssl
+        XML: etc/jetty-proxy-protocol-ssl.xml
+
+     Module: ssl
+           : Enables a TLS(SSL) Connector on the server.
+           : This may be used for HTTPS and/or HTTP2 by enabling
+           : the associated support modules.
+       Tags: connector, ssl
+     Depend: server
+        XML: etc/jetty-ssl.xml
+        XML: etc/jetty-ssl-context.xml
+    Enabled: transitive provider of ssl for https
+
+     Module: unixsocket
+           : Enables a Unix Domain Socket Connector that can receive
+           : requests from a local proxy and/or SSL offloader (eg haproxy) in either
+           : HTTP or TCP mode.  Unix Domain Sockets are more efficient than
+           : localhost TCP/IP connections  as they reduce data copies, avoid
+           : needless fragmentation and have better dispatch behaviours.
+           : When enabled with corresponding support modules, the connector can
+           : accept HTTP, HTTPS or HTTP2C traffic.
+       Tags: connector
+     Depend: server
+        LIB: lib/jetty-unixsocket-${jetty.version}.jar
+        LIB: lib/jnr/*.jar
+        XML: etc/jetty-unixsocket.xml
+
+     Module: unixsocket-forwarded
+           : Adds a forwarded request customizer to the HTTP configuration used
+           : by the Unix Domain Socket connector, for use when behind a proxy operating
+           : in HTTP mode that adds forwarded-for style HTTP headers. Typically this
+           : is an alternate to the Proxy Protocol used mostly for TCP mode.
+       Tags: connector
+     Depend: unixsocket-http
+        XML: etc/jetty-unixsocket-forwarded.xml
+
+     Module: unixsocket-http
+           : Adds a HTTP protocol support to the Unix Domain Socket connector.
+           : It should be used when a proxy is forwarding either HTTP or decrypted
+           : HTTPS traffic to the connector and may be used with the
+           : unix-socket-http2c modules to upgrade to HTTP/2.
+       Tags: connector, http
+     Depend: unixsocket
+        XML: etc/jetty-unixsocket-http.xml
+
+     Module: unixsocket-http2c
+           : Adds a HTTP2C connetion factory to the Unix Domain Socket Connector
+           : It can be used when either the proxy forwards direct
+           : HTTP/2C (unecrypted) or decrypted HTTP/2 traffic.
+       Tags: connector, http2
+     Depend: unixsocket-http
+        LIB: lib/http2/*.jar
+        XML: etc/jetty-unixsocket-http2c.xml
+
+     Module: unixsocket-proxy-protocol
+           : Enables the proxy protocol on the Unix Domain Socket Connector
+           : http://www.haproxy.org/download/1.5/doc/proxy-protocol.txt
+           : This allows information about the proxied connection to be
+           : efficiently forwarded as the connection is accepted.
+           : Both V1 and V2 versions of the protocol are supported and any
+           : SSL properties may be interpreted by the unixsocket-secure
+           : module to indicate secure HTTPS traffic. Typically this
+           : is an alternate to the forwarded module.
+       Tags: connector
+     Depend: unixsocket
+        XML: etc/jetty-unixsocket-proxy-protocol.xml
+
+     Module: unixsocket-secure
+           : Enable a secure request customizer on the HTTP Configuration
+           : used by the Unix Domain Socket Connector.
+           : This looks for a secure scheme transported either by the
+           : unixsocket-forwarded, unixsocket-proxy-protocol or in a
+           : HTTP2 request.
+       Tags: connector
+     Depend: unixsocket-http
+        XML: etc/jetty-unixsocket-secure.xml
+
+Modules for tag 'debug':
+------------------------
+
+     Module: debug
+           : Enables the DebugListener to generate additional
+           : logging regarding detailed request handling events.
+           : Renames threads to include request URI.
+       Tags: debug
+     Depend: deploy
+        XML: etc/jetty-debug.xml
+
+     Module: debuglog
+           : Deprecated Debug Log using the DebugHandle.
+           : Replaced with the debug module.
+       Tags: debug
+     Depend: server
+        XML: etc/jetty-debuglog.xml
+
+Modules for tag 'handler':
+--------------------------
+
+     Module: gzip
+           : Enable GzipHandler for dynamic gzip compression
+           : for the entire server.
+       Tags: handler
+     Depend: server
+        XML: etc/jetty-gzip.xml
+
+     Module: ipaccess
+           : Enable the ipaccess handler to apply a white/black list
+           : control of the remote IP of requests.
+       Tags: handler
+     Depend: server
+        XML: etc/jetty-ipaccess.xml
+
+     Module: stats
+           : Enable detailed statistics collection for the server,
+           : available via JMX.
+       Tags: handler
+     Depend: server
+        XML: etc/jetty-stats.xml
+
+     Module: threadlimit
+       Tags: handler
+     Depend: server
+        XML: etc/jetty-threadlimit.xml
+
+Modules for tag 'logging':
+--------------------------
+
+     Module: console-capture
+           : Redirects JVMs console stderr and stdout to a log file,
+           : including output from Jetty's default StdErrLog logging.
+       Tags: logging
+        LIB: resources/
+        XML: etc/console-capture.xml
+
+     Module: logging-jetty [logging]
+           : Configure jetty logging mechanism.
+           : Provides a ${jetty.base}/resources/jetty-logging.properties.
+       Tags: logging
+     Depend: resources
+
+     Module: logging-jul [logging]
+           : Configure jetty logging to use Java Util Logging (jul)
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: slf4j-jul, jul-impl
+        JVM: -Dorg.eclipse.jetty.util.log.class?=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-log4j [logging]
+           : Configure jetty logging to use Log4j Logging
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: slf4j-log4j, log4j-impl
+        JVM: -Dorg.eclipse.jetty.util.log.class?=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-log4j2 [logging]
+           : Configure jetty logging to use log4j version 2
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: slf4j-log4j2, log4j2-impl
+        JVM: -Dorg.eclipse.jetty.util.log.class?=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-logback [logging]
+           : Configure jetty logging to use Logback Logging.
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: slf4j-logback, logback-impl
+        JVM: -Dorg.eclipse.jetty.util.log.class?=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-slf4j [logging]
+           : Configure jetty logging to use slf4j.
+           : Any slf4j-impl implementation is used
+       Tags: logging
+     Depend: slf4j-api, slf4j-impl
+        JVM: -Dorg.eclipse.jetty.util.log.class?=org.eclipse.jetty.util.log.Slf4jLog
+
+Modules for tag 'requestlog':
+-----------------------------
+
+     Module: logback-access [requestlog]
+           : Enables logback request log.
+       Tags: requestlog, logging, logback
+     Depend: server, logback-impl, resources
+        LIB: lib/logback/logback-access-${logback.version}.jar
+        XML: etc/jetty-logback-access.xml
+
+     Module: requestlog
+           : Enables a NCSA style request log.
+       Tags: requestlog
+     Depend: server
+        XML: etc/jetty-requestlog.xml
+
+Modules for tag 'session':
+--------------------------
+
+     Module: session-cache-hash [session-cache]
+           : Enable first level session cache in ConcurrentHashMap.
+           : If not enabled, sessions will use a HashSessionCache by default, so enabling
+           : via this module is only needed if the configuration properties need to be
+           : changed.
+       Tags: session
+     Depend: sessions
+        XML: etc/sessions/session-cache-hash.xml
+
+     Module: session-cache-null [session-cache]
+           : A trivial SessionCache that does not actually cache sessions.
+       Tags: session
+     Depend: sessions
+        XML: etc/sessions/session-cache-null.xml
+
+     Module: session-store-cache
+           : Enables caching of SessionData in front of a SessionDataStore.
+       Tags: session
+     Depend: session-store, sessions/session-data-cache/${session-data-cache}
+        XML: etc/sessions/session-data-cache/session-caching-store.xml
+
+     Module: session-store-file [session-store]
+           : Enables session persistent storage in files.
+       Tags: session
+     Depend: sessions
+        XML: etc/sessions/file/session-store.xml
+
+     Module: session-store-gcloud [session-store]
+           : Enables GCloudDatastore session management.
+       Tags: session, gcloud
+     Depend: gcloud-datastore, annotations, webapp, sessions
+        LIB: lib/jetty-gcloud-session-manager-${jetty.version}.jar
+        XML: etc/sessions/gcloud/session-store.xml
+
+     Module: session-store-hazelcast-embedded [session-store]
+           : Enables session data store in an embedded Hazelcast Map
+       Tags: session
+     Depend: sessions
+        LIB: lib/jetty-hazelcast-${jetty.version}.jar
+        LIB: lib/hazelcast/*.jar
+        XML: etc/sessions/hazelcast/default.xml
+
+     Module: session-store-hazelcast-remote [session-store]
+           : Enables session data store in a remote Hazelcast Map
+       Tags: session
+     Depend: sessions
+        LIB: lib/jetty-hazelcast-${jetty.version}.jar
+        LIB: lib/hazelcast/*.jar
+        XML: etc/sessions/hazelcast/remote.xml
+
+     Module: session-store-infinispan-embedded [session-store-infnispan-embedded, session-store]
+           : Enables session data store in a local Infinispan cache
+       Tags: session
+     Depend: sessions
+        LIB: lib/jetty-infinispan-${jetty.version}.jar
+        LIB: lib/infinispan/*.jar
+        XML: etc/sessions/infinispan/default.xml
+
+     Module: session-store-infinispan-embedded-910 [session-store-infinispan-embedded, session-store]
+           : Enables session data store in a local Infinispan cache
+       Tags: session
+     Depend: sessions
+        LIB: lib/jetty-infinispan-${jetty.version}.jar
+        LIB: lib/infinispan/*.jar
+        XML: etc/sessions/infinispan/default.xml
+
+     Module: session-store-infinispan-remote [session-store]
+           : Enables session data store in a remote Infinispan cache
+       Tags: session
+     Depend: sessions
+        LIB: lib/jetty-infinispan-${jetty.version}.jar
+        LIB: lib/infinispan/*.jar
+        XML: etc/sessions/infinispan/remote.xml
+
+     Module: session-store-infinispan-remote-910 [session-store-infinispan-remote, session-store]
+           : Enables session data store in a remote Infinispan cache
+       Tags: session
+     Depend: sessions
+        LIB: lib/jetty-infinispan-${jetty.version}.jar
+        LIB: lib/infinispan/*.jar
+        XML: etc/sessions/infinispan/remote.xml
+
+     Module: session-store-jdbc [session-store]
+           : Enables JDBC persistent/distributed session storage.
+       Tags: session
+     Depend: sessions, sessions/jdbc/${db-connection-type}
+        XML: etc/sessions/jdbc/session-store.xml
+
+     Module: session-store-mongo [session-store]
+           : Enables NoSql session management with a MongoDB driver.
+       Tags: session
+     Depend: sessions, sessions/mongo/${connection-type}
+        LIB: lib/jetty-nosql-${jetty.version}.jar
+        LIB: lib/nosql/*.jar
+
+     Module: sessions
+           : The session management. By enabling this module, it allows
+           : session management to be configured via the ini templates
+           : created or by enabling other session-cache or session-store
+           : modules.  Without this module enabled, the server may still
+           : use sessions, but their management cannot be configured.
+       Tags: session
+     Depend: server
+        XML: etc/sessions/id-manager.xml</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="_searching_modules"></a>Searching Modules</h4></div></div></div><p>Since the introduction of the module system, many new modules have been added.
+As a result, looking at the module list as a whole can be somewhat overwhelming.
+To narrow down which modules you would like to choose from, you can search by values listed under the <code class="literal">[tags]</code> section.
+Note that when you search this way, all modules that include your criteria in it&#8217;s <code class="literal">[tags]</code> section, including internal modules, will be shown.
+To filter out internal modules when searching a specific module tag, simply add <code class="literal">-internal</code> to the command line.
+For example, if you wanted to look at only the logging modules (excluding the internal implementation modules), you would use <code class="literal">--list-modules=logging,-internal</code>.</p><div class="screenexample"><pre class="screen">[mybase]$ java -jar $JETTY_HOME/start.jar --list-modules=logging,-internal
+
+Available Modules:
+==================
+tags: [logging, -internal]
+
+Modules for tag 'logging':
+--------------------------
+
+     Module: console-capture
+           : Redirects JVMs console stderr and stdout to a log file,
+           : including output from Jetty's default StdErrLog logging.
+       Tags: logging
+        LIB: resources/
+        XML: etc/console-capture.xml
+
+     Module: logging-jcl [logging]
+           : Configure jetty logging to use Java Commons Logging (jcl)
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: jcl-impl, slf4j-jcl
+        JVM: -Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-jetty [logging]
+           : Configure jetty logging mechanism.
+           : Provides a ${jetty.base}/resources/jetty-logging.properties.
+       Tags: logging
+     Depend: console-capture, resources
+
+     Module: logging-jul [logging]
+           : Configure jetty logging to use Java Util Logging (jul)
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: jul-impl, slf4j-jul
+        JVM: -Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-log4j [logging]
+           : Configure jetty logging to use Log4j Logging
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: log4j-impl, slf4j-log4j
+        JVM: -Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-log4j2 [logging]
+           : Configure jetty logging to use log4j version 2
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: slf4j-log4j2, log4j2-impl
+        JVM: -Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-logback [logging]
+           : Configure jetty logging to use Logback Logging.
+           : SLF4J is used as the core logging mechanism.
+       Tags: logging
+     Depend: logback-impl, slf4j-logback
+        JVM: -Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog
+
+     Module: logging-slf4j [logging]
+           : Configure jetty logging to use slf4j.
+           : Any slf4j-impl implementation is used
+       Tags: logging
+     Depend: slf4j-api, slf4j-impl
+        JVM: -Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog
+
+Modules for tag 'requestlog':
+-----------------------------
+
+     Module: logback-access [requestlog]
+           : Enables logback request log.
+       Tags: requestlog, logging, logback
+     Depend: server, logback-core, resources
+        LIB: lib/logback/logback-access-${logback.version}.jar
+        XML: etc/jetty-logback-access.xml</pre></div></div></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="startup-classpath.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="startup.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="custom-modules.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Managing Server Classpath&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Custom Modules</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

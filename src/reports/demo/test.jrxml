@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="parameter1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["no value given"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="parameter2" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["no value given"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="parameter3" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["no value given"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from user_objects]]>
+	</queryString>
+	<field name="OBJECT_NAME" class="java.lang.String"/>
+	<field name="SUBOBJECT_NAME" class="java.lang.String"/>
+	<field name="OBJECT_ID" class="java.math.BigDecimal"/>
+	<field name="DATA_OBJECT_ID" class="java.math.BigDecimal"/>
+	<field name="OBJECT_TYPE" class="java.lang.String"/>
+	<field name="CREATED" class="java.sql.Timestamp"/>
+	<field name="LAST_DDL_TIME" class="java.sql.Timestamp"/>
+	<field name="TIMESTAMP" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="TEMPORARY" class="java.lang.String"/>
+	<field name="GENERATED" class="java.lang.String"/>
+	<field name="SECONDARY" class="java.lang.String"/>
+	<field name="NAMESPACE" class="java.math.BigDecimal"/>
+	<field name="EDITION_NAME" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="10" y="11" width="217" height="31"/>
+				<textElement>
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Integration Test]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="125" splitType="Stretch">
+			<staticText>
+				<reportElement x="11" y="14" width="68" height="20"/>
+				<textElement/>
+				<text><![CDATA[Parameter 1:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="14" width="186" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{parameter1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="34" width="186" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{parameter2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="34" width="68" height="20"/>
+				<textElement/>
+				<text><![CDATA[Parameter 2:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="54" width="68" height="20"/>
+				<textElement/>
+				<text><![CDATA[Parameter 3:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="92" y="54" width="186" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{parameter3}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="282" y="14" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Report locale:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="383" y="14" width="88" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[""+$P{REPORT_LOCALE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="101" width="100" height="20"/>
+				<textElement>
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[User Objects]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="34" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Currency sample:]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="383" y="34" width="88" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Number"><![CDATA[5000.25]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="2" width="188" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Object Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="201" y="2" width="146" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Object Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="395" y="2" width="141" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Created]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="25" width="553" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="188" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{OBJECT_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="201" y="0" width="146" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{OBJECT_TYPE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="395" y="0" width="141" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{CREATED}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

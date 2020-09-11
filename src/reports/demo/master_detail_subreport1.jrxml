@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="master_detail_subreport1" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p_table_name" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ODT_LOCATION"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from user_tab_cols
+where table_name = $P{p_table_name}]]>
+	</queryString>
+	<field name="TABLE_NAME" class="java.lang.String"/>
+	<field name="COLUMN_NAME" class="java.lang.String"/>
+	<field name="DATA_TYPE" class="java.lang.String"/>
+	<field name="DATA_TYPE_MOD" class="java.lang.String"/>
+	<field name="DATA_TYPE_OWNER" class="java.lang.String"/>
+	<field name="DATA_LENGTH" class="java.math.BigDecimal"/>
+	<field name="DATA_PRECISION" class="java.math.BigDecimal"/>
+	<field name="DATA_SCALE" class="java.math.BigDecimal"/>
+	<field name="NULLABLE" class="java.lang.String"/>
+	<field name="COLUMN_ID" class="java.math.BigDecimal"/>
+	<field name="DEFAULT_LENGTH" class="java.math.BigDecimal"/>
+	<field name="DATA_DEFAULT" class="java.lang.String"/>
+	<field name="NUM_DISTINCT" class="java.math.BigDecimal"/>
+	<field name="SAMPLE_SIZE" class="java.math.BigDecimal"/>
+	<field name="CHARACTER_SET_NAME" class="java.lang.String"/>
+	<field name="CHAR_COL_DECL_LENGTH" class="java.math.BigDecimal"/>
+	<field name="GLOBAL_STATS" class="java.lang.String"/>
+	<field name="USER_STATS" class="java.lang.String"/>
+	<field name="AVG_COL_LEN" class="java.math.BigDecimal"/>
+	<field name="CHAR_LENGTH" class="java.math.BigDecimal"/>
+	<field name="CHAR_USED" class="java.lang.String"/>
+	<field name="V80_FMT_IMAGE" class="java.lang.String"/>
+	<field name="DATA_UPGRADED" class="java.lang.String"/>
+	<field name="HIDDEN_COLUMN" class="java.lang.String"/>
+	<field name="VIRTUAL_COLUMN" class="java.lang.String"/>
+	<field name="SEGMENT_COLUMN_ID" class="java.math.BigDecimal"/>
+	<field name="INTERNAL_COLUMN_ID" class="java.math.BigDecimal"/>
+	<field name="HISTOGRAM" class="java.lang.String"/>
+	<field name="QUALIFIED_COL_NAME" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="126" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{COLUMN_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="126" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DATA_TYPE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="226" y="0" width="80" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{TABLE_NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

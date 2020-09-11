@@ -1,0 +1,107 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Using JNDI with Jetty Embedded</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="jndi.html" title="Chapter&nbsp;12.&nbsp;Configuring JNDI"><link rel="prev" href="jndi-configuration.html" title="Configuring JNDI"><link rel="next" href="jndi-datasource-examples.html" title="Datasource Examples"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Using JNDI with Jetty Embedded</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jndi-configuration.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;12.&nbsp;Configuring JNDI<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jndi-datasource-examples.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jndi-embedded"></a>Using JNDI with Jetty Embedded</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="jndi-embedded.html#_setting_up_the_classpath">Setting up the Classpath</a></span></dt><dt><span class="section"><a href="jndi-embedded.html#_example_code">Example Code</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_setting_up_the_classpath"></a>Setting up the Classpath</h3></div></div></div><p>In addition to the jars that you require for your application, and the jars needed for core Jetty, you will need to place the following jars onto your classpath:</p><pre class="literallayout">jetty-jndi.jar
+jetty-plus.jar</pre><p>If you are using transactions, you will also need the <code class="literal">javax.transaction</code> api.
+You can obtain this jar <a class="link" href="https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.transaction/1.1.1.v201105210645/javax.transaction-1.1.1.v201105210645.jar" target="_top">here.</a></p><p>If you wish to use mail, you will also need the <code class="literal">javax.mail</code> api and implementation which <a class="link" href="https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.mail.glassfish/1.4.1.v201005082020/javax.mail.glassfish-1.4.1.v201005082020.jar" target="_top">you can download here.</a>
+Note that this jar also requires the <code class="literal">javax.activation</code> classes, which is available <a class="link" href="https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.activation/1.1.0.v201105071233/javax.activation-1.1.0.v201105071233.jar" target="_top">at this link.</a></p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_example_code"></a>Example Code</h3></div></div></div><p>Here is an example class that sets up some JNDI entries and deploys a webapp that references these JNDI entries in code.
+We&#8217;ll use some mocked up classes for the transaction manager and the DataSource in this example for simplicity:</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>import java.util.Properties;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
+
+/**
+ * ServerWithJNDI
+ *
+ *
+ */
+public class ServerWithJNDI
+{
+    public static void main(String[] args) throws Exception
+    {
+
+        //Create the server
+        Server server = new Server(8080);
+
+        //Enable parsing of jndi-related parts of web.xml and jetty-env.xml
+        org.eclipse.jetty.webapp.Configuration.ClassList classlist = org.eclipse.jetty.webapp.Configuration.ClassList.setServerDefault(server);
+        classlist.addAfter("org.eclipse.jetty.webapp.FragmentConfiguration", "org.eclipse.jetty.plus.webapp.EnvConfiguration", "org.eclipse.jetty.plus.webapp.PlusConfiguration");
+
+        //Create a WebApp
+        WebAppContext webapp = new WebAppContext();
+        webapp.setContextPath("/");
+        webapp.setWar("./my-foo-webapp.war");
+        server.setHandler(webapp);
+
+        //Register new transaction manager in JNDI
+        //At runtime, the webapp accesses this as java:comp/UserTransaction
+        org.eclipse.jetty.plus.jndi.Transaction transactionMgr = new org.eclipse.jetty.plus.jndi.Transaction(new com.acme.MockUserTransaction());
+
+        //Define an env entry with Server scope.
+        //At runtime, the webapp accesses this as java:comp/env/woggle
+        //This is equivalent to putting an env-entry in web.xml:
+        //&lt;env-entry&gt;
+        //  &lt;env-entry-name&gt;woggle&lt;/env-entry-name&gt;
+        //  &lt;env-entry-type&gt;java.lang.Integer&lt;/env-entry-type&gt;
+        //  &lt;env-entry-value&gt;4000&lt;/env-entry-value&gt;
+        //&lt;/env-entry&gt;
+        org.eclipse.jetty.plus.jndi.EnvEntry woggle = new org.eclipse.jetty.plus.jndi.EnvEntry(server, "woggle", new Integer(4000), false);
+
+
+        //Define an env entry with webapp scope.
+        //At runtime, the webapp accesses this as java:comp/env/wiggle
+        //This is equivalent to putting a web.xml entry in web.xml:
+        //&lt;env-entry&gt;
+        //  &lt;env-entry-name&gt;wiggle&lt;/env-entry-name&gt;
+        //  &lt;env-entry-value&gt;100&lt;/env-entry-value&gt;
+        //  &lt;env-entry-type&gt;java.lang.Double&lt;/env-entry-type&gt;
+        //&lt;/env-entry&gt;
+        //Note that the last arg of "true" means that this definition for "wiggle" would override an entry of the
+        //same name in web.xml
+        org.eclipse.jetty.plus.jndi.EnvEntry wiggle = new org.eclipse.jetty.plus.jndi.EnvEntry(webapp, "wiggle", new Double(100), true);
+
+        //Register a reference to a mail service scoped to the webapp.
+        //This must be linked to the webapp by an entry in web.xml:
+        // &lt;resource-ref&gt;
+        //  &lt;res-ref-name&gt;mail/Session&lt;/res-ref-name&gt;
+        //  &lt;res-type&gt;javax.mail.Session&lt;/res-type&gt;
+        //  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+        // &lt;/resource-ref&gt;
+        //At runtime the webapp accesses this as java:comp/env/mail/Session
+        org.eclipse.jetty.jndi.factories.MailSessionReference mailref = new org.eclipse.jetty.jndi.factories.MailSessionReference();
+        mailref.setUser("CHANGE-ME");
+        mailref.setPassword("CHANGE-ME");
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "false");
+        props.put("mail.smtp.host","CHANGE-ME");
+        props.put("mail.from","CHANGE-ME");
+        props.put("mail.debug", "false");
+        mailref.setProperties(props);
+        org.eclipse.jetty.plus.jndi.Resource xxxmail = new org.eclipse.jetty.plus.jndi.Resource(webapp, "mail/Session", mailref);
+
+
+        // Register a  mock DataSource scoped to the webapp
+        //This must be linked to the webapp via an entry in web.xml:
+        //&lt;resource-ref&gt;
+        //  &lt;res-ref-name&gt;jdbc/mydatasource&lt;/res-ref-name&gt;
+        //  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+        //  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+        //&lt;/resource-ref&gt;
+        //At runtime the webapp accesses this as java:comp/env/jdbc/mydatasource
+        org.eclipse.jetty.plus.jndi.Resource mydatasource = new org.eclipse.jetty.plus.jndi.Resource(webapp, "jdbc/mydatasource",
+                                                                                                     new com.acme.MockDataSource());
+
+        server.start();
+        server.join();
+    }
+}</code></pre></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jndi-configuration.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="jndi.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jndi-datasource-examples.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Configuring JNDI&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Datasource Examples</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

@@ -1,0 +1,184 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Jetty WebSocket Client API</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="websocket-jetty.html" title="Chapter&nbsp;27.&nbsp;Jetty Websocket API"><link rel="prev" href="jetty-websocket-server-api.html" title="Jetty WebSocket Server API"><link rel="next" href="continuations.html" title="Chapter&nbsp;28.&nbsp;Continuations"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Jetty WebSocket Client API</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jetty-websocket-server-api.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;27.&nbsp;Jetty Websocket API<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="continuations.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jetty-websocket-client-api"></a>Jetty WebSocket Client API</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="jetty-websocket-client-api.html#_the_websocketclient">The WebSocketClient</a></span></dt></dl></div><p>Jetty also provides a Jetty WebSocket Client Library to write make talking to WebSocket servers easier.</p><p>To use the Jetty WebSocket Client on your own Java project you will need the following maven artifacts.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>&lt;dependency&gt;
+  &lt;groupId&gt;org.eclipse.jetty.websocket&lt;/groupId&gt;
+  &lt;artifactId&gt;websocket-client&lt;/artifactId&gt;
+  &lt;version&gt;${project.version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_the_websocketclient"></a>The WebSocketClient</h3></div></div></div><p>To use the WebSocketClient you will need to hook up a WebSocket object instance to a specific destination WebSocket URI.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>//
+//  ========================================================================
+//  Copyright (c) 1995-2020 Mort Bay Consulting Pty Ltd and others.
+//  ------------------------------------------------------------------------
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Eclipse Public License v1.0
+//  and Apache License v2.0 which accompanies this distribution.
+//
+//      The Eclipse Public License is available at
+//      http://www.eclipse.org/legal/epl-v10.html
+//
+//      The Apache License v2.0 is available at
+//      http://www.opensource.org/licenses/apache2.0.php
+//
+//  You may elect to redistribute this code under either of these licenses.
+//  ========================================================================
+//
+
+package examples;
+
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
+
+import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
+import org.eclipse.jetty.websocket.client.WebSocketClient;
+
+/**
+ * Example of a simple Echo Client.
+ */
+public class SimpleEchoClient
+{
+    public static void main(String[] args)
+    {
+        String destUri = "ws://echo.websocket.org";
+        if (args.length &gt; 0)
+        {
+            destUri = args[0];
+        }
+
+        WebSocketClient client = new WebSocketClient();
+        SimpleEchoSocket socket = new SimpleEchoSocket();
+        try
+        {
+            client.start();
+
+            URI echoUri = new URI(destUri);
+            ClientUpgradeRequest request = new ClientUpgradeRequest();
+            client.connect(socket, echoUri, request);
+            System.out.printf("Connecting to : %s%n", echoUri);
+
+            // wait for closed socket connection.
+            socket.awaitClose(5, TimeUnit.SECONDS);
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                client.stop();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+}</code></pre><p>The above example connects to a remote WebSocket server and hands off a SimpleEchoSocket to perform the logic on the websocket once connected, waiting for the socket to register that it has closed.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>//
+//  ========================================================================
+//  Copyright (c) 1995-2020 Mort Bay Consulting Pty Ltd and others.
+//  ------------------------------------------------------------------------
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Eclipse Public License v1.0
+//  and Apache License v2.0 which accompanies this distribution.
+//
+//      The Eclipse Public License is available at
+//      http://www.eclipse.org/legal/epl-v10.html
+//
+//      The Apache License v2.0 is available at
+//      http://www.opensource.org/licenses/apache2.0.php
+//
+//  You may elect to redistribute this code under either of these licenses.
+//  ========================================================================
+//
+
+package examples;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.StatusCode;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+
+/**
+ * Basic Echo Client Socket
+ */
+@WebSocket(maxTextMessageSize = 64 * 1024)
+public class SimpleEchoSocket
+{
+    private final CountDownLatch closeLatch;
+    @SuppressWarnings("unused")
+    private Session session;
+
+    public SimpleEchoSocket()
+    {
+        this.closeLatch = new CountDownLatch(1);
+    }
+
+    public boolean awaitClose(int duration, TimeUnit unit) throws InterruptedException
+    {
+        return this.closeLatch.await(duration, unit);
+    }
+
+    @OnWebSocketClose
+    public void onClose(int statusCode, String reason)
+    {
+        System.out.printf("Connection closed: %d - %s%n", statusCode, reason);
+        this.session = null;
+        this.closeLatch.countDown(); // trigger latch
+    }
+
+    @OnWebSocketConnect
+    public void onConnect(Session session)
+    {
+        System.out.printf("Got connect: %s%n", session);
+        this.session = session;
+        try
+        {
+            Future&lt;Void&gt; fut;
+            fut = session.getRemote().sendStringByFuture("Hello");
+            fut.get(2, TimeUnit.SECONDS); // wait for send to complete.
+
+            fut = session.getRemote().sendStringByFuture("Thanks for the conversation.");
+            fut.get(2, TimeUnit.SECONDS); // wait for send to complete.
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+        }
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(String msg)
+    {
+        System.out.printf("Got msg: %s%n", msg);
+        if (msg.contains("Thanks"))
+        {
+            session.close(StatusCode.NORMAL, "I'm done");
+        }
+    }
+
+    @OnWebSocketError
+    public void onError(Throwable cause)
+    {
+        System.out.print("WebSocket Error: ");
+        cause.printStackTrace(System.out);
+    }
+}</code></pre><p>When the SimpleEchoSocket connects, it sends 2 Text messages and then closes the socket.</p><p>The onMessage(String msg) receives the responses from the remote server WebSocket and outputs them to the console.</p></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jetty-websocket-server-api.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="websocket-jetty.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="continuations.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Jetty WebSocket Server API&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;28.&nbsp;Continuations</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

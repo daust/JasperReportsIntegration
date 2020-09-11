@@ -1,0 +1,168 @@
+
+/********************************************************************
+ * JOOMLA 1.0.X TEMPLATE CSS FILE
+ * ----------------------------------------------------------------
+ * Copyright (C) 2007 JoomlaShine.com. All Rights Reserved.
+ * @license - Copyrighted Commercial Software
+ * Author: JoomlaShine.com
+ * Websites:  http://www.joomlashine.com
+*********************************************************************/
+
+
+/** MAIN LEVEL **/
+
+/* Container */
+ul.mainlevel-suckerfish {
+	z-index: 1;
+	float: left;
+	border-right: 1px solid #464646;
+	margin: 3px 0;
+	background: none;
+	padding: 0;
+	list-style: none;
+}
+
+ul.mainlevel-suckerfish li {
+	float: left;
+	display: inline;
+	background: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.mainlevel-suckerfish a:link,
+ul.mainlevel-suckerfish a:visited {
+	display: block;
+	border-right: 1px solid #000000;
+	border-left: 1px solid #464646;
+	margin: 0;
+	padding: 3px 1.5em;
+	color: #ffffff;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+ul.mainlevel-suckerfish a:link span,
+ul.mainlevel-suckerfish a:visited span {
+}
+
+ul.mainlevel-suckerfish a:hover {
+	background-color: #393939;
+}
+
+ul.mainlevel-suckerfish a:hover span {
+}
+
+ul.mainlevel-suckerfish li.active a,
+ul.mainlevel-suckerfish li.current a {
+	background-color: #393939;
+}
+
+
+/* expanded */
+ul.mainlevel-suckerfish span.expanded {
+	
+}
+
+/** SUBLEVEL **/	
+
+/* Container */
+ul.mainlevel-suckerfish ul.sublevel-suckerfish {
+	position: absolute;
+	left: -999em;
+	z-index: 2;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* Other containers */
+ul.mainlevel-suckerfish ul.sublevel-suckerfish ul {
+	margin: -26px 0 0 174px;
+	z-index: 3;
+}
+
+/* Items */
+ul.mainlevel-suckerfish ul.sublevel-suckerfish li {
+	position: relative;
+	width: 175px;
+	margin: 0;
+	background: none;
+	padding: 0;
+}
+
+ul.mainlevel-suckerfish ul.sublevel-suckerfish a:link,
+ul.mainlevel-suckerfish ul.sublevel-suckerfish a:visited {
+	display: block;
+	border-top: 1px solid #366999;
+	border-right: none;
+	border-bottom: 1px solid #162c40;
+	border-left: 1px solid #162c40;
+	background: #284d73 none;
+	color: #cfdbe5;
+	padding: 4px 10px;
+	font-size: 0.9em;
+	font-weight: normal;
+	text-decoration: none;
+	height: 1%;
+}
+
+ul.mainlevel-suckerfish ul.sublevel-suckerfish a:link span,
+ul.mainlevel-suckerfish ul.sublevel-suckerfish a:visited span {
+}
+
+ul.mainlevel-suckerfish ul.sublevel-suckerfish a:hover {
+	background-color: #1f3d59;
+	color: #ffffff;
+}
+
+ul.mainlevel-suckerfish ul.sublevel-suckerfish a:hover span {
+}
+
+ul.sublevel-suckerfish a#active_menu-suckerfish {
+	font-weight: bold;
+	color: #ffffff;
+}
+
+/* expanded */
+ul.sublevel-suckerfish a span.expanded {
+	display: block;
+	background: url("item-expand.png") right center no-repeat;
+	padding-right: 10px;
+}
+
+/* Rollover actions */
+ul.mainlevel-suckerfish li:hover ul,
+ul.mainlevel-suckerfish li.hover ul,
+ul.mainlevel-suckerfish li:hover ul li:hover ul,
+ul.mainlevel-suckerfish li.hover ul li.hover ul,
+ul.mainlevel-suckerfish li:hover ul li:hover ul li:hover ul,
+ul.mainlevel-suckerfish li.hover ul li.hover ul li.hover ul {
+	left: auto;
+}
+
+ul.mainlevel-suckerfish li:hover ul ul,
+ul.mainlevel-suckerfish li.hover ul ul,
+ul.mainlevel-suckerfish li:hover ul li:hover ul ul,
+ul.mainlevel-suckerfish li.hover ul li.hover ul ul,
+ul.mainlevel-suckerfish li:hover ul li:hover ul li:hover ul ul,
+ul.mainlevel-suckerfish li.hover ul li.hover ul li.hover ul ul {
+	left: -999em;
+}
+
+ul.mainlevel-suckerfish,
+ul.mainlevel-suckerfish li li {
+	clear: left;
+}
+
+/** separator */
+span.mainlevel-suckerfish,
+span.sublevel-suckerfish {
+	width: 1em;
+	border-width: 0px;
+	margin-left: 1em;
+	padding: 0;
+	padding-top: 1px;
+	display: block;
+}

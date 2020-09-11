@@ -1,0 +1,118 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Resource Handler</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="advanced-extras.html" title="Chapter&nbsp;18.&nbsp;Provided Servlets, Filters, and Handlers"><link rel="prev" href="cross-origin-filter.html" title="Cross Origin Filter"><link rel="next" href="debug-handler.html" title="Debug Handler"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Resource Handler</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cross-origin-filter.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;18.&nbsp;Provided Servlets, Filters, and Handlers<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="debug-handler.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resource-handler"></a>Resource Handler</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="resource-handler.html#resource-handler-metadata">Info</a></span></dt><dt><span class="section"><a href="resource-handler.html#resource-handler-usage">Usage</a></span></dt><dt><span class="section"><a href="resource-handler.html#_improving_the_look_and_feel">Improving the Look and Feel</a></span></dt><dt><span class="section"><a href="resource-handler.html#_embedded_example">Embedded Example</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resource-handler-metadata"></a>Info</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">Classname: <code class="literal">org.eclipse.jetty.server.handler.ResourceHandler</code></li><li class="listitem">Maven Artifact: org.eclipse.jetty:jetty-server</li><li class="listitem">Javadoc: <a class="link" href="http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/server/handler/ResourceHandler.html" target="_top">http://www.eclipse.org/jetty/javadoc/9.4.31.v20200723/org/eclipse/jetty/server/handler/ResourceHandler.html</a></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resource-handler-usage"></a>Usage</h3></div></div></div><p>This handler will serve static content and handle If-Modified-Since headers and is suitable for simple serving of static content.</p><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-plus" aria-hidden="true"></i> Important</h3><p>There is no caching done with this handler, so if you are looking for a more fully featured way of serving static content look to the <a class="xref" href="advanced-extras.html#default-servlet" title="Default Servlet">Default Servlet</a>.</p></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-asterisk" aria-hidden="true"></i> Note</h3><p>Requests for resources that do not exist are let pass (Eg no 404&#8217;s).</p></div></blockquote></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_improving_the_look_and_feel"></a>Improving the Look and Feel</h3></div></div></div><p>The resource handler has a default stylesheet which you can change by calling <code class="literal">setStyleSheet(String location)</code> with the location of a file on the system that it can locate through the resource loading system.
+The default css is called <code class="literal">jetty-dir.css</code> and is located in the <code class="literal">jetty-util</code> package, pulled as a classpath resource from the <code class="literal">jetty-util</code> jar when requested through the <code class="literal">ResourceHandler</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_embedded_example"></a>Embedded Example</h3></div></div></div><p>The following is an example of a split fileserver, able to serve static content from multiple directory locations.
+Since this handler does not return 404&#8217;s on content you are able to iteratively try multiple resource handlers to resolve content.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>//
+//  ========================================================================
+//  Copyright (c) 1995-2020 Mort Bay Consulting Pty Ltd and others.
+//  ------------------------------------------------------------------------
+//  All rights reserved. This program and the accompanying materials
+//  are made available under the terms of the Eclipse Public License v1.0
+//  and Apache License v2.0 which accompanies this distribution.
+//
+//      The Eclipse Public License is available at
+//      http://www.eclipse.org/legal/epl-v10.html
+//
+//      The Apache License v2.0 is available at
+//      http://www.opensource.org/licenses/apache2.0.php
+//
+//  You may elect to redistribute this code under either of these licenses.
+//  ========================================================================
+//
+
+package org.eclipse.jetty.embedded;
+
+import java.nio.file.Paths;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.resource.PathResource;
+import org.eclipse.jetty.util.resource.Resource;
+
+/**
+ * A {@link ContextHandlerCollection} handler may be used to direct a request to
+ * a specific Context. The URI path prefix and optional virtual host is used to
+ * select the context.
+ */
+public class SplitFileServer
+{
+    public static Server createServer(int port, Resource baseResource0, Resource baseResource1)
+    {
+        // Create the Server object and a corresponding ServerConnector and then
+        // set the port for the connector. In this example the server will
+        // listen on port 8080. If you set this to port 0 then when the server
+        // has been started you can called connector.getLocalPort() to
+        // programmatically get the port the server started on.
+        Server server = new Server();
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(port);
+        server.addConnector(connector);
+
+        // Create a Context Handler and ResourceHandler. The ContextHandler is
+        // getting set to "/" path but this could be anything you like for
+        // building out your url. Note how we are setting the ResourceBase using
+        // our jetty maven testing utilities to get the proper resource
+        // directory, you needn't use these, you simply need to supply the paths
+        // you are looking to serve content from.
+        ResourceHandler rh0 = new ResourceHandler();
+        rh0.setDirectoriesListed(false);
+
+        ContextHandler context0 = new ContextHandler();
+        context0.setContextPath("/");
+        context0.setBaseResource(baseResource0);
+        context0.setHandler(rh0);
+
+        // Rinse and repeat the previous item, only specifying a different
+        // resource base.
+        ResourceHandler rh1 = new ResourceHandler();
+        rh1.setDirectoriesListed(false);
+
+        ContextHandler context1 = new ContextHandler();
+        context1.setContextPath("/");
+        context1.setBaseResource(baseResource1);
+        context1.setHandler(rh1);
+
+        // Create a ContextHandlerCollection and set the context handlers to it.
+        // This will let jetty process urls against the declared contexts in
+        // order to match up content.
+        ContextHandlerCollection contexts = new ContextHandlerCollection(
+            context0, context1
+        );
+        server.setHandler(contexts);
+        return server;
+    }
+
+    public static void main(String[] args) throws Exception
+    {
+        int port = ExampleUtil.getPort(args, "jetty.http.port", 8080);
+        Resource resource0 = new PathResource(Paths.get("src/test/resources/dir0"));
+        Resource resource1 = new PathResource(Paths.get("src/test/resources/dir1"));
+
+        Server server = createServer(port, resource0, resource1);
+
+        // Dump the server state
+        server.setDumpAfterStart(true);
+
+        // Start things up!
+        server.start();
+
+        // The use of server.join() the will make the current thread join and
+        // wait until the server is done executing.
+        server.join();
+    }
+}</code></pre></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cross-origin-filter.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="advanced-extras.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="debug-handler.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Cross Origin Filter&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Debug Handler</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>

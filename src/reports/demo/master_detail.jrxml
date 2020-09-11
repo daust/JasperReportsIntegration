@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="master_detail" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="2"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\dropbox\\My Dropbox\\Projekt\\prj_JasperReportsIntegration\\src\\reports\\demo\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from user_tables]]>
+	</queryString>
+	<field name="TABLE_NAME" class="java.lang.String"/>
+	<field name="TABLESPACE_NAME" class="java.lang.String"/>
+	<field name="CLUSTER_NAME" class="java.lang.String"/>
+	<field name="IOT_NAME" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="PCT_FREE" class="java.math.BigDecimal"/>
+	<field name="PCT_USED" class="java.math.BigDecimal"/>
+	<field name="INI_TRANS" class="java.math.BigDecimal"/>
+	<field name="MAX_TRANS" class="java.math.BigDecimal"/>
+	<field name="INITIAL_EXTENT" class="java.math.BigDecimal"/>
+	<field name="NEXT_EXTENT" class="java.math.BigDecimal"/>
+	<field name="MIN_EXTENTS" class="java.math.BigDecimal"/>
+	<field name="MAX_EXTENTS" class="java.math.BigDecimal"/>
+	<field name="PCT_INCREASE" class="java.math.BigDecimal"/>
+	<field name="FREELISTS" class="java.math.BigDecimal"/>
+	<field name="FREELIST_GROUPS" class="java.math.BigDecimal"/>
+	<field name="LOGGING" class="java.lang.String"/>
+	<field name="BACKED_UP" class="java.lang.String"/>
+	<field name="NUM_ROWS" class="java.math.BigDecimal"/>
+	<field name="BLOCKS" class="java.math.BigDecimal"/>
+	<field name="EMPTY_BLOCKS" class="java.math.BigDecimal"/>
+	<field name="AVG_SPACE" class="java.math.BigDecimal"/>
+	<field name="CHAIN_CNT" class="java.math.BigDecimal"/>
+	<field name="AVG_ROW_LEN" class="java.math.BigDecimal"/>
+	<field name="AVG_SPACE_FREELIST_BLOCKS" class="java.math.BigDecimal"/>
+	<field name="NUM_FREELIST_BLOCKS" class="java.math.BigDecimal"/>
+	<field name="DEGREE" class="java.lang.String"/>
+	<field name="INSTANCES" class="java.lang.String"/>
+	<field name="CACHE" class="java.lang.String"/>
+	<field name="TABLE_LOCK" class="java.lang.String"/>
+	<field name="SAMPLE_SIZE" class="java.math.BigDecimal"/>
+	<field name="LAST_ANALYZED" class="java.sql.Timestamp"/>
+	<field name="PARTITIONED" class="java.lang.String"/>
+	<field name="IOT_TYPE" class="java.lang.String"/>
+	<field name="TEMPORARY" class="java.lang.String"/>
+	<field name="SECONDARY" class="java.lang.String"/>
+	<field name="NESTED" class="java.lang.String"/>
+	<field name="BUFFER_POOL" class="java.lang.String"/>
+	<field name="FLASH_CACHE" class="java.lang.String"/>
+	<field name="CELL_FLASH_CACHE" class="java.lang.String"/>
+	<field name="ROW_MOVEMENT" class="java.lang.String"/>
+	<field name="GLOBAL_STATS" class="java.lang.String"/>
+	<field name="USER_STATS" class="java.lang.String"/>
+	<field name="DURATION" class="java.lang.String"/>
+	<field name="SKIP_CORRUPT" class="java.lang.String"/>
+	<field name="MONITORING" class="java.lang.String"/>
+	<field name="CLUSTER_OWNER" class="java.lang.String"/>
+	<field name="DEPENDENCIES" class="java.lang.String"/>
+	<field name="COMPRESSION" class="java.lang.String"/>
+	<field name="COMPRESS_FOR" class="java.lang.String"/>
+	<field name="DROPPED" class="java.lang.String"/>
+	<field name="READ_ONLY" class="java.lang.String"/>
+	<field name="SEGMENT_CREATED" class="java.lang.String"/>
+	<field name="RESULT_CACHE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="65" splitType="Stretch">
+			<textField>
+				<reportElement x="4" y="14" width="135" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{TABLE_NAME}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="149" y="14" width="395" height="42"/>
+				<subreportParameter name="p_table_name">
+					<subreportParameterExpression><![CDATA[$F{TABLE_NAME}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "master_detail_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="4" y="5" width="551" height="1"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

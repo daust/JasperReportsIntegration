@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+  
+  <meta http-equiv="content-type" content="text/html;
+
+      charset=ISO-8859-1"><!---- COMMON START -------------------------->
+
+
+  
+  <link href="image/template_css.css" rel="stylesheet" type="text/css" media="screen">
+
+  
+  <link href="image/jsn_layout.css" rel="stylesheet" type="text/css" media="screen">
+
+  <link href="image/jsn_typography.css" rel="stylesheet" type="text/css" media="screen">
+  <link href="image/jsn_style.css" rel="stylesheet" type="text/css" media="screen">
+  <link href="image/jasper-integration.css" rel="stylesheet" type="text/css" media="screen"><!--[if lte IE 6]>
+
+<link href="/i/themes/theme_oc/css/jsn_fixie6.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+
+img { behavior: url(image/iepngfix.htc); }
+
+</style><!--[endif]--><!--[if lte IE 7]>
+
+<script type="text/javascript" src="image/suckerfish.js"></script>
+
+<![endif]--><!--[if IE 7]>
+
+<link href="image/jsn_fixie7.css" rel="stylesheet" type="text/css" />
+
+<![endif]-->
+
+
+  
+  <link rel="stylesheet" href="image/oc.css" type="text/css"><!---- COMMON END -------------------------->
+
+
+  
+  <style type="text/css">
+<!--
+.Stil1 {font-family: "Courier New", Courier, monospace;}
+.Stil2 {
+	color: #006600;
+	font-weight: bold;
+}
+-->
+  </style>
+  
+  <style type="text/css">
+<!--
+.Stil1 {font-family: "Courier New", Courier, monospace;}
+-->
+  </style><title>JasperReportsIntegration - Quick Start</title></head><body>
+<div class="moduletable-plain header-arrow">
+<h2>Quick Start<br>
+</h2>
+<p>In order to get you up and running in the shortest amount of time I
+have included the <a href="http://jetty.codehaus.org/jetty/" target="_blank">Jetty J2EE server</a> in the download. <br>
+</p>
+<p>This is really useful for checking out the integration, for test and
+development environments. Typically in production environments, you
+would rather deploy it in your J2EE server of choice, i.e. Weblogic,
+Glassfish, Tomcat, OC4J, etc. <span style="font-weight: bold;">If you want to do that, follow the
+regular installation procedure </span><a style="font-weight: bold;" href="Installation.html">here</a><span style="font-weight: bold;">. </span><br></p>
+<h3>1. Download the files</h3>
+You can download the files from <a href="Download.html">here</a> and unzip them.<br>
+<h3>2. Configure your database access</h3>
+Edit the file&nbsp;<span class="formattedCode">conf/application.properties</span>
+and configure the data source&nbsp;<span class="formattedCode">default</span>
+to connect to your Oracle schema (change the parts in bold to point to
+the Oracle schema you want to connect to): <br>
+<br>
+<div class="formattedCode">
+#====================================================================<br>
+# JDBC datasource configuration<br>
+# http://www.orafaq.com/wiki/JDBC#Thin_driver<br>
+#====================================================================<br>
+[datasource:default]<br>
+name=default<br>
+url=jdbc:oracle:thin:@<span style="font-weight: bold;">192.168.2.114</span>:<span style="font-weight: bold;">1521</span>:<span style="font-weight: bold;">XE</span><br>
+username=<span style="font-weight: bold;">HR</span><br>
+password=<span style="font-weight: bold;">hr_password</span><br>
+</div>
+
+<h3>3. Deploy the JasperReportsIntegration.war file</h3>
+This step has only to be executed once, the J2EE application is
+deployed on the Jetty J2EE server initially.<br>
+<h4>On Unix / Linux:</h4>
+On the command line enter the following commands: <br>
+<ul>
+  <li><span class="formattedCode">cd bin</span><br>
+</li>
+  <li><span class="formattedCode">chmod u+x *.sh</span></li>
+
+  <li><span class="formattedCode">./deployJasperReportsIntegration.sh</span><br>
+  </li>
+</ul>
+<h4>On Windows:</h4>
+<ul>
+  <li><span class="formattedCode">cd bin</span></li>
+  <li><span class="formattedCode">deployJasperReportsIntegration.cmd</span></li>
+
+</ul>
+
+<h3>4. Start the J2EE server<br>
+</h3>
+<h4>On Unix / Linux:</h4>
+On the command line enter the following command: <br>
+<ul>
+  <li><span class="formattedCode">cd bin</span></li>
+  <li><span class="formattedCode">./startJasperReportsIntegration.sh</span><br>
+  </li>
+
+</ul>
+<h4>On Windows:</h4>
+<ul>
+  <li><span class="formattedCode">cd bin</span></li>
+  <li><span class="formattedCode">startJasperReportsIntegration.cmd</span></li>
+
+</ul>
+
+<h3>5. Test the server</h3>
+After 30seconds you can access the server. By default I will start it
+on port 8090. If you need a different port, just change it in the
+script <span class="formattedCode">startJasperReportsIntegration</span>.<br>
+<ul>
+  <li><a href="http://localhost:8090/" target="_blank">http://localhost:8090/</a>&nbsp;&nbsp; =&gt; Jetty Homepage</li>
+  <li><a href="http://localhost:8090/JasperReportsIntegration" target="_blank">http://localhost:8090/JasperReportsIntegration</a> =&gt; Homepage of
+the integration<br>
+  </li>
+</ul>
+
+<h3>6. Installation of database objects<br>
+</h3>
+
+<p>Now that we have the J2EE application working, we can install the
+PL/SQL API in the database. The database objects required for the
+integration will be installed
+into each application schema that you want to use with the
+integration.&nbsp;<br>
+ </p>
+
+<p>The installation instructions will refer to the application schema
+(in which you install the software) as <span class="formattedCode">[application
+schema]</span>. The password for the application schema will be
+referred to as <span class="formattedCode">[application schema
+password]</span>. </p>
+
+<p>Thus when I use an instruction like <span class="formattedCode">sqlplus
+[application schema]/[application schema password]@[database]</span>
+please replace that with the actual values of your local installation.
+For example, if you want to install the integration kit into the schema
+<span class="formattedCode">HR</span> with the password <span class="formattedCode">hr1</span> into your local XE instance (having a
+TNS entry named <span class="formattedCode">xe</span>) then this
+instruction translates to: </p>
+
+<p><span class="formattedCode">sqlplus hr/hr1@xe</span> </p>
+
+
+
+<h4>6.1 Database installation (SYS)</h4>
+
+
+<p>First of all we need to grant the required privileges to the Oracle
+user who will own the packages for the integration. </p>
+
+<ol>
+<li>Extract the downloaded zip file.</li><li>Open a command shell:
+    <ul><li><span class="formattedCode">e.g. on Windows: Start &gt;
+Execute : cmd</span> </li></ul>
+  </li><li>Go to the subdirectory sql (of where you extracted the file):
+    <ul><li><span class="formattedCode">cd sql </span> </li></ul>
+  </li><li>Connect as SYS to the local instance (using sqlplus)
+    <ul><li><span class="formattedCode">sqlplus "sys/[sys
+password]@[database] as sysdba" </span> </li></ul>
+  </li><li>Run the installation script (and pass the name of the target
+application schema as a parameter)
+    <ul><li><span class="formattedCode">@sys_install.sql [application
+schema]</span></li></ul>
+  </li><li>[optional] If you are installing on an Oracle Release 11.0 and
+higher, you have to grant the required network privileges to the
+application schema.&nbsp;
+    <ul><li><span style="font-style: italic;">The&nbsp; script
+sys_install_acl.sql allows access to the local machine on port 80 to
+port 10000. Please adapt the script to suit your needs, especially if
+the J2EE server is running on a different machine. </span></li><li><span class="formattedCode">@sys_install_acl.sql [application
+schema]</span><span class="formattedCode"></span></li></ul>
+  </li>
+</ol>
+
+<h4>6.2 Database installation (Application Schema)</h4>
+
+
+<ol>
+<li>Open a command shell:
+    <ul><li><span class="formattedCode">e.g. on Windows: Start &gt;
+Execute : cmd</span> </li></ul>
+  </li><li>Go to the subdirectory sql (of where you extracted the file):
+    <ul><li><span class="formattedCode">cd sql </span> </li></ul>
+  </li><li>Connect as the application schema to the local instance (using
+sqlplus)
+    <ul><li><span class="formattedCode">sqlplus [application
+schema]/[application schema password]@[database]</span></li></ul>
+  </li><li>Run the installation script
+    <ul><li><span class="formattedCode">@user_install.sql </span> </li></ul>
+  </li>
+</ol>
+
+
+<h3>7. Installation of the test application</h3>
+
+The test application will allow for basic testing of the integration
+with all relevant parts. Install the application file <span class="formattedCode">apex\f121_JasperReportsIntegration-Test_x.x.x.x.sql</span>
+into your workspace.<br>
+<br>
+<br>
+<span style="font-weight: bold;"></span></div></body></html>

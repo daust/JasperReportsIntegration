@@ -1,0 +1,74 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>CloudFoundry</title><link rel="stylesheet" type="text/css" href="css/docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><meta name="keywords" content="jetty, servlet, servlet-api, cometd, http, websocket, eclipse, maven, java, server, software"><link rel="home" href="index.html" title="Jetty"><link rel="up" href="platforms.html" title="Chapter&nbsp;31.&nbsp;Platforms, Stacks and Alternative Distributions"><link rel="prev" href="jelastic.html" title="Jelastic"><link rel="next" href="elastic-beanstalk.html" title="Amazon Elastic Beanstalk"><link xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" rel="shortcut icon" href="images/favicon.ico"><link rel="stylesheet" href="css/highlighter/foundation.css"><script src="js/highlight.pack.js"></script><script>
+      hljs.initHighlightingOnLoad();
+    </script><link type="text/css" rel="stylesheet" href="css/font-awesome/font-awesome.min.css"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><table xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><tr><td style="width: 25%"><a href="http://www.eclipse.org/jetty"><img src="images/jetty-header-logo.png" alt="Jetty Logo"></a><br><span style="font-size: small">
+            Version: 9.4.31.v20200723</span></td><td style="width: 50%"></td></tr></table><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">CloudFoundry</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jelastic.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;31.&nbsp;Platforms, Stacks and Alternative Distributions<br><a accesskey="p" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="elastic-beanstalk.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr></table><hr></div><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="jetty-callout"><h5 class="callout"><a href="http://www.webtide.com/">Contact the core Jetty developers at
+          <span class="website">www.webtide.com</span></a></h5><p>
+ private support for your internal/customer projects ... custom extensions and distributions ... versioned snapshots for indefinite support ...
+ scalability guidance for your apps and Ajax/Comet projects ... development services for sponsored feature development
+      </p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cloudfoundry"></a>CloudFoundry</h2></div></div></div><div class="toc"><dl class="toc"><dt><span class="section"><a href="cloudfoundry.html#cloudfoundry-overview">Overview</a></span></dt><dt><span class="section"><a href="cloudfoundry.html#cloudfoundry-usage">Usage</a></span></dt><dt><span class="section"><a href="cloudfoundry.html#cloudfoundry-acknowledgements">Acknowledgements</a></span></dt></dl></div><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Warning</h3><p>This is an increasingly aged integration, things like likely changed enough this is not directly useful but may serve as a useful starting point should someone want to look into it.</p></div></blockquote></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cloudfoundry-overview"></a>Overview</h3></div></div></div><p><a class="link" href="http://www.cloudfoundry.com" target="_top">CloudFoundry</a> is an open platform intended as a place to deploy end user applications in a manner which is both simple and eminently scalable to fit the needs of the application.
+With the release of their V2 framework the Jetty project has created a buildpack which allows you to deploy your java based web application onto Jetty and still make use of the remainder of the CloudFoundry platform.</p><p>This buildpack itself is quite simple to use.
+A collection of ruby scripting and the buildpack conventions will allow Jetty to be downloaded, configured and customized to your needs and then have your web application deployed onto it.
+While the default buildpack we have created is useful to deploy a stock configuration of jetty, it is quite likely that you will want to fork the buildpack and tweak it to fit your immediate needs.
+This process is made trivial since buildpacks install from a github repository.
+For example, to change the jetty version simply fork it in GitHub and tweak the <code class="literal">JETTY_VERSION</code> string in the <code class="literal">jetty_web.rb</code> file.</p><p>If you have additional modifications to make to the Jetty server, like perhaps configuring additional static contexts, setting up a proxy servlet, adding jar files to the jetty home/lib/ext directory, etc you can either adapt the ruby scripting directly or place them under the appropriate location in the <code class="literal">/resources</code> directory of this buildpack and they will be copied into the correct location.</p><p>For the time being I&#8217;ll leave this buildpack under my personal github account and should there be interest expressed I am more then happy to push it over to <a class="link" href="https://github.com/jetty-project" target="_top">https://github.com/jetty-project</a> down the road for proper contributions, etc.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cloudfoundry-usage"></a>Usage</h3></div></div></div><p>To show how incredibly easy it is to use the Jetty buildpack with cloudfoundry, this is all the more you need to do to deploy your application.
+Refer to the CloudFoundry <a class="link" href="http://docs.cloudfoundry.com/" target="_top">documentation</a> to get started, get the <code class="literal">cf</code> utilities installed and an environment configured.</p><div class="screenexample"><pre class="screen">$ cf push snifftest --buildpack=git://github.com/jmcc0nn3ll/jetty-buildpack.git</pre></div><div class="blockquote"><blockquote class="blockquote"><div xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Tip</h3><p>In this example the web application is uploaded from the <span class="strong"><strong>current</strong></span> directory so make sure you have changed directory into the root of your web application.
+The <code class="literal">snifftest</code> on the commandline refers to what you are calling the application, not the directory to deploy.
+Also note that the webapplication is installed into the <code class="literal">ROOT</code> context of Jetty as is available at the root context of the server.
+Any additional web applications will have to be configured within the buildpack as mentioned above.</p></div></blockquote></div><p>You will be prompted to answer a series of questions describing the execution environment and any additional services you need enabled (databases, etc).</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>Instances&gt; 1
+
+Custom startup command&gt; none
+
+1: 64M
+2: 128M
+3: 256M
+4: 512M
+5: 1G
+Memory Limit&gt; 256M
+
+Creating snifftest... OK
+
+1: snifftest
+2: none
+Subdomain&gt; snifftest
+
+1: a1-app.cf-app.com
+2: none
+Domain&gt; a1-app.cf-app.com
+
+Binding snifftest.a1-app.cf-app.com to snifftest... OK
+
+Create services for application?&gt; n
+
+Save configuration?&gt; n</code></pre><p>Once answered you will see the installation process of your application.</p><pre xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><code>Uploading snifftest... OK
+Starting snifftest... OK
+-&gt; Downloaded app package (4.0K)
+Initialized empty Git repository in /tmp/buildpacks/jetty-buildpack.git/.git/
+Installing jetty-buildpack.git.
+Downloading JDK...
+Copying openjdk-1.7.0_21.tar.gz from the buildpack cache ...
+Unpacking JDK to .jdk
+Downloading Jetty: jetty-distribution-9.4.31.v20200723.tar.gz
+Downloading jetty-distribution-9.4.31.v20200723.tar.gz from http://repo2.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.0.3.v20130506/ ...
+Unpacking Jetty to .jetty
+-&gt; Uploading staged droplet (36M)
+-&gt; Uploaded droplet
+Checking snifftest...
+Staging in progress...
+Staging in progress...
+Staging in progress...
+Staging in progress...
+Staging in progress...
+Staging in progress...
+  0/1 instances: 1 starting
+  0/1 instances: 1 starting
+  0/1 instances: 1 starting
+  0/1 instances: 1 starting
+  1/1 instances: 1 running
+OK</code></pre><p>The application is now available at the configured location! Under the url <code class="literal">http://snifftest.a1-app.cf-app.com/</code> in this particular example.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cloudfoundry-acknowledgements"></a>Acknowledgements</h3></div></div></div><p>The Jetty buildpack was forked from the CloudFoundry Java buildpack. The Virgo Buildpack that Glyn worked on was used as a sanity check.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a class="link" href="http://github.com/cloudfoundry/cloudfoundry-buildpack-java" target="_top">http://github.com/cloudfoundry/cloudfoundry-buildpack-java</a></li><li class="listitem"><a class="link" href="http://github.com/glyn/virgo-buildpack" target="_top">http://github.com/glyn/virgo-buildpack</a></li></ul></div><p>CloudFoundry buildpacks were modelled on Heroku buildpacks.</p></div></div><script type="text/javascript">
+      SyntaxHighlighter.all()
+    </script><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jelastic.html"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="platforms.html"><i class="fa fa-chevron-up" aria-hidden="true"></i> Top</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="elastic-beanstalk.html">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a></td></tr><tr><td width="40%" align="left" valign="top">Jelastic&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></td><td width="40%" align="right" valign="top">&nbsp;Amazon Elastic Beanstalk</td></tr></table></div><p xmlns:jfetch="java:org.eclipse.jetty.xslt.tools.JavaSourceFetchExtension" xmlns:fetch="java:org.eclipse.jetty.xslt.tools.SourceFetchExtension" xmlns:d="http://docbook.org/ns/docbook" xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0" xmlns:xslthl="http://xslthl.sf.net" xmlns:gcse="http://www.google.com" xmlns:date="http://exslt.org/dates-and-times"><div class="jetty-callout">
+            See an error or something missing?
+            <span class="callout"><a href="http://github.com/eclipse/jetty.project">Contribute to this documentation at
+                <span class="website"><i class="fa fa-github" aria-hidden="true"></i> Github!</span></a></span><span style="float: right"><i>(Generated: 2020-07-23)</i></span></div></p></body></html>
