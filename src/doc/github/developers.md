@@ -22,7 +22,7 @@ First you need to download the files to a local directory, either use git clone 
 
 We are using the gradle build tool (https://gradle.org/), specifically with the gradle wrapper (https://tomgregory.com/what-is-the-gradle-wrapper-and-why-should-you-use-it/).
 
-Thus, for all commands you can use `./gradlew` or `gradle.bat` instead of `gradle`. The advantage is that you don't have to download and install gradle. Also, you can always be sure to use the correct version of gradle for the build. In the instructions we will always refer to ``<gradle>``, so on Windows replace that with ``gradlew`` or ``gradlew.bat``, on Linux and MacOS replace it with ``./gradlew``. 
+Thus, for all commands you can use `./gradlew` or `gradle.bat` instead of `gradle`. The advantage is that you don't have to download and install gradle. Also, you can always be sure to use the correct version of gradle for the build. In the instructions we will always refer to ``<gradle command>``, so on Windows replace that with ``gradlew`` or ``gradlew.bat``, on Linux and MacOS replace it with ``./gradlew``. 
 
 ### Configuration
 
@@ -76,7 +76,7 @@ The following file system structure will be created for you:
 
 You can get an overview of all available build tasks by using: 
 ```
-<gradle> tasks --all
+<gradle command> tasks --all
 ```
 
 ### Upating the configuration
@@ -103,7 +103,7 @@ If you create a new version (meaning you change the Java sources), please update
 Once you have updated the property `jasperreportsVersion`, you can now call the following command to download the new libraries: 
 
 ```
-<gradle> jriDownloadJasperLibraries
+<gradle command> jriDownloadJasperLibraries
 ```
 
 This will download the files into the directory: `lib/jasper-reports/<version>` .
@@ -116,13 +116,13 @@ This will download the files into the directory: `lib/jasper-reports/<version>` 
 
 There are many different ways you can build the project ... depending on your needs: 
 * cleaning the build directory
-    * `<gradle> clean`
+    * `<gradle command> clean`
 * building the war file 
-    * `<gradle> build`
+    * `<gradle command> build`
 * building the distribution (without zip) into the build directory `build/install/JasperReportsIntegration`
-    * `<gradle> installDist`
+    * `<gradle command> installDist`
 * building the distribution as zip into the build directory: `build/distributions`
-    * `<gradle> assembleDist`
+    * `<gradle command> assembleDist`
 
 The following naming conventions will be used: `JasperReportsIntegration-<project.version>-<jasperreportsVersion>.zip`.
 
@@ -131,9 +131,9 @@ A *.tar file will also be created.
 ## Testing / debugging
 
 * starting the built-in jetty (provided by gretty) - (faster) - will use an inplace web application and not compile the full war file. Thus the version numbers might not show properly. 
-    * `<gradle> appRun`
+    * `<gradle command> appRun`
 * starting the built-in jetty (provided by gretty) - will actually build the war file first and run it
-    * `<gradle> appRunWar`
+    * `<gradle command> appRunWar`
 
 Should you get an error message like ``Caused by: java.net.BindException: Address already in use: bind`` then you need to change the port that the integrated jetty is using. Look for the following section in the ``build.gradle`` file and change the parameter **httpPort**: 
 
@@ -149,7 +149,7 @@ gretty {
 ## Development with Eclipse
 
 * the following task will create all required files for Eclipse
-    * `<gradle> eclipse`
+    * `<gradle command> eclipse`
 
 Then you can just start Eclipse and import the root directory into Eclipse as a gradle project. 
 
