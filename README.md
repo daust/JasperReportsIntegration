@@ -15,7 +15,7 @@ The reports will be created using the JasperSoft Studio software: https://commun
 * [Links](#links)
 * [Include newer versions of the JasperReports libraries on your own](#updateLibs) 
 * [Contribute to the project as a developer](#contribute)
-* [Documentation](src/doc/User-Documentation/Index-Local.html)
+* <a href="https://daust.github.io/JasperReportsIntegration/src/doc/User-Documentation/Index-Local.html" target="_blank">Documentation</a>
 
 ## <a name="links"></a> Links
 
