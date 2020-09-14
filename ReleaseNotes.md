@@ -7,16 +7,18 @@
 
 * New features
   * #30 - Update the standalone application server to jetty-distribution-9.4.31.v20200723
-  * #17 - Wrong ojdbc library used causing connection failure enhancement
-  * #30 - Upgrade jasperreports libraries to current version 6.14.0 enhancement
+  * #17 - Wrong ojdbc library used causing connection failure
+  * #30 - Upgrade jasperreports libraries to current version 6.14.0
 * Bug fixes
   * #20 - When using jasper report Integration sessions are not closed propperly bug
-  * #28 - error connection database on 2.5.0.1 enhancement
+  * #28 - error connection database on 2.5.0.1
 * Changed behaviour
-
+  * *none*
+* Known issues
+  * When contributing as a developer, the integration with eclipse still has issues, some libraries are included redundantly and are causing errors. 
 
 ## Patch files to be installed
-...
+In order to upgrade from release 2.5.0, you only need to install the new JasperReportsIntegration.war file.
 
 ----------------------------------------------------------------------------------
 # Version 2.5.0
