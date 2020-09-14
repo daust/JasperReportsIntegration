@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
-<Context path="/JasperReportsIntegration" debug="5" reloadable="true"
+<Context path="/JasperReportsIntegration" debug="0" reloadable="false"
          crossContext="true">
 
     <!-- default data source, when no _dataSource parameter is given -->
