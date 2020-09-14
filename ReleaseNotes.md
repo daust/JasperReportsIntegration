@@ -6,11 +6,14 @@
 ## Release Notes
 
 * New features
-  * FEATURE: #? - Updated the standalone application server to jetty-distribution-9.4.31.v20200723
+  * #30 - Update the standalone application server to jetty-distribution-9.4.31.v20200723
+  * #17 - Wrong ojdbc library used causing connection failure enhancement
+  * #30 - Upgrade jasperreports libraries to current version 6.14.0 enhancement
 * Bug fixes
-  * BUG: #11 - ???
+  * #20 - When using jasper report Integration sessions are not closed propperly bug
+  * #28 - error connection database on 2.5.0.1 enhancement
 * Changed behaviour
-  * 
+
 
 ## Patch files to be installed
 ...

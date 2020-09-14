@@ -5,6 +5,7 @@
   Date        Author    Comment
   --------------------------------------------------
   08.09.2020  D. Aust   initial creation
+  14.09.2020  D. Aust   fixed script to be able to run on Windows as well, added some debug output.
  */
 
 plugins {
@@ -15,6 +16,7 @@ plugins {
 apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
 //for Ant filter
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.internal.os.OperatingSystem
 
 // import groovy helper functions
 //  println "$project.projectDir/src/groovy/tools.groovy"
@@ -116,11 +118,7 @@ def download(String remoteUrl, String localUrl) {
 // can take either a string or a list of strings (for arguments with spaces)    
 // prints all output, complains and halts on error                              
 def runCommand = { strList ->
-/*
-  assert ( strList instanceof String ||
-           ( strList instanceof List && strList.each{ it instanceof String } ) \
-)
-*/
+
   def proc = strList.execute()
   proc.in.eachLine { line -> println line }
   proc.out.close()
@@ -139,6 +137,17 @@ def runCommand = { strList ->
     println "[ERROR] ${proc.getErrorStream()}"
   }
   assert !proc.exitValue()
+}
+
+// run os command dependent on OS
+private static Iterable<String> osAdaptiveCommand(String... commands) {
+	def newCommands = []
+	if (OperatingSystem.current().isWindows()) {
+		newCommands = ['cmd', '/c']
+	}
+
+	newCommands.addAll(commands)
+	return newCommands
 }
 
 //-----------------------------------------------------------------------------
@@ -241,6 +250,7 @@ task jriCreateLocalEnvironment{
 task jriDownloadJasperLibraries{
   description = "This will download the libraries for version $jasperreportsVersion to a local directory. Needs to be done only once when you upgrade to a new jasperreports version."
 
+  // ${File.separator}
   doLast{
     def tempLocation    ="$project.projectDir/build/download/$jasperreportsVersion"
     def tempLocation2   ="$tempLocation/jasperreports-$jasperreportsVersion"
@@ -248,6 +258,7 @@ task jriDownloadJasperLibraries{
     def baseURLJasper   ="https://sourceforge.net/projects/jasperreports/files/jasperreports/JasperReports%20${jasperreportsVersion}"
 
     println " download files and install in target location: " + targetLocation
+    println " first download project files into temporary directory: " + tempLocation2
 
     file(targetLocation).mkdirs()
     file(tempLocation).mkdirs()
@@ -263,8 +274,11 @@ task jriDownloadJasperLibraries{
             into "$tempLocation"
         }
     // run build.xml file to download all libraries and build the jasperreport libraries
-    runCommand.call("ant -f $tempLocation2/build.xml retrievelibs")
-    runCommand.call("ant -f $tempLocation2/build.xml jar")
+	println "running ant task: " + osAdaptiveCommand("ant", "-f", "$tempLocation2/build.xml", "retrievelibs")
+    runCommand.call( osAdaptiveCommand("ant", "-f", "$tempLocation2/build.xml", "retrievelibs") )
+	
+	println "running ant task: " + osAdaptiveCommand("ant", "-f", "$tempLocation2/build.xml", "jar")
+    runCommand.call( osAdaptiveCommand("ant", "-f", "$tempLocation2/build.xml", "jar") )
 
     // copy all libraries to target location to: lib/jasper-reports/<version>
     copy {
@@ -279,5 +293,3 @@ task jriDownloadJasperLibraries{
     }
   }
 }   
-
-
