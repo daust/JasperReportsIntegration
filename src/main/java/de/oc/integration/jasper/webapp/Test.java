@@ -65,6 +65,10 @@ public class Test extends HttpServlet {
 	    if (!appConfig.infoPageIsEnabled){
 	    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "This page is protected." );	
 	    }
+	    // #37 Security: Whitelisting of ip addresses to access the /JasperReportsIntegration service
+	    if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())){
+	    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access th." );	
+	    }
 		
 		// extract all relevant url parameters from the url
 		URLCallInterface urlCallInterface = new URLCallInterface(request);

@@ -37,12 +37,12 @@
 		<servlet-name>ReportWrapper</servlet-name>
 		<servlet-class>de.oc.integration.jasper.webapp.ReportWrapper</servlet-class>
 	</servlet>
-	<servlet>
+	<!-- servlet>
 		<description></description>
 		<display-name>apex</display-name>
 		<servlet-name>apex</servlet-name>
 		<servlet-class>de.oc.integration.jasper.webapp.Apex</servlet-class>
-	</servlet>
+	</servlet  -->
 	<servlet>
 		<servlet-name>ImageServlet</servlet-name>
 		<servlet-class>net.sf.jasperreports.j2ee.servlets.ImageServlet</servlet-class>
@@ -58,10 +58,10 @@
 		<servlet-name>ReportWrapper</servlet-name>
 		<url-pattern>/report</url-pattern>
 	</servlet-mapping>
-	<servlet-mapping>
+	<!-- servlet-mapping>
 		<servlet-name>apex</servlet-name>
 		<url-pattern>/apex</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping -->
 	<servlet-mapping>
 		<servlet-name>ImageServlet</servlet-name>
 		<url-pattern>/report_image</url-pattern>

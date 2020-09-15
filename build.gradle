@@ -181,8 +181,15 @@ eclipse {
                     classpath.setEntries(wanted)
                 }
      }
-    //customizing the classes output directory:
-    defaultOutputDir = file('build-eclipse')
+    //customizing the classes output directory => use /build instead of /bin
+    defaultOutputDir = file('build')
+    file.whenMerged {
+            entries.each { entry ->
+                if (entry.kind == 'src' && entry.hasProperty('output')) {
+                    entry.output = entry.output.replace('bin/', "build/")
+                }
+            }
+        }
 
     //default settings for downloading sources and Javadoc:
     downloadSources = true

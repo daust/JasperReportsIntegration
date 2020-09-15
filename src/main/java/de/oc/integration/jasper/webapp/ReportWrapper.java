@@ -161,6 +161,11 @@ public class ReportWrapper extends HttpServlet {
 		// validate configuration, has the config file been changed since last
 		// time?
 		appConfig.validateConfiguration(getServletContext());
+		
+	    // #37 Security: Whitelisting of ip addresses to access the /JasperReportsIntegration service
+	    if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())){
+	    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access th." );	
+	    }
 
 		JasperPrint jasperPrint = null;
 		OutputStream out = response.getOutputStream();
