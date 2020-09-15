@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- removed context-root so that the context path is always picked up from the filename of the .war file -->
 <weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/weblogic-web-app" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.bea.com/ns/weblogic/weblogic-web-app http://www.bea.com/ns/weblogic/weblogic-web-app/1.0/weblogic-web-app.xsd">
-  <context-root>/JasperReportsIntegration</context-root>
 	<container-descriptor>
 		<show-archived-real-path-enabled>true</show-archived-real-path-enabled>
 	</container-descriptor>

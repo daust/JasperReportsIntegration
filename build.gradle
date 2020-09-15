@@ -6,6 +6,8 @@
   --------------------------------------------------
   08.09.2020  D. Aust   initial creation
   14.09.2020  D. Aust   fixed script to be able to run on Windows as well, added some debug output.
+  15.09.2020  D. Aust   - changed war file name from JasperReportsInegration.war to jri.war
+                        - excluded the servlet-api*.jar files from the downloaded jasper libraries
  */
 
 plugins {
@@ -28,12 +30,12 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.6.0'
+  project.version           = '2.6.1'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
 
-  archivesBaseName          = "JasperReportsIntegration"
+  archivesBaseName          = "jri"
 
   // version of jasperreports to be used
   def jasperreportsVersion  ='6.14.0'  
@@ -53,7 +55,7 @@ repositories {
 /* define specific maven dependencies */
 dependencies {
     // *** Only for compilation, NOT distributed
-    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    //compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
 
     // https://mvnrepository.com/artifact/log4j/log4j
     implementation group: 'log4j', name: 'log4j', version: '1.2.16'
@@ -75,13 +77,17 @@ dependencies {
 
     // dependencies from jasperreports.proj
     compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
+
+    // custom files to be excluded from Eclipse build path
+    //customExcludeEclipseConfig=files("commons-lang-2.6.jar")
 }
 
 gretty {
   //servletContainer = 'tomcat9'
-  httpPort = 8080
+  httpPort      = 8080
   //initParameter 'oc.jasper.config.home', "/tmp/jri"
-  jvmArgs = ['-Djava.awt.headless=true']
+  jvmArgs       = ['-Djava.awt.headless=true']
+  contextPath   = "/jri"
 } 
 
 //-----------------------------------------------------------------------------
@@ -150,6 +156,65 @@ private static Iterable<String> osAdaptiveCommand(String... commands) {
 	return newCommands
 }
 
+
+/* Eclipse configurations 
+   see: https://docs.gradle.org/current/dsl/org.gradle.plugins.ide.eclipse.model.EclipseClasspath.html */
+eclipse {
+  classpath {
+    // remove duplicate libraries from the build path. There is a conflict in Eclipse when duplicate libraries are on the build path
+    // one in the jasper build lib directory (lib/jasper-reports/$jasperreportsVersion) and the local gradle cache: 
+    // 
+    file {
+            whenMerged { classpath ->
+                    java.util.List wanted = new java.util.ArrayList()
+                    def entries = classpath.getEntries()
+                    entries.each {
+                        if (   (it.path.contains('commons-lang-2.6.jar') && it.path.contains('.gradle/caches'))
+                            ||
+                               (it.path.contains('commons-logging-1.1.1.jar') && it.path.contains('.gradle/caches'))
+                        ) {
+                            println('Removing library: ' + it.path + ' from eclipse classpath (duplicate)')
+                        } else {
+                            wanted.add(it)
+                        }
+                    }
+                    classpath.setEntries(wanted)
+                }
+     }
+    //customizing the classes output directory:
+    defaultOutputDir = file('build-eclipse')
+
+    //default settings for downloading sources and Javadoc:
+    downloadSources = true
+    downloadJavadoc = false
+  }
+
+  project {
+     resourceFilter {
+       appliesTo = 'FOLDERS'
+       type = 'EXCLUDE_ALL'
+       matcher {
+         id = 'org.eclipse.ui.ide.multiFilter'
+         // to find out which arguments to use, configure the desired
+         // filter with Eclipse's UI and copy the arguments string over
+         arguments = '1.0-projectRelativePath-matches-false-false-src/main/dist'
+       }
+     }
+     resourceFilter {
+       appliesTo = 'FOLDERS'
+       type = 'EXCLUDE_ALL'
+       matcher {
+         id = 'org.eclipse.ui.ide.multiFilter'
+         // to find out which arguments to use, configure the desired
+         // filter with Eclipse's UI and copy the arguments string over
+         arguments = '1.0-projectRelativePath-matches-false-false-src/doc'
+       }
+     }
+   }
+
+}
+
+
 //-----------------------------------------------------------------------------
 //-- task definitions for JasperReportsIntegration
 //-----------------------------------------------------------------------------
@@ -196,7 +261,7 @@ distributions {
             from('src/doc/User-Documentation'){into 'doc' filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
             from('src/doc/User-Documentation/Index-Distribution.html'){rename 'Index-Distribution.html', 'Index.html' }
             from('src/reports'){into 'reports'}
-            from (war.outputs){into 'webapp' rename(war.archiveName , "JasperReportsIntegration.war")}
+            from (war.outputs){into 'webapp' rename(war.archiveName , "jri.war")}
 
             /*from (configurations.compile){
               include(["commons-configuration-*.jar"
@@ -212,7 +277,7 @@ distributions {
 
             // copy war file directly into jetty/webapps
             // rather not, make zip distribution too large
-            //from (war.outputs){into 'jetty/webapps' rename(war.archiveName , "JasperReportsIntegration.war")}
+            //from (war.outputs){into 'jetty/webapps' rename(war.archiveName , "jri.war")}
         }
     }
 }
@@ -287,9 +352,12 @@ task jriDownloadJasperLibraries{
             from "$tempLocation2/dist/lib"
             into "$targetLocation"
             include "*.jar"
+            // exclude all that are used for compilation and test only
+            // but not required at runtime
             exclude "net.tascalate.asmx*jar"
             exclude "net.tascalate.javaflow*jar"
             exclude "testng*jar"
+            exclude "servlet-api*"
     }
   }
 }   

@@ -19,11 +19,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
-
 public class DBUtils {
 	
-	private static Logger log = Logger.getLogger(DBUtils.class);
+	//private static Logger log = Logger.getLogger(DBUtils.class);
 
 	public static void closeQuietly(Connection conn){
 		if (conn!=null){

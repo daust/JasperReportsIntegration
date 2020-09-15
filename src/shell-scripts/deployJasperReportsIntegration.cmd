@@ -1,1 +1,1 @@
-copy ..\webapp\JasperReportsIntegration.war ..\jetty\webapps
+copy ..\webapp\*.war ..\jetty\webapps

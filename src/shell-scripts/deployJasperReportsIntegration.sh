@@ -1,1 +1,1 @@
-cp ../webapp/JasperReportsIntegration.war ../jetty/webapps
+cp ../webapp/*.war ../jetty/webapps
