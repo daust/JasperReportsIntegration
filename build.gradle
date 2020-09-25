@@ -8,6 +8,7 @@
   14.09.2020  D. Aust   fixed script to be able to run on Windows as well, added some debug output.
   15.09.2020  D. Aust   - changed war file name from JasperReportsInegration.war to jri.war
                         - excluded the servlet-api*.jar files from the downloaded jasper libraries
+  18.09.2020  D. Aust   added missing jasperreports.properties file to WEB-INF/classes
  */
 
 plugins {
@@ -77,17 +78,20 @@ dependencies {
 
     // dependencies from jasperreports.proj
     compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
-
-    // custom files to be excluded from Eclipse build path
-    //customExcludeEclipseConfig=files("commons-lang-2.6.jar")
 }
 
 gretty {
   //servletContainer = 'tomcat9'
-  httpPort      = 8080
+  httpPort      = 8099
   //initParameter 'oc.jasper.config.home', "/tmp/jri"
-  jvmArgs       = ['-Djava.awt.headless=true']
   contextPath   = "/jri"
+  jvmArgs = [
+            '-Xms4096m',
+            '-Xmx4096m',
+            '-XX:+UseConcMarkSweepGC',
+            '-server',
+            '-Djava.awt.headless=true'
+    ]
 } 
 
 //-----------------------------------------------------------------------------
@@ -227,6 +231,7 @@ eclipse {
 //-----------------------------------------------------------------------------
 
 war {
+    dependsOn configurations.compile
     archiveName = "${archivesBaseName}-${project.version}-${jasperreportsVersion}.war"
 
     // replaces tokens in the respective files only for the assembly of the .war file:
@@ -242,12 +247,29 @@ war {
       into 'doc' 
       //filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])
     } 
+    from('src/conf'){
+      include 'jasperreports.properties' into 'WEB-INF/classes'
+    }
+
+    doFirst{
+      manifest {
+          attributes( "Implementation-Title": project.name,
+                      "Implementation-Version": project.version,
+                      "Main-Class": "main.CommandLine",
+                      //"Class-Path": "*.jar"
+                      //"Class-Path": configurations.runtimeClasspath.collect { it.getName() }.join(' ') + " " + jar.outputs.files.collect { it.getName() }.join(' ')
+                      "Class-Path": war.classpath.collect { it.getName() }.join(' ') + " " + jar.outputs.files.collect { it.getName() }.join(' ')
+                    )
+      }
+    }
 
     //webInf { from 'src/additionalWebInf' }  // adds a file-set to the WEB-INF dir.
     //classpath fileTree('additionalLibs') // adds a file-set to the WEB-INF/lib dir.
     //classpath configurations.moreLibs // adds a configuration to the WEB-INF/lib dir.
+    //classpath = ['src/...',]
+    //classpath = war.classpath.plus('src/conf/jasperreports.properties')
     //webXml = file('src/conf/web.xml') // copies a file to WEB-INF/web.xml
-    //webInf { from 'src/conf/weblogic.xml' }  // adds a file-set to the WEB-INF dir.
+    //webInf { from 'src/conf/weblogic.xml' }  // adds a file-set to the WEB-INF dir.  
 }
 
 distZip.setArchiveName("${archivesBaseName}-${project.version}-${jasperreportsVersion}.zip")

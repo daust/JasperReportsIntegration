@@ -237,6 +237,7 @@ public class CommandLine {
 		tmpWarFile.renameTo(new File(warFilename));
 	}
 
+
 	public static void updateWebXML(String origWarFilePath,
 			String newWarFilePath, String configDirname) throws IOException {
 		ZipFile zipFile = new ZipFile(origWarFilePath);
@@ -250,12 +251,20 @@ public class CommandLine {
 		for (Enumeration<?> e = zipFile.entries(); e.hasMoreElements();) {
 			ZipEntry entryIn = (ZipEntry) e.nextElement();
 			if (!entryIn.getName().contains("web.xml")) {
-				zos.putNextEntry(entryIn);
-				InputStream is = zipFile.getInputStream(entryIn);
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = (is.read(buf))) > 0) {
-					zos.write(buf, 0, len);
+				try {
+					// all files but web.xml are being just simply copied into the new .war file
+					//System.out.println("  - " + entryIn.getName());
+					logger.debug("  - " + entryIn.getName());
+					zos.putNextEntry(entryIn);
+					InputStream is = zipFile.getInputStream(entryIn);
+					byte[] buf = new byte[1024];
+					int len;
+					while ((len = (is.read(buf))) > 0) {
+						zos.write(buf, 0, len);
+					}					
+				} catch (Exception ex) {
+					logger.warn("Warning: " + ex.getLocalizedMessage());
+					//System.out.println("Warning: " + ex.getLocalizedMessage());
 				}
 			} else {
 				System.out.println("process web.xml");
