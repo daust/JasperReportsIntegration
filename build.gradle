@@ -81,7 +81,7 @@ dependencies {
 }
 
 gretty {
-  //servletContainer = 'tomcat9'
+  //servletContainer = 'tomcat9' // can be changed to Tomcat, by default jetty9 is used
   httpPort      = 8099
   //initParameter 'oc.jasper.config.home', "/tmp/jri"
   contextPath   = "/jri"

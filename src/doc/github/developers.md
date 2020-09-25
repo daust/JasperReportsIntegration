@@ -139,9 +139,7 @@ Should you get an error message like ``Caused by: java.net.BindException: Addres
 
 ```
 gretty {
-  //servletContainer = 'tomcat9' // can be changed to Tomcat, by default jetty9 is used
-  httpPort = 8080
-  //initParameter 'oc.jasper.config.home', "/tmp/jri"  // does not work currently
+  httpPort = 8099
   jvmArgs = ['-Djava.awt.headless=true']
 } 
 ```
