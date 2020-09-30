@@ -59,9 +59,7 @@
 	
 	<h2>Documentation</h2>
 	
-	<p>The online documentation can be accessed <a href="https://github.com/daust/JasperReportsIntegration/blob/v@project.version@/README.md" target="_new">on GitHub</a>.  </p>
-
-	<p>The included (LEGACY) documentation can be accessed <a href="doc/Index-Local.html" target="_new">here</a>.  </p>
+	<p>The online documentation can be accessed <a href="https://github.com/daust/JasperReportsIntegration/tree/v@project.version@" target="_new">on GitHub</a>.  </p>
 
 	<h2>Basic connectivity tests</h2>
 	

@@ -86,8 +86,8 @@ gretty {
   //initParameter 'oc.jasper.config.home', "/tmp/jri"
   contextPath   = "/jri"
   jvmArgs = [
-            '-Xms4096m',
-            '-Xmx4096m',
+            '-Xms2048m', //Xms4096m
+            '-Xmx2048m', //Xmx4096m
             '-XX:+UseConcMarkSweepGC',
             '-server',
             '-Djava.awt.headless=true'
@@ -225,7 +225,6 @@ eclipse {
 
 }
 
-
 //-----------------------------------------------------------------------------
 //-- task definitions for JasperReportsIntegration
 //-----------------------------------------------------------------------------
@@ -243,10 +242,10 @@ war {
     
     //from 'src/rootContent' // adds a file-set to the root of the archive
     // all occurences of @project.version@ will be replaced with the current project version
-    from('src/doc/User-Documentation'){
-      into 'doc' 
+    //from('src/doc/User-Documentation'){
+    //  into 'doc' 
       //filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])
-    } 
+    //} 
     from('src/conf'){
       include 'jasperreports.properties' into 'WEB-INF/classes'
     }
@@ -287,8 +286,8 @@ distributions {
                                       into 'bin'}
             from('src/conf/application.properties'){into 'conf'}
             from('src/conf/log4j.properties'){into 'conf'}
-            from('src/doc/User-Documentation'){into 'doc' filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
-            from('src/doc/User-Documentation/Index-Distribution.html'){rename 'Index-Distribution.html', 'Index.html' }
+            //from('src/doc/User-Documentation'){into 'doc' filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
+            from('src/doc/Documentation.html'){ filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
             from('src/reports'){into 'reports'}
             from (war.outputs){into 'webapp' rename(war.archiveName , "jri.war")}
 
@@ -358,9 +357,10 @@ task jriDownloadJasperLibraries{
     file(tempLocation).mkdirs()
 
     downloadRedirect( "$baseURLJasper/jasperreports-${jasperreportsVersion}-project.tar.gz", "$tempLocation/jasperreports.tar.gz")
-    downloadRedirect( "$baseURLJasper/jasperreports-chart-themes-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-themes.jar")
-    downloadRedirect( "$baseURLJasper/jasperreports-chart-customizers-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-customizers.jar")
-    downloadRedirect( "$baseURLJasper/jasperreports-functions-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-functions.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-chart-themes-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-themes-${jasperreportsVersion}.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-chart-customizers-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-customizers-${jasperreportsVersion}.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-functions-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-functions-${jasperreportsVersion}.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-fonts-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-fonts-${jasperreportsVersion}.jar")
 
     // ungzip / untar files
     copy {
@@ -379,6 +379,7 @@ task jriDownloadJasperLibraries{
             from "$tempLocation2"
             from "$tempLocation2/dist"
             from "$tempLocation2/dist/lib"
+            from "$tempLocation"    // chart-customizers, chart-themes, jasperreports-functions, jasperreports-fonts
             into "$targetLocation"
             include "*.jar"
             // exclude all that are used for compilation and test only

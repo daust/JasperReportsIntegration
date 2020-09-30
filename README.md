@@ -2,25 +2,30 @@
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 [//]: # (how to write a good readme for a github project: https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
 
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick" />
-<input type="hidden" name="hosted_button_id" value="NH8MWBUXWQ73W" />
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
-</form>
+
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NH8MWBUXWQ73W&source=url"><img alt="Donate" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"></a>
 
 * [What is the JasperReportsIntegration?](#intro)
-* [Documentation](#docs)
 * [Download](#download)
+* [Installation](#install)
+    * System Requirements
+    * Quickstart
+    * Installation
+    * Upgrade
+* [Integration and Usage](#integration)
+* [Configuration](#configuration)
+* [PL/SQL API](#plsql_api)
+* [Legacy Documentation](#legacy_documentation)
 * [Change Log / Release Notes](#changelog)
-* [FAQ / Support / Forum](#support)
 * [Credit](#credit)
 * [Contributing](#contribute)
 * [License](#license)
+* [FAQ/ Troubleshooting](#faq)
+* [Support / Forum](#support)
 
 # <a name="intro"></a> What is the JasperReportsIntegration?
 
-JasperReportsIntegration provides an interface to use the [JasperReports reporting engine](https://community.jaspersoft.com/project/jasperreports-library) in an Oracle database application, specifically with Oracle Application Express (Oracle APEX).
+JasperReportsIntegration provides an interface to use the [JasperReports reporting engine](https://community.jaspersoft.com/project/jasperreports-library) in an Oracle database application, specifically with Oracle Application Express (Oracle APEX). 
 
 >"The JasperReports Library is the world's most popular open source reporting engine. It is entirely written in Java and it is able to use data coming from any kind of data source and produce pixel-perfect documents that can be viewed, printed or exported in a variety of document formats including HTML, PDF, Excel, OpenOffice and Word."
 
@@ -28,20 +33,72 @@ The main purpose is to provide a cost free alternative for high-fidelity printin
 
 ## How does it work?
 
-### Architecture
+This integration approach focuses on the integration with Jasper Reports, but is not limited to it. Using a generic URL-based approach, it can easily be extended to call any other reporting engine that provides a URL based interface for running reports, for example Oracle Reports, BIRT or Crystal Reports.
 
-*tbd*
+### What are the parts of the integration?
 
-### Design and execution flow
+The integration kit consists of the following components:
 
-1. Design your report against the Oracle database using the JasperSoft Studio software: https://community.jaspersoft.com/project/jaspersoft-studio/releases. 
-2. Copy the ``<report name>.jasper`` file to the application server
-3. Use the pl/sql api to call the report and pass any required parameters
-4. The integration pl/sql api will construct the url and call the j2ee web application using utl_http. This will execute the locally stored ``<report name>.jasper`` file and use the connection pool as defined in the ``application.properties`` file. 
+* a J2EE application to call the specified report definition file, make a connection to the target database and return the generated report
 
-# <a name="docs"></a>Documentation
+    * This J2EE application (``jri.war``) is deployed in a standard J2EE container.
+    
+    * Also, all reports we want to use have to be copied to the J2EE server, so that they are accessible by the J2EE application. These Jasper Report definition files are usually created with the iReport designer or the newer Jaspersoft Studio, this is the most convenient way.
+    
+    * Finally, we need to configure the JNDI datasources in the J2EE server (or the ``application.properties`` file) to connect to our Oracle databases.
+
+* a PL/SQL interface which can you can use in your application (package ``XLIB_JASPERREPORTS``)
+
+    * This package essentially takes the parameters and constructs a URL for the J2EE application. This URL is then passed to the J2EE application via ``UTL_HTTP``. Once the report is run, it will return the report as a BLOB. This BLOB can be displayed immediately, stored in the database or sent via Email.
+
+### Preparation
+
+First of all, we need to design the report. The preferred method is to use the newer Jaspersoft Studio (https://community.jaspersoft.com/project/jaspersoft-studio/releases) to create the report definition file, but reports created with the older iReport designer will also work. We use a JDBC connection to connect to the target Oracle Schema and design the report. The report definition file is then copied into a specific directory on the J2EE server so that it can be used by the J2EE application .
+
+Next we use the PL/SQL call interface in our APEX application to call the report and pass all required parameters to it.
+
+### One roundtrip ...
+
+Once the user invokes the report generation functionality (by clicking on a link or a button), usually a PL/SQL process is invoked to call the report, e.g.:
+
+```
+begin
+  xlib_jasperreports.show_report (p_rep_name => :p5_rep_name,
+                                  p_rep_format => :p5_rep_format,
+                                  p_data_source => :p5_data_source,
+                                  p_out_filename => :p5_out_filename,
+                                  p_rep_locale => :p5_rep_locale,
+                                  p_rep_encoding => :p5_rep_encoding,
+                                  p_additional_params => :p5_additional_params);
+
+  -- stop rendering of the current APEX page
+  apex_application.g_unrecoverable_error := true;
+end;
+```
+
+This will result in a URL like ``http://localhost:8080/JasperReportsIntegration/report?_repName=test&_repFormat=pdf&_dataSource=default&_outFilename=myTest.pdf&_repLocale=de_DE&_repEncoding=UTF-8&p_deptno=10``
+
+Within the J2EE server we have already defined a data source named ``default``. For example this could be the HR schema in our target database.
+
+The J2EE application will use a JDBC connection from the connection pool to connect to the schema ``HR`` and run the report named ``test``.
+
+Since the report format in our example is specified as PDF, the reporting engine will return a PDF document.
+
+This PDF document will be returned as a BLOB and thus can be displayed directly in our application, stored in the database or sent via email.
+
+# <a name="download"></a>Download
+
+Binary releases can be downloaded from [the releases folder](https://github.com/daust/JasperReportsIntegration/releases). There you can find the released binaries as well as pre-releases for testing in the field. 
+
+The following naming convention will be used for the provided binaries: `JasperReportsIntegration-<project.version>-<jasperreportsVersion>.zip`.
+
+Legacy releases (up until version 2.4) can be downloaded here: https://www.opal-consulting.de/downloads/free_tools/JasperReportsIntegration/
+
+# <a name="install"></a>Installation
 
 ## System Requirements
+
+The integration has no requirement on a specific operating system, it is widely used on Linux systems as well as on Windows. It is mainly developed on MacOS. 
 
 * **Oracle Database Release**: The minimum requirement is the availability of the package ``UTL_HTTP``. Thus the integration will work with all Oracle versions in which Oracle APEX can be installed, even Oracle XE (10g).  
 
@@ -51,63 +108,287 @@ The main purpose is to provide a cost free alternative for high-fidelity printin
 
 * **J2EE Server**: It is still compatible with the fairly old servlet specification 2.4 (Java JDK 1.8), thus the J2EE application should work in most J2EE servers, it even works with Apache Tomcat 5.5. See [Apache Tomcat Versions](https://tomcat.apache.org/whichversion.html) for details. 
 
-## Quick Start
-## Installation
-## Integration and Usage
+## Quickstart
 
-## Configuration
-## Customizations
+In order to get you up and running in the shortest amount of time you can use the included Jetty J2EE server in the download.
+This is really useful for checking out the integration, for test and development environments. Typically in production environments, you can deploy it to your J2EE server of choice, i.e. Weblogic, Glassfish, Tomcat, etc. 
 
-### jasperreports.properties file
-### additional fonts
+You can find the quickstart instructions [here](src/doc/github/installation-quickstart.md).
 
-## PL/SQL API
+## <a name="install.installation"></a>Installation
+
+You can find the complete installation instructions [here](src/doc/github/installation-full.md).
+
+## Upgrade
+
+If you are already using JasperReportsIntegration and simply want to upgrade it to the latest release, you can find the instructions [here](src/doc/github/installation-upgrade.md).
+
+# <a name="integration"></a>Integration and Usage
+
+You can find the instructions [here](src/doc/github/integration-usage.md).
+
+# <a name="configuration"></a> Configuration
+
+## <a name="configuration.jasperreports_properties"></a> jasperreports.properties file
+```
+#====================================================================
+# 2.3.0.0	D. Aust		08.04.2015	New config parameter: 
+#									- application.infoPageIsEnabled
+# 2.6.1     D. Aust     15.09.2020  New config parameter: 
+#                                   - application.ipAddressesAllowed
+#====================================================================
+
+#====================================================================
+# Application properties (global)
+#====================================================================
+[application]
+configFileVersion=2.6.1
+
+# set the jndiPrefix, this is different for different
+# containers, e.g. 
+# for Glassfish: jndiPrefix=jdbc/
+# for Tomcat   : jndiPrefix=java:comp/env/jdbc/
+jndiPrefix=java:comp/env/jdbc/
+
+# infoPageIsEnabled will show the initial start page of the j2ee application
+# including testing and the environment settings
+infoPageIsEnabled=true
+
+# this parameter is limiting access to the integration for the 
+# specified list of ip addresses, e.g.: 
+# ipAddressListAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# if the list is empty, ALL addresses are allowed
+# ipAddressesAllowed=0:0:0:0:0:0:0:1
+
+#====================================================================
+# JDBC datasource configuration
+# http://www.orafaq.com/wiki/JDBC#Thin_driver
+# type=jndi|jdbc
+#====================================================================
+[datasource:default]
+type=jdbc
+name=default
+url=jdbc:oracle:thin:@127.0.0.1:1521:XE
+username=my_oracle_user
+password=my_oracle_user_pwd
+
+#====================================================================
+# Native JNDI datasource, to be configured in the application server
+# name: jndi_test
+#====================================================================
+#[datasource:jndi_test]
+#type=jndi
+#name=jndi_test
+
+#====================================================================
+# JDBC datasource configuration
+# http://www.orafaq.com/wiki/JDBC#Thin_driver
+# additional jdbc configurations, please uncomment
+#====================================================================
+#[datasource:test]
+#name=test
+#url=jdbc:oracle:thin:@127.0.0.1:1521:XE
+#username=my_oracle_user
+#password=my_oracle_user_pwd
+
+#====================================================================
+# Direct printing
+#====================================================================
+[directPrinting]
+isEnabled=false
+
+# for debugging purposes does it make sense to display the 
+# print dialog ON THE SERVER before printing. You can even cancel the 
+# request through the print dialog
+# DON'T do that in production (displayPrintDialog=true)!!!
+displayPrintDialog=false
+
+#====================================================================
+# Save File on Server
+#====================================================================
+[saveFileOnServer]
+isEnabled=false
+
+# allow only certain directories on the server to write to
+#directoryWhitelist=/Users/daust/oc-jasper/tmp,/Users/daust/oc-jasper
+
+#====================================================================
+## Syntax for specifying properties: 
+## http://commons.apache.org/configuration/userguide/howto_basicfeatures.html#Basic_features_and_AbstractConfiguration
+#====================================================================
+```
+
 ## Security
 
-## Legacy documentation
+Initially, JasperReportsIntegration did not implement a security strategy at all. 
 
-Previously, the documentation was provided using html
+Nevertheless, it was always quite easy to implement security. By using a firewall we can prohibit access to the J2EE server and only allow communication between the Oracle database and the J2EE server. This way we easily implement all required authentication and authorization just within our APEX application.
 
-* [Include newer versions of the JasperReports libraries on your own](#updateLibs) 
-* <a href="https://daust.github.io/JasperReportsIntegration/src/doc/User-Documentation/Index-Local.html" target="_blank">Documentation</a>
+Unfortunately, many people don't set things up this way and thus they use "security by obscurity". When you deploy it on the same outside-facing application server together with Oracle REST Data Services, you can circumvent any security measures implemented in your APEX application once you get the details of the call to the J2EE application like name of the datasource, report names and parameters. 
 
+Thus, over time some security features were implemented and more will follow in the future. 
 
-# <a name="download"></a>Download
+Currently, you can use the following features for improved security: 
+* The info page of the J2EE application shows lots of important information like version information and current configuration values. For production environments this can quickly become a security issue. You can turn off the info page by specifying the parameter ``infoPageIsEnabled=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
+* Restrict access based on IP address: You typically want to restrict access to the JasperReportsIntegration J2EE application. Only the database server should be allowed to call it. You can can restrict access to certain ip addresses by specifying the parameter ``ipAddressesAllowed=...`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
+* You should encrypt the passwords in the configuration file ``application.properties``. You can do this using the command line script ``bin\encryptPasswords.cmd`` or ``bin/encryptPasswords.sh`` respectively. 
 
-Binary releases can be downloaded from [the releases folder](releases). There you can find pre-releases for testing in the field as well as actually released binaries. 
+## Accessing JasperReportsIntegration through SSL
 
-The following naming convention will be used for the provided binaries: `JasperReportsIntegration-<project.version>-<jasperreportsVersion>.zip`.
+When you have SSL enabled on your application server then your url to the reporting services will look like ``https://server:port/jri``. 
 
-Legacy releases (up until version 2.4) can be downloaded here: https://www.opal-consulting.de/downloads/free_tools/JasperReportsIntegration/
+In order for you to use calls via ``utl_http`` or ``apex_web_service`` to an ssl secured service, you need to set up a wallet and import the certificate chain of the target service. 
+
+The following blogpost details quite nicely how to set up your Oracle wallet: https://fuzziebrain.com/content/id/1720/.
+
+Based on that information I have created simple instructions as an example for my local server ``vm1`` using the url ``https://vm1/jri``. The default port for ``https`` is ``443``, thus the actual url is : ``https://vm1:443/jri`` if you want to be more explicit. 
+
+### Download certificate from server
+```
+openssl s_client -showcerts -connect vm1:443 </dev/null
+```
+
+* copy lines from ``-----BEGIN CERTIFICATE-----`` until ``-----END CERTIFICATE----``- into a file, e.g. ``vm1.cer``
+    - Don't use the first one ... only the rest of the chain. 
+    - UNLESS you use a self-signed certificate, then the certificate is also the 
+    ROOT certificate and thus needs to be imported, too. 
+
+* Also, make sure the common name in the certificate matches the name of the server you are using in the call to utl_http or apex_web_service
+
+```
+# create autologin wallet and set password
+orapki wallet create -wallet ./wallet -pwd YourWalletPasswd123 -auto_login
+
+# add the certificate to the wallet
+# in this case when accessing a local server with a self-signed certificate, 
+# we MUST import the server certificate itself, because it is also the ROOT
+# certificate. In all other cases you need to import each certificate of the
+# certificate chain BUT NOT the server certificate itself
+
+orapki wallet add -wallet ./wallet -trusted_cert -cert "vm1.cer" -pwd YourWalletPasswd123
+
+# display the certificates that are contained in the wallet
+orapki wallet display -wallet ./wallet
+```
+
+e.g.
+```
+[oracle@localhost create_wallet3]$ orapki wallet display -wallet ./wallet
+Oracle PKI Tool Release 18.0.0.0.0 - Production
+Version 18.1.0.0.0
+Copyright (c) 2004, 2017, Oracle and/or its affiliates. All rights reserved.
+
+Requested Certificates: 
+User Certificates:
+Trusted Certificates: 
+Subject:        CN=vm1
+Subject:        CN=dietmarausted48
+Subject:        CN=GTS CA 1O1,O=Google Trust Services,C=US
+```
+
+**In our case we need to make sure, that we have an entry with the common name vm1 (CN=vm1).**
+
+### Run test in Oracle
+
+* Make sure you create a new session to the database, because the wallet information is cached on the session level. 
+* Thus, for APEX you would need to restart ORDS.
+
+```
+-- calling the service using http
+select apex_web_service.make_rest_request('http://vm1:8080/jri','GET') from dual;
+
+-- calling the service using https and the wallet
+select apex_web_service.make_rest_request(
+        p_url         => 'https://vm1/jri/',
+        p_http_method => 'GET',
+        p_wallet_path => 'file:/u01/app/dietmar/create_wallet3/wallet',
+        p_wallet_pwd  => 'YourWalletPasswd123') as r
+  from dual;
+```
+
+I am using apex_web_service in this example but you could do it just as well using utl_http. 
+
+## Using additional fonts
+
+In a jasper report (.jrxml file) you can use several fonts for displaying labels/texts. These fonts may not be always available on different platforms/OS. (e.g. There are some MS fonts which are unavailable on linux machines unless you install them manually). 
+
+Some fonts are bundled with jasperreports itself into a jar and make them work irrespective of underlying platform. Those are the DejaVuSans fonts. They are always available on all platforms because they are included in the file ``jasperreports-fonts-<version>.jar``. 
+
+More information can be found here: 
+* https://stackoverflow.com/questions/27184408/what-is-the-jasperrepots-fonts-jar-for-and-how-to-use-it
+* http://jasperreports.sourceforge.net/sample.reference/fonts/index.html#fontextensions
+
+More details will follow later ... *tbd*
+
+# <a name="plsql_api"></a> PL/SQL API
+
+*tbd*
+
+# <a name="legacy_documentation"></a> Legacy documentation
+
+Previously, the documentation was provided using html. This is still part of the distribution. This is to be considered deprecated and will be removed in future releases. The documentation has been moved to GitHub using the markdown format. 
+
+You can find the current html documentation <a href="https://daust.github.io/JasperReportsIntegration/src/doc/User-Documentation/Index-Local.html" target="_blank">here</a>.
 
 # <a name="changelog"></a>Change Log / Release Notes
 
-The [ReleaseNotes.md](ReleaseNotes.md) contain all the major updates for each release. ThecComplete set of issues can be found on [Milestones](milestones?state=closed) page.
+The [ReleaseNotes.md](src/doc/github/ReleaseNotes.md) contain all the major updates for each release. ThecComplete set of issues can be found on [Milestones](https://github.com/daust/JasperReportsIntegration/milestones) page.
 
-# <a name="support"></a>FAQ / Support / Forum
+# <a name="credit"></a>Credit
 
-* Forum: https://gitq.com/daust/JasperReportsIntegration
+The software is provided for free by [OPAL Consulting (Dietmar Aust)](https://www.opal-consulting.de/). 
 
-There is a FORUM for getting help here: https://gitq.com/daust/JasperReportsIntegration. Please be as specific as possible (error message, what is working, what is not working, steps to reproduce, operating system and version of application server, JasperReportsIntegration and application server). 
+# <a name="contribute"></a>Contributing
 
-## <a name="updateLibs"></a> Include newer versions of the JasperReports libraries on your own
+In case you want to contribute to the project, you can find instructions [here](src/doc/github/developers.md) on how to set up your development environment how supply patches to the software or documentation. 
+
+It also includes instructions on how to upgrade the jasperreports libraries which are included in the J2EE application. 
 
 One could say that the project consists of two main aspects: 
 * the JasperReportsIntegration software itself (the Java war file and the pl/sql apis)
 * the jasperreports libraries, see [jasperreports libraries](https://sourceforge.net/projects/jasperreports/files/jasperreports)
 
-Often a new release is required when a new version of the libraries is available. 
-
-Everybody can do this now. Please follow the instructions for developers: [src/doc/github/developers.md](src/doc/github/developers.md)
-
-# <a name="credit"></a>Credit
-
-Provided for free by OPAL Consulting (Dietmar Aust). 
-
-# <a name="contribute"></a>Contributing
-* [src/doc/github/developers.md](src/doc/github/developers.md)
+Often a new release is required when a new version of the libraries is available. This can now easily be done by everybody. You are no longer dependent on the main developer. 
 
 # <a name="license"></a>License
 
-Cheers, 
-~Dietmar. 
+For this project we are using a "BSD 3-Clause License", you can find the full license text [here](LICENSE).
+
+The BSD style license is very different from the GNU Public License. While the GNU license puts all sorts of restrictions on what you can do with the software, BSD-style licenses say "Hey, do what you like, we don't care. Just let people know we wrote it, and don't sue us." That's really all there is to it.
+
+The first paragraph with the numbered items says you can do what you like with the code, as long as you keep our name on it. And you cannot use our name(s) for advertising.
+
+The second paragraph, all in capital letters, is a standard legal boilerplate notification that tries to make it difficult for anyone to successfully sue us over the software.
+
+# <a name="faq"></a>FAQ / Troubleshooting
+
+* When using "headless" Linux servers (https://www.howtogeek.com/660841/what-is-a-headless-server/, ), you might encounter error messages regarding awt like the following: ``"java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11GraphicsEnvironment"``.  
+    - Solution: You need to configure your application server (e.g. Tomcat) in headless mode. You can get more information here: https://www.xwiki.org/xwiki/bin/view/Documentation/AdminGuide/Installation/InstallationWAR/InstallationTomcat/
+    - For Windows, create a file named ``setenv.bat`` in the directory ``%TOMCAT_HOME%/bin``. It will be called from ``catalina.bat``:
+        ```
+        set JAVA_OPTS=%JAVA_OPTS% -Djava.awt.headless=true
+        ```
+
+    - For *nix systems, create a file named ``setenv.sh`` in the directory ``$TOMCAT_HOME/bin``. It will be called from ``catalina.sh``:
+        ```
+        #!/bin/sh
+        export JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true"
+        ```
+
+* Enable debug messages
+    - *tbd*, use different configuration files (log4j.properties)
+
+
+# <a name="support"></a>Support / Forum
+
+There is a FORUM for getting help here: https://gitq.com/daust/JasperReportsIntegration. Please be as specific as possible: 
+
+* Error Message
+* Steps to reproduce
+* Operating system of the application server and version (e.g. Linux Redhat 7.x)
+* Application server and version (e.g. Apache Tomcat/8.0.23)
+* JasperReportsIntegration version (e.g. JasperReportsIntegration-2.6.0-6.14.0 )
+* Possibly logfiles of Apache Tomcat
+* Log entries from xlib_logs for making the url call using utl_http
+
+Also, when you encounter issues that you suspect are bugs and/or want to request enhancements to the software, please [enter the issues here](issues). 
