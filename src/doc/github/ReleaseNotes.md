@@ -7,12 +7,15 @@
 
 With this release, the full source code is published on github and can be used freely. The build process is now implemented using ``gradle`` instead of ``ant``. Also, it is now a lot easier to upgrade the integration with the newest jasperreports libraries. It can be done just using a configuration parameter and running the gradle build process. 
 
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/4?closed=1). 
+
 ## New features
   * #30 - Update the standalone application server to jetty-distribution-9.4.31.v20200723
   * #17 - Wrong ojdbc library used causing connection failure
   * #30 - Upgrade jasperreports libraries to current version 6.14.0
   * #7 - Update documentation
   * #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
+  * #2 - Deploying .jrxml and / or .jasper files
 
 ## Bug fixes
   * #20 - When using jasper report Integration sessions are not closed propperly bug
