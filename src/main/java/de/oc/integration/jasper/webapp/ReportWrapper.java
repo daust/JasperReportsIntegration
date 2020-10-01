@@ -165,7 +165,7 @@ public class ReportWrapper extends HttpServlet {
 		
 	    // #37 Security: Whitelisting of ip addresses to access the /JasperReportsIntegration service
 	    if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())){
-	    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access th." );	
+	    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access the application." );	
 	    }
 
 		JasperPrint jasperPrint = null;
@@ -176,7 +176,12 @@ public class ReportWrapper extends HttpServlet {
 
 		// extract all relevant url parameters from the url
 		URLCallInterface urlCallInterface = new URLCallInterface(request);
-
+		
+		// ----------------------------------------------------
+		// compile .jrxml file into .jasper on the fly
+		// ----------------------------------------------------
+		ReportUtilities.compileJRXMLIfNecessary(urlCallInterface.repName);
+		
 		// ----------------------------------------------------
 		// get the jasper file from the report search path
 		// look it up in order of the preferences of the search path

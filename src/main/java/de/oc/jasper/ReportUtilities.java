@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 
 import de.oc.integration.jasper.webapp.AppConfig;
 import de.oc.servlet.ServletUtilities;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
 
 public class ReportUtilities {
 
@@ -84,6 +86,38 @@ public class ReportUtilities {
 		
 		
 		return reportFile;
+	}
+
+	/** Compiles the pRepName.jrxml file into a pRepName.jasper file if it exists and the timestamp is newer than the .jasper file
+	 * 
+	 * @param pRepName name of the report
+	 *  
+	 */
+	public static void compileJRXMLIfNecessary( String pRepName ){
+				
+		String errMsg="";
+		String reportsDir=_appConfig.getReportsDir();
+		String reportFileNameBase = reportsDir + File.separator	+ pRepName;
+		
+		File jasperFile = new File(reportFileNameBase + ".jasper");
+		File jrxmlFile = new File(reportFileNameBase + ".jrxml");
+		
+		// compilation is only required if jrxml file actually exists
+		if (jrxmlFile.exists()) {
+			// compile if no .jasper exists or timestamp is older than that of the .jrxml file
+			if (!jasperFile.exists() || (jasperFile.lastModified() < jrxmlFile.lastModified()))  {
+				try {
+					logger.info("compiling file " + reportFileNameBase + ".jrxml on the fly" );
+
+					JasperCompileManager.compileReportToFile(reportFileNameBase + ".jrxml");
+				} catch (JRException e) {
+					e.printStackTrace();
+					errMsg = "Error compiling " + reportFileNameBase + ".jrxml: " + e.getMessage() ;
+					
+					throw new RuntimeException(errMsg);
+				}
+			}
+		}		
 	}
 
 }
