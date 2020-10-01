@@ -332,7 +332,7 @@ You can find the current html documentation <a href="https://daust.github.io/Jas
 
 # <a name="changelog"></a>Change Log / Release Notes
 
-The [ReleaseNotes.md](src/doc/github/ReleaseNotes.md) contain all the major updates for each release. ThecComplete set of issues can be found on [Milestones](https://github.com/daust/JasperReportsIntegration/milestones) page.
+The [ReleaseNotes.md](src/doc/github/ReleaseNotes.md) contain all the major updates for each release. The complete set of issues can be found on [Milestones](https://github.com/daust/JasperReportsIntegration/milestones) page.
 
 # <a name="credit"></a>Credit
 
