@@ -18,6 +18,10 @@
     if (!appConfig.infoPageIsEnabled){
     	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "JasperReportsIntegration: This page is protected. The info page has been disabled in the application.properties file. " );	
     }
+    // #37 Security: Whitelisting of ip addresses to access the /JasperReportsIntegration service
+    if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())){
+    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access th." );	
+    }
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -49,11 +53,13 @@
 			style="font-family: Consolas, Arial; font-weight: bold;"><%=  System.getProperty("java.version") %></span></li>
 		<li>JasperReports-Version: <span
 			style="font-family: Consolas, Arial; font-weight: bold;"><%=  JasperCompileManager.class.getPackage().getImplementationVersion() %></span></li>
+		<li>Your ip address: <span
+			style="font-family: Consolas, Arial; font-weight: bold;"><%=  request.getRemoteAddr() %></span></li>
 	</ul>
 	
 	<h2>Documentation</h2>
 	
-	<p>The included documentation can be accessed <a href="doc/Index-Local.html" target="_new">here</a>.  </p>
+	<p>The online documentation can be accessed <a href="https://github.com/daust/JasperReportsIntegration/tree/v@project.version@" target="_new">on GitHub</a>.  </p>
 
 	<h2>Basic connectivity tests</h2>
 	

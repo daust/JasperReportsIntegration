@@ -27,6 +27,7 @@ import de.oc.utils.Encryptor;
  * @author daust
  * 
  * 08.09.2020	D. Aust		Added getVersion()
+ * 15.09.2020	D. Aust		Added config parameter application.ipAddressesAllowed
  * 
  */
 public class AppConfig {
@@ -54,6 +55,9 @@ public class AppConfig {
 
 	// infoPageIsEnabled
 	public boolean infoPageIsEnabled = false;
+	
+	// application.ipAddressesAllowed
+	public String[] ipAddressesAllowed = null;
 
 	// direct printing
 	public boolean printIsEnabled = false;
@@ -290,6 +294,8 @@ public class AppConfig {
 		this.infoPageIsEnabled = Boolean.parseBoolean(props
 				.getString("application.infoPageIsEnabled", "true"));
 
+		this.ipAddressesAllowed = props.getStringArray("application.ipAddressesAllowed");
+		
 		// -----------------------------------------------------------
 		// direct printing
 		// -----------------------------------------------------------
@@ -427,6 +433,7 @@ public class AppConfig {
 	 */
 	public void close() {
 		// TODO: needs to be implemented
+		// Needs more checking, but the connection pools are closed differently. 
 	}
 
 	
@@ -487,4 +494,28 @@ public class AppConfig {
 		
 		return pwd;
 	}
+	
+	/**
+	 * Checks the list of allowed ip addresses. 
+	 * 
+	 * @param ipAddress
+	 * @return yes/no based on the configured list of allowed ip addresses: application.ipAddressesAllowed
+	 */
+	public boolean isIpAddressAllowed(String ipAddress) {
+		_logger.debug("check ip address: " + ipAddress);
+		
+		// if parameter has not been configured in the file => ALLOW ACCESS
+		if (this.ipAddressesAllowed.length==0) {
+			return true;
+		}
+		
+		for (int i = 0; i < this.ipAddressesAllowed.length; i++) {
+			if (this.ipAddressesAllowed[i].toLowerCase().equals(ipAddress.toLowerCase()))
+				return true;
+		}
+		_logger.debug("ip address rejected: " + ipAddress);
+		return false;
+
+	}
+
 }

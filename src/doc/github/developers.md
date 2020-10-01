@@ -139,9 +139,7 @@ Should you get an error message like ``Caused by: java.net.BindException: Addres
 
 ```
 gretty {
-  //servletContainer = 'tomcat9' // can be changed to Tomcat, by default jetty9 is used
-  httpPort = 8080
-  //initParameter 'oc.jasper.config.home', "/tmp/jri"  // does not work currently
+  httpPort = 8099
   jvmArgs = ['-Djava.awt.headless=true']
 } 
 ```
@@ -152,4 +150,8 @@ gretty {
     * `<gradle command> eclipse`
 
 Then you can just start Eclipse and import the root directory into Eclipse as a gradle project. 
+
+## Working with Markdown (*.md) files
+
+Markdown files are used for the documentation, they are written in Markdown syntax as described [here](https://guides.github.com/features/mastering-markdown/). In Visual Studio Code you can use plugins to display the Markdown preview in a separate window. But you can also use a Google Chrome Extension to render the markdown files in the browser, e.g. [the Markdown Viewer](https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk).
 

@@ -11,6 +11,7 @@ package de.oc.integration.jasper.webapp;
  Date        Version   Author          Comment
  -------------------------------------------------------------------------------------------
  05.08.2008  0.5.0.0   D. Aust         Initial creation
+ 25.09.2020  2.6.1     D. Aust         adding log information: jdbc fetch size
 
  */
 
@@ -63,6 +64,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
+import de.oc.db.DBUtils;
+import de.oc.jasper.ReportDefinitionFile;
+import de.oc.jasper.ReportUtilities;
+import de.oc.print.PrinterUtilities;
+import de.oc.utils.Utils;
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -88,14 +97,6 @@ import net.sf.jasperreports.repo.FileRepositoryService;
 import net.sf.jasperreports.repo.PersistenceServiceFactory;
 import net.sf.jasperreports.repo.RepositoryService;
 import net.sf.jasperreports.web.util.WebHtmlResourceHandler;
-
-import org.apache.log4j.Logger;
-
-import de.oc.db.DBUtils;
-import de.oc.jasper.ReportDefinitionFile;
-import de.oc.jasper.ReportUtilities;
-import de.oc.print.PrinterUtilities;
-import de.oc.utils.Utils;
 
 public class ReportWrapper extends HttpServlet {
 	/**
@@ -161,6 +162,11 @@ public class ReportWrapper extends HttpServlet {
 		// validate configuration, has the config file been changed since last
 		// time?
 		appConfig.validateConfiguration(getServletContext());
+		
+	    // #37 Security: Whitelisting of ip addresses to access the /JasperReportsIntegration service
+	    if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())){
+	    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access the application." );	
+	    }
 
 		JasperPrint jasperPrint = null;
 		OutputStream out = response.getOutputStream();
@@ -170,7 +176,12 @@ public class ReportWrapper extends HttpServlet {
 
 		// extract all relevant url parameters from the url
 		URLCallInterface urlCallInterface = new URLCallInterface(request);
-
+		
+		// ----------------------------------------------------
+		// compile .jrxml file into .jasper on the fly
+		// ----------------------------------------------------
+		ReportUtilities.compileJRXMLIfNecessary(urlCallInterface.repName);
+		
 		// ----------------------------------------------------
 		// get the jasper file from the report search path
 		// look it up in order of the preferences of the search path
@@ -243,10 +254,11 @@ public class ReportWrapper extends HttpServlet {
 
 			jasperPrint = fillmanager.fill(reportFile.reportFile.getPath(),
 					reportParams, conn);
-
-			// jasperPrint = JasperFillManager.fillReport(new FileInputStream(
-			// reportFile.reportFile), reportParams, conn);
-
+			logger.info("net.sf.jasperreports.jdbc.fetch.size="+ctx.getProperty("net.sf.jasperreports.jdbc.fetch.size"));
+			//logger.info("net.sf.jasperreports.jdbc.concurrency="+ctx.getProperty("net.sf.jasperreports.jdbc.concurrency"));
+			//logger.info("net.sf.jasperreports.jdbc.holdability="+ctx.getProperty("net.sf.jasperreports.jdbc.holdability"));
+			//logger.info("net.sf.jasperreports.jdbc.result.set.type="+ctx.getProperty("net.sf.jasperreports.jdbc.result.set.type"));
+			
 			conn.close();
 		} catch (SQLException e) {
 			Utils.throwRuntimeException(e.getMessage());
@@ -436,7 +448,7 @@ public class ReportWrapper extends HttpServlet {
 				Utils.throwRuntimeException("direct printing is not enabled in application.properties.");
 			}
 		}
-
+		
 		out.close();
 
 		logger.info("service() end");

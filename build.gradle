@@ -6,6 +6,9 @@
   --------------------------------------------------
   08.09.2020  D. Aust   initial creation
   14.09.2020  D. Aust   fixed script to be able to run on Windows as well, added some debug output.
+  15.09.2020  D. Aust   - changed war file name from JasperReportsInegration.war to jri.war
+                        - excluded the servlet-api*.jar files from the downloaded jasper libraries
+  18.09.2020  D. Aust   added missing jasperreports.properties file to WEB-INF/classes
  */
 
 plugins {
@@ -28,12 +31,12 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.6.0'
+  project.version           = '2.6.1'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
 
-  archivesBaseName          = "JasperReportsIntegration"
+  archivesBaseName          = "jri"
 
   // version of jasperreports to be used
   def jasperreportsVersion  ='6.14.0'  
@@ -53,7 +56,7 @@ repositories {
 /* define specific maven dependencies */
 dependencies {
     // *** Only for compilation, NOT distributed
-    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    //compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
 
     // https://mvnrepository.com/artifact/log4j/log4j
     implementation group: 'log4j', name: 'log4j', version: '1.2.16'
@@ -78,10 +81,17 @@ dependencies {
 }
 
 gretty {
-  //servletContainer = 'tomcat9'
-  httpPort = 8080
+  //servletContainer = 'tomcat9' // can be changed to Tomcat, by default jetty9 is used
+  httpPort      = 8099
   //initParameter 'oc.jasper.config.home', "/tmp/jri"
-  jvmArgs = ['-Djava.awt.headless=true']
+  contextPath   = "/jri"
+  jvmArgs = [
+            '-Xms2048m', //Xms4096m
+            '-Xmx2048m', //Xmx4096m
+            '-XX:+UseConcMarkSweepGC',
+            '-server',
+            '-Djava.awt.headless=true'
+    ]
 } 
 
 //-----------------------------------------------------------------------------
@@ -150,11 +160,77 @@ private static Iterable<String> osAdaptiveCommand(String... commands) {
 	return newCommands
 }
 
+
+/* Eclipse configurations 
+   see: https://docs.gradle.org/current/dsl/org.gradle.plugins.ide.eclipse.model.EclipseClasspath.html */
+eclipse {
+  classpath {
+    // remove duplicate libraries from the build path. There is a conflict in Eclipse when duplicate libraries are on the build path
+    // one in the jasper build lib directory (lib/jasper-reports/$jasperreportsVersion) and the local gradle cache: 
+    // 
+    file {
+            whenMerged { classpath ->
+                    java.util.List wanted = new java.util.ArrayList()
+                    def entries = classpath.getEntries()
+                    entries.each {
+                        if (   (it.path.contains('commons-lang-2.6.jar') && it.path.contains('.gradle/caches'))
+                            ||
+                               (it.path.contains('commons-logging-1.1.1.jar') && it.path.contains('.gradle/caches'))
+                        ) {
+                            println('Removing library: ' + it.path + ' from eclipse classpath (duplicate)')
+                        } else {
+                            wanted.add(it)
+                        }
+                    }
+                    classpath.setEntries(wanted)
+                }
+     }
+    //customizing the classes output directory => use /build instead of /bin
+    defaultOutputDir = file('build')
+    file.whenMerged {
+            entries.each { entry ->
+                if (entry.kind == 'src' && entry.hasProperty('output')) {
+                    entry.output = entry.output.replace('bin/', "build/")
+                }
+            }
+        }
+
+    //default settings for downloading sources and Javadoc:
+    downloadSources = true
+    downloadJavadoc = false
+  }
+
+  project {
+     resourceFilter {
+       appliesTo = 'FOLDERS'
+       type = 'EXCLUDE_ALL'
+       matcher {
+         id = 'org.eclipse.ui.ide.multiFilter'
+         // to find out which arguments to use, configure the desired
+         // filter with Eclipse's UI and copy the arguments string over
+         arguments = '1.0-projectRelativePath-matches-false-false-src/main/dist'
+       }
+     }
+     resourceFilter {
+       appliesTo = 'FOLDERS'
+       type = 'EXCLUDE_ALL'
+       matcher {
+         id = 'org.eclipse.ui.ide.multiFilter'
+         // to find out which arguments to use, configure the desired
+         // filter with Eclipse's UI and copy the arguments string over
+         arguments = '1.0-projectRelativePath-matches-false-false-src/doc'
+       }
+     }
+   }
+
+}
+
 //-----------------------------------------------------------------------------
 //-- task definitions for JasperReportsIntegration
 //-----------------------------------------------------------------------------
 
 war {
+    dependsOn configurations.compile
     archiveName = "${archivesBaseName}-${project.version}-${jasperreportsVersion}.war"
 
     // replaces tokens in the respective files only for the assembly of the .war file:
@@ -166,16 +242,33 @@ war {
     
     //from 'src/rootContent' // adds a file-set to the root of the archive
     // all occurences of @project.version@ will be replaced with the current project version
-    from('src/doc/User-Documentation'){
-      into 'doc' 
+    //from('src/doc/User-Documentation'){
+    //  into 'doc' 
       //filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])
-    } 
+    //} 
+    from('src/conf'){
+      include 'jasperreports.properties' into 'WEB-INF/classes'
+    }
+
+    doFirst{
+      manifest {
+          attributes( "Implementation-Title": project.name,
+                      "Implementation-Version": project.version,
+                      "Main-Class": "main.CommandLine",
+                      //"Class-Path": "*.jar"
+                      //"Class-Path": configurations.runtimeClasspath.collect { it.getName() }.join(' ') + " " + jar.outputs.files.collect { it.getName() }.join(' ')
+                      "Class-Path": war.classpath.collect { it.getName() }.join(' ') + " " + jar.outputs.files.collect { it.getName() }.join(' ')
+                    )
+      }
+    }
 
     //webInf { from 'src/additionalWebInf' }  // adds a file-set to the WEB-INF dir.
     //classpath fileTree('additionalLibs') // adds a file-set to the WEB-INF/lib dir.
     //classpath configurations.moreLibs // adds a configuration to the WEB-INF/lib dir.
+    //classpath = ['src/...',]
+    //classpath = war.classpath.plus('src/conf/jasperreports.properties')
     //webXml = file('src/conf/web.xml') // copies a file to WEB-INF/web.xml
-    //webInf { from 'src/conf/weblogic.xml' }  // adds a file-set to the WEB-INF dir.
+    //webInf { from 'src/conf/weblogic.xml' }  // adds a file-set to the WEB-INF dir.  
 }
 
 distZip.setArchiveName("${archivesBaseName}-${project.version}-${jasperreportsVersion}.zip")
@@ -193,10 +286,10 @@ distributions {
                                       into 'bin'}
             from('src/conf/application.properties'){into 'conf'}
             from('src/conf/log4j.properties'){into 'conf'}
-            from('src/doc/User-Documentation'){into 'doc' filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
-            from('src/doc/User-Documentation/Index-Distribution.html'){rename 'Index-Distribution.html', 'Index.html' }
+            //from('src/doc/User-Documentation'){into 'doc' filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
+            from('src/doc/Documentation.html'){ filter(ReplaceTokens, tokens: ['project.version': project.version, 'jasperreports.version': jasperreportsVersion])}
             from('src/reports'){into 'reports'}
-            from (war.outputs){into 'webapp' rename(war.archiveName , "JasperReportsIntegration.war")}
+            from (war.outputs){into 'webapp' rename(war.archiveName , "jri.war")}
 
             /*from (configurations.compile){
               include(["commons-configuration-*.jar"
@@ -212,7 +305,7 @@ distributions {
 
             // copy war file directly into jetty/webapps
             // rather not, make zip distribution too large
-            //from (war.outputs){into 'jetty/webapps' rename(war.archiveName , "JasperReportsIntegration.war")}
+            //from (war.outputs){into 'jetty/webapps' rename(war.archiveName , "jri.war")}
         }
     }
 }
@@ -264,9 +357,10 @@ task jriDownloadJasperLibraries{
     file(tempLocation).mkdirs()
 
     downloadRedirect( "$baseURLJasper/jasperreports-${jasperreportsVersion}-project.tar.gz", "$tempLocation/jasperreports.tar.gz")
-    downloadRedirect( "$baseURLJasper/jasperreports-chart-themes-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-themes.jar")
-    downloadRedirect( "$baseURLJasper/jasperreports-chart-customizers-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-customizers.jar")
-    downloadRedirect( "$baseURLJasper/jasperreports-functions-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-functions.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-chart-themes-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-themes-${jasperreportsVersion}.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-chart-customizers-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-customizers-${jasperreportsVersion}.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-functions-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-functions-${jasperreportsVersion}.jar")
+    downloadRedirect( "$baseURLJasper/jasperreports-fonts-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-fonts-${jasperreportsVersion}.jar")
 
     // ungzip / untar files
     copy {
@@ -285,11 +379,15 @@ task jriDownloadJasperLibraries{
             from "$tempLocation2"
             from "$tempLocation2/dist"
             from "$tempLocation2/dist/lib"
+            from "$tempLocation"    // chart-customizers, chart-themes, jasperreports-functions, jasperreports-fonts
             into "$targetLocation"
             include "*.jar"
+            // exclude all that are used for compilation and test only
+            // but not required at runtime
             exclude "net.tascalate.asmx*jar"
             exclude "net.tascalate.javaflow*jar"
             exclude "testng*jar"
+            exclude "servlet-api*"
     }
   }
 }   
