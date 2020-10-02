@@ -73,6 +73,10 @@ begin
 
   -- stop rendering of the current APEX page
   apex_application.g_unrecoverable_error := true;
+
+exception
+  when apex_application.e_stop_apex_engine then
+    null; -- ok, stop engine raises exception, we can ignore that  
 end;
 ```
 
@@ -232,6 +236,7 @@ Currently, you can use the following features for improved security:
 * The info page of the J2EE application shows lots of important information like version information and current configuration values. For production environments this can quickly become a security issue. You can turn off the info page by specifying the parameter ``infoPageIsEnabled=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
 * Restrict access based on IP address: You typically want to restrict access to the JasperReportsIntegration J2EE application. Only the database server should be allowed to call it. You can can restrict access to certain ip addresses by specifying the parameter ``ipAddressesAllowed=...`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
 * You should encrypt the passwords in the configuration file ``application.properties``. You can do this using the command line script ``bin\encryptPasswords.cmd`` or ``bin/encryptPasswords.sh`` respectively. 
+* You should delete the directory ``reports/demo`` because it contains sample reports, particulary one that works on the user objects installed in the schema. 
 
 ## Accessing JasperReportsIntegration through SSL
 
@@ -376,8 +381,20 @@ The second paragraph, all in capital letters, is a standard legal boilerplate no
         ```
 
 * Enable debug messages
-    - *tbd*, use different configuration files (log4j.properties)
-
+    - Edit the file ``conf/log4j.properties`` and change
+        <pre>
+        # opal-consulting logging
+        # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
+        log4j.logger.de.oc=<b>OFF</b>
+        </pre>
+      to
+        <pre>
+        # opal-consulting logging
+        # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
+        log4j.logger.de.oc=<b>DEBUG</b>
+        </pre>
+    - Restart the application server
+    - Then you can find the log entries in the file ``logs/JasperReportsIntegration.log``.
 
 # <a name="support"></a>Support / Forum
 

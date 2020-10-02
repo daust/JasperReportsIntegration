@@ -1,8 +1,6 @@
 create or replace PACKAGE "XLIB_JASPERREPORTS"
 AS
 /*=========================================================================
-  $Id: xlib_jasperreports.pks 134 2018-09-30 07:00:44Z dietmar.aust $
-
   Purpose  : 
 
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
@@ -28,11 +26,12 @@ AS
                                  (report parameter REPORT_TIME_ZONE)
   2.5.0.0  29.09.2018  D. Aust   FEATURE: #9 - Ability to set Printjob name (programmatically)   
   2.5.0.1  30.09.2018  D. Aust     fix bool2string issue
-                                 
+  2.6.1    01.10.2020  D. Aust   add get_default_configuration() and set_default_configuration()
+
 =========================================================================*/
 
   -- version of this package
-  version_c constant varchar2(20 char) := '2.5.0.1';   
+  version_c constant varchar2(20 char) := '2.6.1';   
 
    -- constants
    -- supported formats
@@ -54,7 +53,7 @@ AS
    m_jri_path_cookie_name_c CONSTANT VARCHAR2 (50) := 'JRI_PATH';   
    c_images_uri_tunnel constant varchar2(500 char) := 'wwv_flow.show?p_request=APPLICATION_PROCESS%3DJRI_SHOW_IMAGE&p_flow_id=#APP_ID#&p_flow_step_id=0&p_instance=#APP_SESSION#&x01=#IMAGE_NAME#';
    c_images_uri_no_tunnel constant varchar2(500 char) := '#J2EE_CONTEXT_PATH#/report_image?image=#IMAGE_NAME#';
-   
+
    -- exceptions
    report_url_not_defined       EXCEPTION;
 
@@ -66,7 +65,7 @@ AS
 
    FUNCTION get_report_url
       RETURN VARCHAR2;
-      
+
 ----------------------------------------------------------------------------
 -- set the image uri for html reports only!
 ----------------------------------------------------------------------------
@@ -74,7 +73,7 @@ AS
 
    FUNCTION get_images_uri
       return varchar2;
-      
+
 
 /**  make a callout with utl_http to the j2ee container running the
  *   JasperReportsIntegration web application
@@ -122,10 +121,10 @@ AS
       p_rep_time_zone       in   varchar2 default null,
       p_print_job_name      in   varchar2 default null
    );
-   
+
    /* tunnels images for html reports */
    procedure show_image(p_image_name IN   VARCHAR2);
-   
+
 
 /**  run the report and return the result as a blob
  *
@@ -175,5 +174,26 @@ AS
       p_print_job_name      in   varchar2 default null
    );
    
+----------------------------------------------------------------------------
+-- get default configuration
+----------------------------------------------------------------------------
+   FUNCTION get_default_configuration
+      return xlib_jasperreports_conf%rowtype;
+      
+----------------------------------------------------------------------------
+-- set default configuration
+----------------------------------------------------------------------------
+    PROCEDURE set_default_configuration(p_conf in out xlib_jasperreports_conf%rowtype);      
+
+    PROCEDURE set_default_configuration (
+    p_protocol                IN xlib_jasperreports_conf.conf_protocol%TYPE default 'http',
+    p_server                  IN xlib_jasperreports_conf.conf_server%TYPE default 'localhost',
+    p_port                    IN xlib_jasperreports_conf.conf_port%TYPE default '80',
+    p_context_path            IN xlib_jasperreports_conf.conf_context_path%TYPE default 'jri',
+    p_wallet_path             IN xlib_jasperreports_conf.conf_wallet_path%TYPE default null,
+    p_wallet_pwd              IN xlib_jasperreports_conf.conf_wallet_pwd%TYPE default null,
+    p_http_transfer_timeout   IN xlib_jasperreports_conf.conf_http_transfer_timeout%TYPE default 60);
+
+
 END;
 /

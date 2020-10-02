@@ -1,9 +1,6 @@
 create or replace 
 PACKAGE BODY "XLIB_LOG"
 IS
-/*=========================================================================
-   FILE  :  $Id: xlib_log.pkb 56 2013-05-13 07:06:46Z dietmar.aust $
-=========================================================================*/
 
    PROCEDURE m (
       p_module      IN   VARCHAR2,

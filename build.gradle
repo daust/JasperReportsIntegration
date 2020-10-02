@@ -281,7 +281,7 @@ distributions {
         contents {
             from('src/apex'){into 'apex'}
             from('src/sql'){into 'sql'}
-            from('src/shell-scripts'){exclude '*ConfigDir.*'
+            from('src/shell-scripts'){//exclude '*ConfigDir.*'
                                       //exclude 'deploy*'  
                                       into 'bin'}
             from('src/conf/application.properties'){into 'conf'}

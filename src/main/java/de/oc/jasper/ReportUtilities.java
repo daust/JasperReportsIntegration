@@ -95,7 +95,7 @@ public class ReportUtilities {
 	 */
 	public static void compileJRXMLIfNecessary( String pRepName ){
 				
-		String errMsg="";
+		String errMsg=""; 
 		String reportsDir=_appConfig.getReportsDir();
 		String reportFileNameBase = reportsDir + File.separator	+ pRepName;
 		
@@ -109,7 +109,7 @@ public class ReportUtilities {
 				try {
 					logger.info("compiling file " + reportFileNameBase + ".jrxml on the fly" );
 
-					JasperCompileManager.compileReportToFile(reportFileNameBase + ".jrxml");
+					JasperCompileManager.compileReportToFile(reportFileNameBase + ".jrxml", reportFileNameBase + ".jasper" );
 				} catch (JRException e) {
 					e.printStackTrace();
 					errMsg = "Error compiling " + reportFileNameBase + ".jrxml: " + e.getMessage() ;

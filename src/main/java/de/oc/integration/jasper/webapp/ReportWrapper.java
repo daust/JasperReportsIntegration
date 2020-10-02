@@ -71,7 +71,6 @@ import de.oc.jasper.ReportDefinitionFile;
 import de.oc.jasper.ReportUtilities;
 import de.oc.print.PrinterUtilities;
 import de.oc.utils.Utils;
-import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
