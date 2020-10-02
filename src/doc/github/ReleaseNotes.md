@@ -16,6 +16,8 @@ You can see the full list of issues with details in the [milestones page](https:
   * #7 - Update documentation
   * #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
   * #2 - Deploying .jrxml and / or .jasper files
+  * #45 - Update APEX test application
+  * #44 - Store defaults for url and wallet in configuration table
 
 ## Bug fixes
   * #20 - When using jasper report Integration sessions are not closed propperly bug
