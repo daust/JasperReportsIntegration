@@ -1,9 +1,10 @@
 /*=========================================================================
-  $Id: user_remove.sql 57 2013-05-13 07:09:51Z dietmar.aust $
 
   Purpose  : Removes all database objects regarding JasperReportsIntegration:
              XLIB_HTTP
              XLIB_JASPERREPORTS
+             XLIB_JASPERREPORTS_CONF
+             XLIB_JASPERREPORT_DEMOS
              XLIB_COMPONENT
              XLIB_COMPONENTS
              XLIB_LOG
@@ -13,15 +14,14 @@
   
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
              Licensed under a BSD style license (license.txt)
-             http://www.opal-consulting.de/pls/apex/f?p=20090928:14
-             
-  $LastChangedDate: 2013-05-13 09:09:51 +0200 (Mon, 13 May 2013) $
-  $LastChangedBy: dietmar.aust $ 
+             https://github.com/daust/JasperReportsIntegration
+
   
   Date        Author          Comment
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   06.01.2010  D. Aust         Initial creation
   29.09.2020  D. Aust         simplified installation / removal scripts
+  01.10.2020  D. Aust         Added configuration table XLIB_JASPERREPORTS_CONF
 
 =========================================================================*/
 
@@ -41,7 +41,8 @@ prompt
 
   select object_name, object_type
     from user_objects 
-   where object_name in ('XLIB_HTTP', 'XLIB_JASPERREPORTS', 'XLIB_COMPONENT', 'XLIB_COMPONENTS', 'XLIB_LOG', 'XLIB_LOGS', 'XLOG', 'XLIB_SEQ')
+   where object_name in ('XLIB_HTTP', 'XLIB_JASPERREPORTS', 'XLIB_JASPERREPORTS_CONF', 'XLIB_JASPERREPORT_DEMOS'
+                       , 'XLIB_COMPONENT', 'XLIB_COMPONENTS', 'XLIB_LOG', 'XLIB_LOGS', 'XLOG', 'XLIB_SEQ')
    order by 1;
 
 prompt   Are you sure?
@@ -56,7 +57,8 @@ begin
     for rec in (  
               select object_name, object_type
                 from user_objects 
-               where object_name in ('XLIB_HTTP', 'XLIB_JASPERREPORTS', 'XLIB_COMPONENT', 'XLIB_COMPONENTS', 'XLIB_LOG', 'XLIB_LOGS', 'XLOG', 'XLIB_SEQ')
+               where object_name in ('XLIB_HTTP', 'XLIB_JASPERREPORTS', 'XLIB_JASPERREPORTS_CONF', 'XLIB_JASPERREPORT_DEMOS'
+                                   , 'XLIB_COMPONENT', 'XLIB_COMPONENTS', 'XLIB_LOG', 'XLIB_LOGS', 'XLOG', 'XLIB_SEQ')
                  and object_type not in ('PACKAGE BODY')
                order by 1
              ) loop

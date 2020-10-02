@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cb86a302-28cf-4a59-8ac4-e7a2e180e2cc">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="data-adapter-test-vm1.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="parameter1" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["no value given"]]></defaultValueExpression>
 	</parameter>
@@ -14,27 +17,27 @@
 		<defaultValueExpression><![CDATA["no value given"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select * from user_objects]]>
+		<![CDATA[select seq,demo_value from (
+select 1 seq, 'value1' demo_value from dual
+union all 
+select 2 seq, 'value2' demo_value from dual
+)]]>
 	</queryString>
-	<field name="OBJECT_NAME" class="java.lang.String"/>
-	<field name="SUBOBJECT_NAME" class="java.lang.String"/>
-	<field name="OBJECT_ID" class="java.math.BigDecimal"/>
-	<field name="DATA_OBJECT_ID" class="java.math.BigDecimal"/>
-	<field name="OBJECT_TYPE" class="java.lang.String"/>
-	<field name="CREATED" class="java.sql.Timestamp"/>
-	<field name="LAST_DDL_TIME" class="java.sql.Timestamp"/>
-	<field name="TIMESTAMP" class="java.lang.String"/>
-	<field name="STATUS" class="java.lang.String"/>
-	<field name="TEMPORARY" class="java.lang.String"/>
-	<field name="GENERATED" class="java.lang.String"/>
-	<field name="SECONDARY" class="java.lang.String"/>
+	<field name="SEQ" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="SEQ"/>
+		<property name="com.jaspersoft.studio.field.label" value="SEQ"/>
+	</field>
+	<field name="DEMO_VALUE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DEMO_VALUE"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEMO_VALUE"/>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="42" splitType="Stretch">
 			<staticText>
-				<reportElement x="10" y="11" width="217" height="31"/>
+				<reportElement x="10" y="11" width="217" height="31" uuid="379d639d-b067-47c6-8e43-32e049492bcd"/>
 				<textElement>
 					<font size="18" isBold="true"/>
 				</textElement>
@@ -43,110 +46,110 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="125" splitType="Stretch">
+		<band height="84" splitType="Stretch">
 			<staticText>
-				<reportElement x="11" y="14" width="68" height="20"/>
-				<textElement/>
+				<reportElement x="11" y="14" width="68" height="20" uuid="73be86a9-6ff5-4c31-b1aa-01ccb10c3183"/>
 				<text><![CDATA[Parameter 1:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="92" y="14" width="186" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{parameter1}]]></textFieldExpression>
+				<reportElement x="92" y="14" width="186" height="20" uuid="dcb83c46-2479-4007-b72b-f3e1ddd5a0f4"/>
+				<textFieldExpression><![CDATA[$P{parameter1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="92" y="34" width="186" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{parameter2}]]></textFieldExpression>
+				<reportElement x="92" y="34" width="186" height="20" uuid="dcfd1891-f2b4-4ee6-a0fd-40f80625c28b"/>
+				<textFieldExpression><![CDATA[$P{parameter2}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="11" y="34" width="68" height="20"/>
-				<textElement/>
+				<reportElement x="11" y="34" width="68" height="20" uuid="7e1065dc-a203-40f0-8eb3-4b82a60950bd"/>
 				<text><![CDATA[Parameter 2:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="11" y="54" width="68" height="20"/>
-				<textElement/>
+				<reportElement x="11" y="54" width="68" height="20" uuid="b467b17a-6fc1-4b8c-88af-0ee88fb2a74a"/>
 				<text><![CDATA[Parameter 3:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="92" y="54" width="186" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{parameter3}]]></textFieldExpression>
+				<reportElement x="92" y="54" width="186" height="20" uuid="078549dd-4a87-4b49-b314-526ccb6b15e6"/>
+				<textFieldExpression><![CDATA[$P{parameter3}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="282" y="14" width="100" height="20"/>
-				<textElement/>
+				<reportElement x="282" y="14" width="100" height="20" uuid="0d82b0dd-77ac-458c-b315-68a8d2a74bfb"/>
 				<text><![CDATA[Report locale:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="383" y="14" width="88" height="20"/>
+				<reportElement x="383" y="14" width="126" height="20" uuid="8e0a3b33-d21b-4099-9ea8-d901b674809d"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[""+$P{REPORT_LOCALE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[""+$P{REPORT_LOCALE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="2" y="101" width="100" height="20"/>
-				<textElement>
-					<font size="14" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[User Objects]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="282" y="34" width="100" height="20"/>
-				<textElement/>
+				<reportElement x="282" y="34" width="100" height="20" uuid="43a74b2f-ab39-4558-bb34-65878aeef89c"/>
 				<text><![CDATA[Currency sample:]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
-				<reportElement x="383" y="34" width="88" height="20"/>
+				<reportElement x="383" y="34" width="126" height="20" uuid="f2d7f348-fbf5-4d69-a294-a2ecd7fd21ed"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.lang.Number"><![CDATA[5000.25]]></textFieldExpression>
+				<textFieldExpression><![CDATA[5000.25]]></textFieldExpression>
 			</textField>
+			<textField pattern="MMM d, yyyy h:mm:ss a">
+				<reportElement x="383" y="54" width="126" height="20" uuid="01b794ff-c85f-4cd0-82b3-8751625930ab"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[TODAY( )]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="282" y="54" width="100" height="20" uuid="380cae45-42fb-432d-beb8-557bf489914d"/>
+				<text><![CDATA[Date/time]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="28" splitType="Stretch">
-			<staticText>
-				<reportElement x="1" y="2" width="188" height="20"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Object Name]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="201" y="2" width="146" height="20"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Object Type]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="395" y="2" width="141" height="20"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Created]]></text>
-			</staticText>
-			<line>
-				<reportElement x="2" y="25" width="553" height="1"/>
-			</line>
+		<band height="20" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="550" height="20" backcolor="#838385" uuid="5923b878-4701-4edf-b261-4e7258336290"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<staticText>
+					<reportElement x="0" y="0" width="78" height="20" forecolor="#FFFFFF" uuid="d9321867-89db-4955-bca5-6ae28bc2cfbc">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="43630d81-c1a3-4c3c-bf2e-a5c1d03e38a8"/>
+					</reportElement>
+					<box padding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SEQ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="80" y="0" width="100" height="20" forecolor="#FFFFFF" uuid="23680dfd-7d7a-48bd-8417-21fb203ac0b8">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="23d94ee2-57be-4d03-be3c-d06bf2186b1a"/>
+					</reportElement>
+					<box padding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DEMO_VALUE]]></text>
+				</staticText>
+			</frame>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="188" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{OBJECT_NAME}]]></textFieldExpression>
+				<reportElement x="0" y="0" width="78" height="20" uuid="ff5db7c7-d0d4-4b03-aee8-2f713ede4be6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="43630d81-c1a3-4c3c-bf2e-a5c1d03e38a8"/>
+				</reportElement>
+				<box padding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SEQ}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="201" y="0" width="146" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{OBJECT_TYPE}]]></textFieldExpression>
-			</textField>
-			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement x="395" y="0" width="141" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{CREATED}]]></textFieldExpression>
+				<reportElement x="80" y="0" width="100" height="20" uuid="d6a2d539-4eb8-447f-a3fb-7161727ef40a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="23d94ee2-57be-4d03-be3c-d06bf2186b1a"/>
+				</reportElement>
+				<box padding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DEMO_VALUE}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

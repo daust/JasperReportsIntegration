@@ -9,10 +9,14 @@ e.g.:
 declare
     l_additional_parameters varchar2(32767);
 begin
-    xlib_jasperreports.set_report_url('http://localhost:8080/JasperReportsIntegration/report');
+    -- setting the report url is optional since v2.6.1, 
+    -- the defaults from the table xlib_jasperreports_conf will be picked up
+    -- xlib_jasperreports.set_report_url('http://localhost:8080/JasperReportsIntegration/report');
+
     -- construct addional parameter list
     l_additional_parameters := 'parameter1=' || apex_util.url_encode(:p1_filter_object_name);
     l_additional_parameters := l_additional_parameters || '&parameter2=' || apex_util.url_encode(:p1_filter_object_type);
+
     -- call the J2EE application and display the returned file
     xlib_jasperreports.show_report (p_rep_name => :p5_rep_name,
           p_rep_format          => :p5_rep_format,
@@ -33,9 +37,13 @@ begin
           );
 
     -- stop rendering of the current APEX page (APEX version up until version 4.0)
-    -- apex_application.stop_apex_engine;
+    -- apex_application.g_unrecoverable_error := true;
     -- stop rendering of the current APEX page (APEX version 4.1 and higher)
     apex_application.stop_apex_engine;
+exception
+  when apex_application.e_stop_apex_engine then
+    null; -- ok, stop engine raises exception, we can ignore that
+      
 end;
 ```
 
@@ -59,6 +67,20 @@ Here is a description of the input parameters:
 |p_save_is_enabled|shall the generated file be saved on the application server, too?||
 |p_save_filename|fully specified path to the filename where the output should be saved on the server (only when p_save_is_enabled=true)||
 |p_rep_time_zone|"time zone" parameter for the execution of the report, a list of valid entries can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones e.g.: Europe/Berlin, UCT, US/Central, US/Pacific, Etc/Greenwich, Europe/London||
+
+### Call Interface (picking up defaults from the table ``XLIB_JASPERREPORTS_CONF``)
+
+Previously, you needed to set the following parameters manually before calling ``xlib_jasperreports.show_report`` or ``xlib_jasperreports.get_report``: 
+
+* xlib_jasperreports.set_report_url
+* utl_http.set_wallet
+* utl_http.set_transfer_timeout
+
+This is now done for you using the defaults in the table ``XLIB_JASPERREPORTS_CONF``. 
+
+Setting those parameters explicitly will still work, they are only set when those values HAVE NOT BEEN SET. 
+Unfortunately, this is not the case for utl_http.set_wallet because we cannot determine the current wallet path. 
+Thus, when the report url is using https, set_wallet will be called automatically based on the values in ``XLIB_JASPERREPORTS_CONF`` regardless of previous calls to utl_http.set_wallet ... thus overwriting it. 
 
 ### Designing reports
 

@@ -5,7 +5,7 @@
   
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
              Licensed under a BSD style license (license.txt)
-             http://www.opal-consulting.de/pls/apex/f?p=20090928:14
+             https://github.com/daust/JasperReportsIntegration
              
   $LastChangedDate: 2013-05-13 09:09:51 +0200 (Mon, 13 May 2013) $
   $LastChangedBy: dietmar.aust $ 

@@ -174,11 +174,9 @@
 						<option value="en_US">en_US</option>
 				</select></td>
 				<td><p>
-						Locale string, composed of the <br /> <a
-							href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt"
-							target="_blank">ISO language code</a> and <br /> <a
-							href="http://www.chemie.fu-berlin.de/diverse/doc/ISO_3166.html"
-							target="_blank">ISO country code</a>
+						Locale string, composed of the <br /> 
+							<a href="https://www.oracle.com/java/technologies/javase/jdk8-jre8-suported-locales.html"
+							target="_blank">JDK 8 and JRE 8 Supported Locales	(replace in column "Language Tag"  de-DE with de_DE)</a>
 					</p></td>
 				<td class="center">de_DE</td>
 				<td class="center"></td>

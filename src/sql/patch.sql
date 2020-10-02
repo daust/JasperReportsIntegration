@@ -1,6 +1,20 @@
-/*
-$Id: patch.sql 71 2017-10-15 16:25:51Z dietmar.aust $
-*/
+/*=========================================================================
+  Purpose  : Upgrades an existing installation to the newest release. 
+
+             Should the table(s) already exist, then it is ok to get ORA- errors
+             which indicate that the object already exists and also that the 
+             data cannot be inserted again. This is expected. 
+  
+  License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
+             Licensed under a BSD style license (license.txt)
+             https://github.com/daust/JasperReportsIntegration
+             
+  Date        Author          Comment
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  01.10.2020  D. Aust         Added configuration table XLIB_JASPERREPORTS_CONF
+                              Added demo table XLIB_JASPERREPORT_DEMOS
+
+=========================================================================*/
 
 set serveroutput on size unlimited;
 
@@ -36,6 +50,17 @@ begin
     end loop;
 end;
 /
+
+prompt ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+prompt ~~ Tables
+prompt ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+@@user/xlib_jasperreports_conf.sql
+@@user/xlib_jasperreports_demos.sql
+
+-- data
+@@user/xlib_jasperreports_conf_data.sql
+@@user/xlib_jasperreports_demos_data.sql
 
 
 prompt ====================================================================
