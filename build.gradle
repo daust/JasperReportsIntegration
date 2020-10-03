@@ -9,6 +9,8 @@
   15.09.2020  D. Aust   - changed war file name from JasperReportsInegration.war to jri.war
                         - excluded the servlet-api*.jar files from the downloaded jasper libraries
   18.09.2020  D. Aust   added missing jasperreports.properties file to WEB-INF/classes
+  03.10.2020  D. Aust   fixed bug in generating eclipse project file, 
+                        now it is back to using "bin/default" as the default output dir, should be "build"
  */
 
 plugins {
@@ -186,7 +188,7 @@ eclipse {
                 }
      }
     //customizing the classes output directory => use /build instead of /bin
-    defaultOutputDir = file('build')
+    /*defaultOutputDir = file('build')
     file.whenMerged {
             entries.each { entry ->
                 if (entry.kind == 'src' && entry.hasProperty('output')) {
@@ -194,7 +196,7 @@ eclipse {
                 }
             }
         }
-
+    */
     //default settings for downloading sources and Javadoc:
     downloadSources = true
     downloadJavadoc = false

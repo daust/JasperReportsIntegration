@@ -2108,7 +2108,7 @@ s:=s||'ion to #SERVER_URL#.<br>'||unistr('\000a')||
 '<span style="font-size: 130%; font-weight: bold;">This can be ignored when the  the parameter infoPageIsEnabled=false is set in the application.properties file. Then the J2EE server will respond with an 403 error code for security reasons.</span>'||unistr('\000a')||
 '<br><br />'||unistr('\000a')||
 ''||unistr('\000a')||
-'Please make sure the J2EE application (JasperReportsIntegration.war) is'||unistr('\000a')||
+'Please make sure the J2EE application (jri.war) is'||unistr('\000a')||
 'deployed and can be accessed.'||unistr('\000a')||
 '   '||unistr('\000a')||
 '  ';

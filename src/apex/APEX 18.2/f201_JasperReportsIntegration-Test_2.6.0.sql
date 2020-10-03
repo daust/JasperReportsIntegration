@@ -7495,7 +7495,7 @@ wwv_flow_api.create_page_plug(
 '<span style="font-size: 130%; font-weight: bold;">This can be ignored when the  the parameter infoPageIsEnabled=false is set in the application.properties file. Then the J2EE server will respond with an 403 error code for security reasons.</span>',
 '<br><br />',
 '',
-'Please make sure the J2EE application (JasperReportsIntegration.war) is',
+'Please make sure the J2EE application (jri.war) is',
 'deployed and can be accessed.',
 '   ',
 '      ',

@@ -1,17 +1,13 @@
 create or replace PACKAGE BODY      "XLIB_HTTP"
 AS
 /*=========================================================================
-  $Id: xlib_http.pkb 60 2015-10-05 15:08:20Z dietmar.aust $
 
   Purpose  : Make http callouts
   
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
              Licensed under a BSD style license (license.txt)
-             http://www.opal-consulting.de/pls/apex/f?p=20090928:14
-             
-  $LastChangedDate: 2015-10-05 17:08:20 +0200 (Mon, 05 Oct 2015) $
-  $LastChangedBy: dietmar.aust $ 
-  
+             https://github.com/daust/JasperReportsIntegration
+               
  Version Date        Author           Comment
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          19.02.2007  D. Aust          initial creation
@@ -25,9 +21,9 @@ AS
                                           xlib_http.get_report
                                       - added version information to this package
  2.3.0.0 09.05.2015  D. Aust          pass JSESSIONID from backend J2EE server to client 
-                                        for image rendering in html reports      
+                                        for image rendering in html reports                                         
+ 2.6.1   28.09.2020  D. Aust          - #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
 
- 2.6.1    28.09.2020  D. Aust          - #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
 =========================================================================*/
 
    m_module   VARCHAR2 (50) := 'XLIB_HTTP';
@@ -135,12 +131,10 @@ AS
             if upper(l_header_name_arr(i)) = 'SET-COOKIE' and l_header_value_arr (i) like 'JSESSIONID%' then 
               xlog(l_proc , 'JSESSION_ID found !!!:'||l_header_value_arr (i));
               --extract path
-              l_jsession := regexp_substr(l_header_value_arr (i), 'JSESSIONID=(.*);Path',1, 1,'i',1);
-              l_path := regexp_substr(l_header_value_arr (i), ';Path=(.*)',1, 1,'i',1);
+              l_jsession := regexp_substr(l_header_value_arr (i), 'JSESSIONID=(.*);[ ]*Path',1, 1,'i',1);
+              l_path := regexp_substr(l_header_value_arr (i), ';[ ]*Path=(.*)',1, 1,'i',1);
               
-              --xlog(l_proc, 'xx:full:'||l_header_value_arr (i));
-              --xlog(l_proc, 'xx:session:'||l_jsession);
-              --xlog(l_proc, 'xx:path:'||l_path);              
+              xlog(l_proc, 'xx:full:'||l_header_value_arr (i)|| '; xx:session:'||l_jsession || '; xx:path:'||l_path);             
             else
               l_header_value := l_header_value_arr (i);
             end if;
@@ -155,13 +149,25 @@ AS
       END LOOP;
       
       -- JSESSION Cookies ausgeben
-      l_msg := 'Set-Cookie: ' || xlib_jasperreports.m_jri_cookie_name_c || '=' || l_jsession;
-      xlog (l_proc, 'set header:' || l_msg );
-      HTP.p (l_msg);
-      l_msg := 'Set-Cookie: ' || xlib_jasperreports.m_jri_path_cookie_name_c || '=' || l_path;
-      xlog (l_proc, 'set header:' || l_msg );
-      HTP.p (l_msg);
- 
+      -- if using tunnel, then the cookie is JRI_JSESSIONID
+      -- if not using tunnel, then cookie is JSESSIONID directly
+      --
+      if xlib_jasperreports.get_use_images_no_tunnel=false then 
+          l_msg := 'Set-Cookie: ' || xlib_jasperreports.m_jri_cookie_name_c || '=' || l_jsession;
+          xlog (l_proc, 'set header:' || l_msg );
+          HTP.p (l_msg);
+          l_msg := 'Set-Cookie: ' || xlib_jasperreports.m_jri_path_cookie_name_c || '=' || l_path;
+          xlog (l_proc, 'set header:' || l_msg );
+          HTP.p (l_msg);
+      else
+          l_msg := 'Set-Cookie: JSESSIONID=' || l_jsession;
+          if xlib_jasperreports.get_cookie_path_no_tunnel is not null then 
+            l_msg := l_msg || '; Path=' || xlib_jasperreports.get_cookie_path_no_tunnel;
+          end if;
+          xlog (l_proc, 'set header:' || l_msg );
+          HTP.p (l_msg);
+      end if;
+
       -- set content length
       HTP.p ('Content-length: ' || DBMS_LOB.getlength (l_blob));
       OWA_UTIL.http_header_close;

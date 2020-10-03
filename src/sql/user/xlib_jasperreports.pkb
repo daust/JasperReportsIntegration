@@ -31,9 +31,11 @@ AS
    =========================================================================*/
 
 
-   m_module       VARCHAR2 (50) := 'XLIB_JASPERREPORTS';
+   m_module       constant varchar2 (100) := $$plsql_unit;
    m_report_url   VARCHAR2 (32767) := NULL;
    m_images_uri   VARCHAR2 (32767) := NULL;
+   m_use_images_no_tunnel boolean := false;
+   m_cookie_path_no_tunnel varchar2(200 char) := null;
 
    -- convert boolean to 'true' or 'false'
    FUNCTION bool2string (b IN BOOLEAN)
@@ -47,6 +49,35 @@ AS
          RETURN 'false';
       END IF;
    END;
+
+    procedure setup_configuration_defaults
+    is
+      l_conf xlib_jasperreports_conf%rowtype;
+      l_timeout PLS_INTEGER;
+    begin
+        l_conf := get_default_configuration();
+        
+        -- override report url if not defined
+        if m_report_url is null then
+          m_report_url := l_conf.conf_protocol || '://'||l_conf.conf_server||':'||l_conf.conf_port||'/'||l_conf.conf_context_path||'/report';
+          xlog(p_module => m_module, p_msg => 'Override report url from defaults: '|| m_report_url, p_type=> 'DEBUG');
+        end if;
+        
+        -- set wallet path and pwd
+        -- will ALWAYS override the settings, will ignore previous calls to set_wallet
+        if lower(m_report_url) like 'https%' then
+            utl_http.set_wallet(l_conf.conf_wallet_path, l_conf.conf_wallet_pwd);
+            xlog(p_module => m_module, p_msg => 'Override wallet location/pwd from defaults', p_type=> 'DEBUG');
+        end if;
+        
+        -- override http transfer timeout it not defined
+        utl_http.get_transfer_timeout( timeout => l_timeout );
+        if l_timeout is null then
+            utl_http.set_transfer_timeout(l_conf.conf_http_transfer_timeout);
+            xlog(p_module => m_module, p_msg => 'Override http transfer timeout from defaults: '|| l_conf.conf_http_transfer_timeout, p_type=> 'DEBUG');
+        end if;
+        
+    end;
 
    PROCEDURE dump_all_cookies
    IS
@@ -94,6 +125,37 @@ AS
    BEGIN
       m_images_uri := p_images_uri;
    END;
+   
+   /* use the images from the application server when both /ords and /jri are 
+      installed on the same application server 
+      
+      the p_server_uri parameter is rarely used, only when they are not run on the same application server
+      and the uri differs. But that comes with a lot of CORS and other cookie issues. 
+    */
+   procedure use_images_no_tunnel (p_server_uri in varchar2 default null, p_cookie_path varchar2 default null)
+   is
+   begin
+     m_use_images_no_tunnel := true;
+     m_cookie_path_no_tunnel := p_cookie_path;
+     
+     -- the placeholders #J2EE_CONTEXT_PATH# and #IMAGE_NAME# will be replaced 
+     -- inside the J2EE application with the current values of the deployment
+     set_images_uri( p_images_uri => p_server_uri || '#J2EE_CONTEXT_PATH#/report_image?image=#IMAGE_NAME#');
+   end;
+   
+   function get_use_images_no_tunnel return boolean
+   is
+   begin
+     return m_use_images_no_tunnel;
+   end;
+
+    FUNCTION get_cookie_path_no_tunnel
+      RETURN VARCHAR2
+   IS
+   BEGIN
+      RETURN m_cookie_path_no_tunnel;
+   END;
+
 
    FUNCTION get_images_uri
       RETURN VARCHAR2
@@ -166,6 +228,9 @@ AS
    BEGIN
       xlog (l_proc, 'start: ### SHOW IMAGE: ' || p_image_name);
       dump_all_cookies;
+      
+      -- pick up defaults from table xlib_jasperreports_conf
+      setup_configuration_defaults();
 
       -------------------------------------------------------
       -- assert valid values for the input variables
@@ -198,34 +263,6 @@ AS
    END;
 
 
-procedure setup_configuration_defaults
-is
-  l_conf xlib_jasperreports_conf%rowtype;
-  l_timeout PLS_INTEGER;
-begin
-    l_conf := get_default_configuration();
-    
-    -- override report url if not defined
-    if m_report_url is null then
-      m_report_url := l_conf.conf_protocol || '://'||l_conf.conf_server||':'||l_conf.conf_port||'/'||l_conf.conf_context_path||'/report';
-      xlog(p_module => m_module, p_msg => 'Override report url from defaults: '|| m_report_url, p_type=> 'DEBUG');
-    end if;
-    
-    -- set wallet path and pwd
-    -- will ALWAYS override the settings, will ignore previous calls to set_wallet
-    if lower(m_report_url) like 'https%' then
-        utl_http.set_wallet(l_conf.conf_wallet_path, l_conf.conf_wallet_pwd);
-        xlog(p_module => m_module, p_msg => 'Override wallet location/pwd from defaults', p_type=> 'DEBUG');
-    end if;
-    
-    -- override http transfer timeout it not defined
-    utl_http.get_transfer_timeout( timeout => l_timeout );
-    if l_timeout is null then
-        utl_http.set_transfer_timeout(l_conf.conf_http_transfer_timeout);
-        xlog(p_module => m_module, p_msg => 'Override http transfer timeout from defaults: '|| l_conf.conf_http_transfer_timeout, p_type=> 'DEBUG');
-    end if;
-    
-end;
 
    ----------------------------------------------------------------------------
    -- make a callout with utl_http to the j2ee container running the
