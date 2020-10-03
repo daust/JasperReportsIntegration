@@ -65,7 +65,9 @@ AS
         
         -- set wallet path and pwd
         -- will ALWAYS override the settings, will ignore previous calls to set_wallet
-        if lower(m_report_url) like 'https%' then
+        -- at least we check whether the config table has an entry for the wallet or not. 
+        -- thus it could work relying on the wallet set by APEX through the internal workspace! :)
+        if lower(m_report_url) like 'https%' and l_conf.conf_wallet_path is not null then
             utl_http.set_wallet(l_conf.conf_wallet_path, l_conf.conf_wallet_pwd);
             xlog(p_module => m_module, p_msg => 'Override wallet location/pwd from defaults', p_type=> 'DEBUG');
         end if;

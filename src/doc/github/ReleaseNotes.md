@@ -1,7 +1,7 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
-# Version 2.6.1 (Release: dd.mm.yyyy)
+# Version 2.6.1 (pre-release: 03.10.2020)
 
 *(version 2.6.1 includes all changes from 2.6.0 as well)*
 
@@ -16,7 +16,7 @@ You can see the full list of issues with details in the [milestones page](https:
   * #7 - Update documentation
   * #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
   * #2 - Deploying .jrxml and / or .jasper files
-  * #45 - Update APEX test application
+  * #45 - Update APEX test application (new and updated design for APEX 19.1)
   * #44 - Store defaults for url and wallet in configuration table
 
 ## Bug fixes
@@ -36,7 +36,7 @@ You can see the full list of issues with details in the [milestones page](https:
 ## Known issues
   * *none*
 
-# Version 2.6.0 (Pre-release: 14.09.2020)
+# Version 2.6.0 (pre-release: 14.09.2020)
 
 With this release, the full source code is published on github and can be used freely. The build process is now implemented using ``gradle`` instead of ``ant``. Also, it is now a lot easier to upgrade the integration with the newest jasperreports libraries. It can be done just using a configuration parameter and running the gradle build process. 
 
