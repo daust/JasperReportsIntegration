@@ -9,13 +9,31 @@ e.g.:
 declare
     l_additional_parameters varchar2(32767);
 begin
-    -- setting the report url is optional since v2.6.1, 
+    -- setting the report url explicitly is optional since v2.6.1, 
     -- the defaults from the table xlib_jasperreports_conf will be picked up
     -- xlib_jasperreports.set_report_url('http://localhost:8080/JasperReportsIntegration/report');
 
+    /*
+        When you are using HTML as the output format, then the images for the report are also 
+        generated in the J2EE server. They are referenced in the generated html document. 
+        Typically, all images are "tunneled" through the database, but this will slow it down 
+        when you have many images in your html report. 
+
+        When both ORDS and JRI are running on the same J2EE server, you then can call 
+            xlib_jasperreports.use_images_no_tunnel();
+        in order to access the generated images from the report directly. This is a lot faster than 
+        tunneling each image. 
+
+        Using use_images_no_tunnel will allow you to call the images directly from the J2EE application server 
+        and not through the database. Anyhow, this is secured through the java session (cookie JSESSIONID) which 
+        was established by calling the J2ee server through the database via UTL_HTTP. 
+    */ 
+    -- xlib_jasperreports.use_images_no_tunnel();
+
     -- construct addional parameter list
     l_additional_parameters := 'parameter1=' || apex_util.url_encode(:p1_filter_object_name);
-    l_additional_parameters := l_additional_parameters || '&parameter2=' || apex_util.url_encode(:p1_filter_object_type);
+    l_additional_parameters := l_additional_parameters 
+                               || '&parameter2=' || apex_util.url_encode(:p1_filter_object_type);
 
     -- call the J2EE application and display the returned file
     xlib_jasperreports.show_report (p_rep_name => :p5_rep_name,
@@ -90,22 +108,29 @@ First of all, we need to design the report. The preferred method is to use the n
 
 The report files will have to be stored on the application server. Copy the compiled version (``report.jasper``) of your report definition file (``test.jrxml``) into the directory ``OC_JASPER_CONFIG_HOME/reports/``.
 
+**Version 2.6.1 now supports ``.jrxml`` OR ``.jasper`` files, either one is fine. It will automatically detect whether the ``.jasper`` exists and has a timestamp later than the ``.jrxml`` (if it exists) and recompile it on the fly.** 
+
 You can also create subdirectories to organize your reports. For example if you have different reports in your application application1 for sales and for controlling:
 
-1. reports/test.jasper
-2. reports/application1/sales/sales-report.jasper
-3. reports/application1/controlling/controlling-report.jasper
+1. ``reports/test.jasper``
+2. ``reports/application1/sales/sales-report.jasper``
+3. ``reports/application1/controlling/controlling-report.jasper``
 
 You would use as a p_rep_name the following values:
-1. p_rep_name => 'test'
-2. p_rep_name => 'application1/sales/sales-report'
-3. p_rep_name => 'application1/controlling/controlling-report'
+1. ``p_rep_name => 'test'``
+2. ``p_rep_name => 'application1/sales/sales-report'``
+3. ``p_rep_name => 'application1/controlling/controlling-report'``
 
 ### Input parameter for the reports
 
 You can specify input parameters for the reports and use them as a filter. They have to be defined as ``STRING``, they cannot be number or any other data type. This is due to how the integration calls the reports. 
 
-See the report ``demo/orders.jrxml`` or ``demo/top_orders.jrxml`` as a sample. Both use the input parameter ``pAppUser`` for filtering the data set.
+For example consider defining a parameter called ``p_bill_id``. You would use it like this in your SQL query:
+```
+select *
+  from opal_pjm_bills_rl_v
+ where bill_id = to_number( $P{p_bill_id} )
+```
 
 ### Configuration of export properties 
 
