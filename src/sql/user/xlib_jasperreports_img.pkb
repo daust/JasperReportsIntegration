@@ -2,7 +2,7 @@ create or replace package body xlib_jasperreports_img as
 /*
 $Id: xlib_jasperreports_img.pkb 71 2017-10-15 16:25:51Z dietmar.aust $
 */
-   m_module       VARCHAR2 (50)   := 'XLIB_JASPERREPORTS_IMG';
+   m_module       constant varchar2 (100) := $$plsql_unit;
    
 
 ----------------------------------------------------------------------------

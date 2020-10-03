@@ -27,7 +27,7 @@ prompt APPLICATION 344 - Jasper Reports Integration Test (v2.6.1)
 -- Application Export:
 --   Application:     344
 --   Name:            Jasper Reports Integration Test (v2.6.1)
---   Date and Time:   19:15 Friday October 2, 2020
+--   Date and Time:   14:44 Saturday October 3, 2020
 --   Exported By:     DIETMAR.AUST
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -44,7 +44,7 @@ prompt APPLICATION 344 - Jasper Reports Integration Test (v2.6.1)
 --     Dynamic Actions:          5
 --   Shared Components:
 --     Logic:
---       Processes:              1
+--       Processes:              2
 --       Build Options:          1
 --     Navigation:
 --       Lists:                  3
@@ -116,7 +116,7 @@ wwv_flow_api.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Jasper Reports Integration Test (v#APP_VERSION#)'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20201002191509'
+,p_last_upd_yyyymmddhh24miss=>'20201003144329'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
 ,p_ui_type_name => null
@@ -399,6 +399,23 @@ wwv_flow_api.create_flow_process(
 '    :P1_INTEGRATION_CONTEXT_URL := :P1_server_url || ''/'' || :P1_context_path;',
 '    :P1_REPORT_URL := :P1_INTEGRATION_CONTEXT_URL || ''/'' || ''report'';',
 'end;'))
+);
+end;
+/
+prompt --application/shared_components/logic/application_processes/jri_show_image
+begin
+wwv_flow_api.create_flow_process(
+ p_id=>wwv_flow_api.id(27897925156092649)
+,p_process_sequence=>1
+,p_process_point=>'ON_DEMAND'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'JRI_SHOW_IMAGE'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'-- will be picked up by the defaults from table xlib_jasperreports_conf',
+'-- calling set_report_url now optional',
+'-- xlib_jasperreports.set_report_url(:p0_report_url);',
+'',
+'xlib_jasperreports.show_image(p_image_name => apex_application.g_x01);'))
 );
 end;
 /
@@ -13528,7 +13545,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20201002181556'
+,p_last_upd_yyyymmddhh24miss=>'20201003123715'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(27532217834831284)
@@ -13588,9 +13605,9 @@ wwv_flow_api.create_page_plug(
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(27544027360902517)
 ,p_max_row_count=>'1000000'
-,p_show_nulls_as=>'-'
 ,p_pagination_type=>'ROWS_X_TO_Y'
 ,p_pagination_display_pos=>'BOTTOM_RIGHT'
+,p_show_display_row_count=>'Y'
 ,p_report_list_mode=>'TABS'
 ,p_show_detail_link=>'N'
 ,p_show_notify=>'Y'
@@ -14038,7 +14055,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20201002182545'
+,p_last_upd_yyyymmddhh24miss=>'20201003144329'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(27820833814290562)
@@ -14621,7 +14638,23 @@ wwv_flow_api.create_page_process(
 '    into l_demo',
 '    from xlib_jasperreports_demos',
 '   where demo_code=:p14_demo_code;',
+'  ',
+'  /*',
+'   using use_images_no_tunnel will allow you to call the images directly from the J2EE application server ',
+'   and not through the database. Anyhow, this is secured through the java session (cookie JSESSIONID) which ',
+'   was established by calling the J2ee server through the database via UTL_HTTP. ',
 '',
+'   When both ORDS and JRI are running on the same J2EE server, you then can call ',
+'       xlib_jasperreports.use_images_no_tunnel();',
+'   in order to access the generated images from the report directly. This is a lot faster than tunneling each image. ',
+'   ',
+'   Developers might face the rare case where ORDS is running on the local machine but JRI is spawned in a separate',
+'   application server (Jetty or Tomcat) on the same machine as well but using a different port. ',
+'   Thus, they would pass the server uri and cookie path as well: ',
+'       xlib_jasperreports.use_images_no_tunnel(p_server_uri => ''http://localhost:8099'', p_cookie_path => ''/jri'');',
+'  */ ',
+'',
+'  --xlib_jasperreports.use_images_no_tunnel();',
 '  xlib_jasperreports.show_report (p_rep_name => apex_util.url_encode(l_demo.demo_report_name),',
 '          p_rep_format          => apex_util.url_encode(l_demo.demo_report_format),',
 '          p_data_source         => apex_util.url_encode(l_demo.demo_data_source),',

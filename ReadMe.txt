@@ -2,10 +2,10 @@
 
 java -Dlog4j.configuration=file:/Users/daust/Dropbox/Projekt/prj_JasperReportsIntegration/conf/log4j-quiet.properties -jar build/JasperReportsIntegration-2.2.0.0-onejar.war encryptPasswords build/dist/conf/application.properties 
 
-./setConfigDir.sh ../webapp/JasperReportsIntegration.war "d:\program files\jasperReports"
-./setConfigDir.sh ../webapp/JasperReportsIntegration.war "/Users/daust/oc-jasper"
+./setConfigDir.sh ../webapp/jri.war "d:\program files\jasperReports"
+./setConfigDir.sh ../webapp/jri.war "/Users/daust/oc-jasper"
 
-./getConfigDir.sh ../webapp/JasperReportsIntegration.war.tmp.war
+./getConfigDir.sh ../webapp/jri.war.tmp.war
 ./encryptPasswords.sh /Users/daust/oc-jasper/conf/application.properties
 
 

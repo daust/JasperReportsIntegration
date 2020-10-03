@@ -1,17 +1,13 @@
 create or replace PACKAGE      "XLIB_HTTP"
 AS
 /*=========================================================================
-  $Id: xlib_http.pks 60 2015-10-05 15:08:20Z dietmar.aust $
 
   Purpose  : Make http callouts
   
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
              Licensed under a BSD style license (license.txt)
              http://www.opal-consulting.de/pls/apex/f?p=20090928:14
-             
-  $LastChangedDate: 2015-10-05 17:08:20 +0200 (Mon, 05 Oct 2015) $
-  $LastChangedBy: dietmar.aust $ 
-  
+               
  Version Date        Author           Comment
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          19.02.2007  D. Aust          initial creation

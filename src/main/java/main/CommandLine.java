@@ -68,7 +68,7 @@ public class CommandLine {
 			 */
 			if (cntArguments < 3) {
 				System.err
-						.println("Please specify the path to the JasperReportsIntegration.war file and the configuration directory.");
+						.println("Please specify the path to the jri.war file and the configuration directory.");
 				showHelp(arg0);
 				System.exit(-1);
 			}
@@ -80,7 +80,7 @@ public class CommandLine {
 			 */
 			if (cntArguments < 2) {
 				System.err
-						.println("Please specify the path to the JasperReportsIntegration.war.");
+						.println("Please specify the path to the jri.war.");
 				showHelp(arg0);
 				System.exit(-1);
 			}
@@ -210,15 +210,15 @@ public class CommandLine {
 
 		// does the file actually exist?
 		if (!configDir.exists()) {
-			System.err
-					.println("WARNING: Configuration directory could not be found: "
-							+ configDirname);
+			System.err.println("WARNING: Configuration directory could not be found: "
+					+ configDirname);
+			System.err.println("You can use the script createConfigDir to create an initial configuration directoy with all required files.\n ");
 			// System.exit(-1);
 		}
 		// does the war file actually exist?
 		if (!warFile.exists()) {
 			System.err
-					.println("War file (JasperReportsIntegration.war) could not be found: "
+					.println("War file (jri.war) could not be found: "
 							+ warFilename);
 			System.exit(-1);
 		}
@@ -276,7 +276,7 @@ public class CommandLine {
 				while ((len = (is.read(buf))) > 0) {
 					String s = new String(buf);
 					if (s.contains("oc.jasper.config.home")) {
-						System.out.println("replace config.home");
+						System.out.println("replace config.home with directory: " + configDirname);
 						buf = s.replaceAll(
 								"(?ms)<context-param>.*<param-name>oc.jasper.config.home</param-name>.*?</context-param>",
 								"<context-param><param-name>oc.jasper.config.home</param-name><param-value>"
@@ -375,13 +375,13 @@ public class CommandLine {
 			} else if (command.toLowerCase().equals("setconfigdir")) {
 
 				System.out.println("setConfigDir.cmd <path to .war file> <path to config directory>");
-				System.out.println("  e.g.: setConfigDir.cmd ..\\webapp\\JasperReportsIntegration.war c:\\app\\JasperReportsIntegration");
+				System.out.println("  e.g.: setConfigDir.cmd ..\\webapp\\jri.war c:\\app\\JasperReportsIntegration");
 				System.out.println("");
 
 			} else if (command.toLowerCase().equals("getconfigdir")) {
 
 				System.out.println("getConfigDir.sh <path to .war file>");
-				System.out.println("  e.g.: getConfigDir.cmd ..\\webapp\\JasperReportsIntegration.war");
+				System.out.println("  e.g.: getConfigDir.cmd ..\\webapp\\jri.war");
 				System.out.println("");
 				
 			} else {
@@ -394,19 +394,19 @@ public class CommandLine {
 			if (command.toLowerCase().equals("encryptpasswords")) {
 
 				System.out.println("encryptPasswords.sh <path to application.properties file>");
-				System.out.println("  e.g.: encryptPasswords.sh ../conf/application.properties");
+				System.out.println("  e.g.: ./encryptPasswords.sh ../conf/application.properties");
 				System.out.println("");
 
 			} else if (command.toLowerCase().equals("setconfigdir")) {
 
 				System.out.println("setConfigDir.sh <path to .war file> <path to config directory>");
-				System.out.println("  e.g.: setConfigDir.sh ../webapp/JasperReportsIntegration.war /Users/daust/oc-jasper");
+				System.out.println("  e.g.: setConfigDir.sh ../webapp/jri.war /Users/daust/oc-jasper");
 				System.out.println("");
 
 			} else if (command.toLowerCase().equals("getconfigdir")) {
 
 				System.out.println("getConfigDir.sh <path to .war file>");
-				System.out.println("  e.g.: getConfigDir.sh ../webapp/JasperReportsIntegration.war");
+				System.out.println("  e.g.: ./getConfigDir.sh ../webapp/jri.war");
 				System.out.println("");
 				
 			} else {
@@ -423,49 +423,49 @@ public class CommandLine {
 	public static void showHelpJavaCall() {
 		System.out.println("");
 		System.out
-				.println("Usage: java -jar JasperReportsIntegration.war <COMMAND> [arguments] \n");
+				.println("Usage: java -jar jri.war <COMMAND> [arguments] \n");
 		System.out.println("The following commands are available: \n");
 		System.out
-				.println("getConfigDir <path to JasperReportsIntegration.war file>  : This will return the config directory as specified in the web.xml file \n");
+				.println("getConfigDir <path to jri.war file>  : This will return the config directory as specified in the web.xml file \n");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war getConfigDir ./JasperReportsIntegration.war\n");
+				.println("   example: java -jar jri.war getConfigDir ./jri.war\n");
 		System.out
 				.println("setConfigDir     : This will set the config directory and update the web.xml file \n");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war setConfigDir JasperReportsIntegration.war /jri");
+				.println("   example: java -jar jri.war setConfigDir jri.war /jri");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war setConfigDir JasperReportsIntegration.war d:\\jri\n");
+				.println("   example: java -jar jri.war setConfigDir jri.war d:\\jri\n");
 		System.out
 				.println("encryptPasswords <path to application.properties file> \n");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war encryptPasswords /jri/conf/application.properties");
+				.println("   example: java -jar jri.war encryptPasswords /jri/conf/application.properties");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war encryptPasswords d:\\jri\\conf\\application.properties\n");
+				.println("   example: java -jar jri.war encryptPasswords d:\\jri\\conf\\application.properties\n");
 	}
 
 	public static void showHelpOldOneJAR() {
 		System.out.println("");
 		System.out
-				.println("Usage: java -jar JasperReportsIntegration.war <COMMAND> [arguments] \n");
+				.println("Usage: java -jar jri.war <COMMAND> [arguments] \n");
 		System.out.println("The following commands are available: \n");
 		System.out
-				.println("getConfigDir <path to JasperReportsIntegration.war file>  : This will return the config directory as specified in the web.xml file \n");
+				.println("getConfigDir <path to jri.war file>  : This will return the config directory as specified in the web.xml file \n");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war getConfigDir ./JasperReportsIntegration.war\n");
+				.println("   example: java -jar jri.war getConfigDir ./jri.war\n");
 		System.out
 				.println("setConfigDir     : This will set the config directory and update the web.xml file \n");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war setConfigDir JasperReportsIntegration.war /jri");
+				.println("   example: java -jar jri.war setConfigDir jri.war /jri");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war setConfigDir JasperReportsIntegration.war d:\\jri\n");
+				.println("   example: java -jar jri.war setConfigDir jri.war d:\\jri\n");
 		System.out
 				.println("encryptPasswords <path to application.properties file> \n");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war encryptPasswords /jri/conf/application.properties");
+				.println("   example: java -jar jri.war encryptPasswords /jri/conf/application.properties");
 		System.out
-				.println("   example: java -jar JasperReportsIntegration.war encryptPasswords d:\\jri\\conf\\application.properties\n");
+				.println("   example: java -jar jri.war encryptPasswords d:\\jri\\conf\\application.properties\n");
 		System.out
-				.println("You can suppress all info messages by using -Done-jar.silent=true, \n e.g. java -Done-jar.silent=true -jar JasperReportsIntegration.war getConfigDir JasperReportsIntegration.war\n");
+				.println("You can suppress all info messages by using -Done-jar.silent=true, \n e.g. java -Done-jar.silent=true -jar jri.war getConfigDir jri.war\n");
 	}
 
 }

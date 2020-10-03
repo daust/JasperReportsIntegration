@@ -70,9 +70,13 @@ AS
 -- set the image uri for html reports only!
 ----------------------------------------------------------------------------
    PROCEDURE set_images_uri (p_images_uri IN VARCHAR2 default null);
+   procedure use_images_no_tunnel (p_server_uri in varchar2 default null, p_cookie_path varchar2 default null);
+   function get_use_images_no_tunnel return boolean;
 
    FUNCTION get_images_uri
       return varchar2;
+   FUNCTION get_cookie_path_no_tunnel
+      RETURN VARCHAR2;
 
 
 /**  make a callout with utl_http to the j2ee container running the
