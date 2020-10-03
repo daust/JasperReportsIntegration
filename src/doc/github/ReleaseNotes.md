@@ -1,7 +1,7 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
-# Version 2.6.1 (pre-release: 03.10.2020)
+# Version 2.6.1 (release: 03.10.2020)
 
 *(version 2.6.1 includes all changes from 2.6.0 as well)*
 
