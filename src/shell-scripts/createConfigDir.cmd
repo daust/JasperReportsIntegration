@@ -25,12 +25,12 @@ if exist %DIR% (
     mkdir %DIR%
 
     echo Copy files conf\*, reports\* and create directory logs
-	echo xcopy /s %TEMPLATE_DIR%\conf %DIR%
-    xcopy /s %TEMPLATE_DIR%\conf %DIR%
+	echo xcopy /s /i %TEMPLATE_DIR%\conf %DIR%\conf
+    xcopy /s /i %TEMPLATE_DIR%\conf %DIR%\conf
 	echo mkdir %DIR%\logs
     mkdir %DIR%\logs
-    echo xcopy /s %TEMPLATE_DIR%\reports %DIR%
-	xcopy /s %TEMPLATE_DIR%\reports %DIR%
+    echo xcopy /s /i %TEMPLATE_DIR%\reports %DIR%\reports
+	xcopy /s /i %TEMPLATE_DIR%\reports %DIR%\reports
 )
 
 goto EOF
@@ -44,7 +44,7 @@ echo   the template directory, typically where you downloaded the files.
 echo.
 echo Syntax:
 echo   createConfigDir.sh ^<target config directory^> ^<template directory^>
-echo   e.g. ./createConfigDir.sh /tmp/jri ..
+echo   e.g. createConfigDir.cmd  c:\app\JasperReportsIntegration ..
 echo.
 
 

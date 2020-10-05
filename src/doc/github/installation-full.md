@@ -272,7 +272,9 @@ sqlplus [application schema]/[application schema password]@[database]
 
 ### <a name="install.installation.apex"></a>4. Installation of the test application
 
-The test application will allow for basic testing of the integration with all relevant parts. Install the application file ``apex\f121_JasperReportsIntegration-Test_x.x.x.x.sql`` into your workspace.
+The test application will allow for basic testing of the integration with all relevant parts. Install the application file ``apex\[apex version]\f201_JasperReportsIntegration-Test_[version].sql`` into your workspace. 
+
+Please always pick the highest APEX version, e.g. when running APEX 19.1 and above (19.2, 20.1, ...), please install ``apex\APEX 19.1\f201_JasperReportsIntegration-Test_2.6.1.sql``.
 
 It will perform checks on the installation and allow you to run the test reports.
 

@@ -105,8 +105,10 @@ public class ConnectionUtility {
 						conn = ds.getConnection();
 					}
 				} catch (Exception e) {
-					logger.info("JNDI lookup failed for " + jndiName
-							+ ", trying JDBC now...");
+					//logger.info("JNDI lookup failed for " + jndiName);
+					logger.error("JNDI datasource " + dsName + " could not be found. Lookup was done with " + jndiName);
+					Utils.throwRuntimeException("JNDI datasource " + dsName + " could not be found. Lookup was done with " + jndiName);
+
 				}
 			}		
 		} else if (dataSourceDef.type.equals("jdbc")){
