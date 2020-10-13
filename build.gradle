@@ -11,6 +11,7 @@
   18.09.2020  D. Aust   added missing jasperreports.properties file to WEB-INF/classes
   03.10.2020  D. Aust   fixed bug in generating eclipse project file, 
                         now it is back to using "bin/default" as the default output dir, should be "build"
+  07.10.2020  D. Aust   #52 - Uptake JasperReports Library 6.15.0
  */
 
 plugins {
@@ -33,7 +34,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.6.1'
+  project.version           = '2.6.2'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -41,7 +42,7 @@ import org.gradle.internal.os.OperatingSystem
   archivesBaseName          = "jri"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.14.0'  
+  def jasperreportsVersion  ='6.15.0'  
 
 //-----------------------------------------------------------------------------
 //-- Groovy helper functions
