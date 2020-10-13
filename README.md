@@ -15,6 +15,7 @@
 * [Integration and Usage](#integration)
 * [Configuration](#configuration)
 * [PL/SQL API](#plsql_api)
+* [External Documentation / Training](#external_documentation_training)
 * [Legacy Documentation](#legacy_documentation)
 * [Change Log / Release Notes](#changelog)
 * [Credit](#credit)
@@ -328,6 +329,11 @@ More details will follow later ... *tbd*
 # <a name="plsql_api"></a> PL/SQL API
 
 *tbd*
+
+# <a name="external_documentation_training"></a> External Documentation Training
+
+* [JasperReports Wiki](https://community.jaspersoft.com/wiki/jaspersoft-community-wiki-0)
+
 
 # <a name="legacy_documentation"></a> Legacy documentation
 

@@ -74,9 +74,10 @@ AS
         
         -- override http transfer timeout it not defined
         utl_http.get_transfer_timeout( timeout => l_timeout );
-        if l_timeout is null then
+        --xlog(p_module => m_module, p_msg => 'Current setting of transfer_timeout: '||l_timeout, p_type=> 'DEBUG');
+        if (l_timeout is null or l_timeout=60 /*60 is the default*/) then
             utl_http.set_transfer_timeout(l_conf.conf_http_transfer_timeout);
-            xlog(p_module => m_module, p_msg => 'Override http transfer timeout from defaults: '|| l_conf.conf_http_transfer_timeout, p_type=> 'DEBUG');
+            xlog(p_module => m_module, p_msg => 'Override http transfer timeout ('||l_timeout||'s) from defaults: '|| l_conf.conf_http_transfer_timeout ||'s', p_type=> 'DEBUG');
         end if;
         
     end;
