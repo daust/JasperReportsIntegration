@@ -27,6 +27,7 @@ AS
   2.5.0.0  29.09.2018  D. Aust   FEATURE: #9 - Ability to set Printjob name (programmatically)   
   2.5.0.1  30.09.2018  D. Aust     fix bool2string issue
   2.6.1    01.10.2020  D. Aust   add get_default_configuration() and set_default_configuration()
+  2.6.2    13.10.2020  D. Aust   #54 - Timeout value from default table not working
 
 =========================================================================*/
 
