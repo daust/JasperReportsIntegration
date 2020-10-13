@@ -12,6 +12,7 @@
   03.10.2020  D. Aust   fixed bug in generating eclipse project file, 
                         now it is back to using "bin/default" as the default output dir, should be "build"
   07.10.2020  D. Aust   #52 - Uptake JasperReports Library 6.15.0
+  07.10.2020  D. Aust   #55 - Barcodes produce classnotfound error
  */
 
 plugins {
@@ -71,6 +72,13 @@ dependencies {
     implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '19.+'
     // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ucp
     implementation group: 'com.oracle.database.jdbc', name: 'ucp', version: '19.+'
+
+    // https://mvnrepository.com/artifact/xalan/serializer
+    // see bug: #55 - Barcodes produce classnotfounderror
+    compile group: 'xalan', name: 'serializer', version: '2.7.1'
+    // https://mvnrepository.com/artifact/org.apache.xmlgraphics/xmlgraphics-commons
+    // see bug: #55 - Barcodes produce classnotfounderror
+    compile group: 'org.apache.xmlgraphics', name: 'xmlgraphics-commons', version: '2.+'
 
     // *** Only for TESTING
     testCompileOnly 'junit:junit:4.12'
