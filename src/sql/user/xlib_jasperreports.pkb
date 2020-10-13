@@ -342,12 +342,27 @@ AS
       l_url := l_url || '&_saveIsEnabled=' || bool2string (p_save_is_enabled);
       l_url := l_url || '&_saveFileName=' || p_save_filename;
 
+      
+/*
+      Each additional parameter needs to be escaped using utl_url.escape()
+       utl_url.escape(
+        url                    => p_additional_params,
+        escape_reserved_chars  => true,
+                   url_charset            => 'UTF-8'
+        );
+*/
+
       -- additional report parameter passed?
       IF (p_additional_params IS NOT NULL)
       THEN
-         l_url := l_url || '&' || p_additional_params;
+--         l_url := l_url || '&' || p_additional_params;
+         l_url := l_url || '&' || utl_url.escape(
+                                        url                    => p_additional_params,
+                                        escape_reserved_chars  => false,
+                                                   url_charset            => 'UTF-8'
+        );
       END IF;
-
+      
       -------------------------------------------------------
       -- call J2EE server
       -------------------------------------------------------
@@ -427,7 +442,12 @@ AS
       -- additional report parameter passed?
       IF (p_additional_params IS NOT NULL)
       THEN
-         l_url := l_url || '&' || p_additional_params;
+--         l_url := l_url || '&' || p_additional_params;
+         l_url := l_url || '&' || utl_url.escape(
+                                        url                    => p_additional_params,
+                                        escape_reserved_chars  => false,
+                                                   url_charset            => 'UTF-8'
+        );
       END IF;
 
       -------------------------------------------------------

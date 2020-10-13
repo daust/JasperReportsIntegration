@@ -122,12 +122,18 @@ sqlplus "sys/[sys password]@[database] as sysdba"
 cd sql
 ```
 
-3. Connect as the application schema to the local instance (using sqlplus)
+3. Change encoding to Unicode for the sql files
+```
+On Windows: set NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+On Linux/Unix: export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+```
+
+4. Connect as the application schema to the local instance (using sqlplus)
 ```
 sqlplus [application schema]/[application schema password]@[database]
 ```
 
-4. Run the installation script
+5. Run the installation script
 ```
 @user_install.sql
 ```

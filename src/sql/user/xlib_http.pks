@@ -23,6 +23,7 @@ AS
  2.3.0.0 09.05.2015  D. Aust          pass JSESSIONID from backend J2EE server to client 
                                         for image rendering in html reports                                         
  2.6.1   28.09.2020  D. Aust          - #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
+ 2.6.2   13.10.2020  D. Aust          - added function check_acl()
 
 =========================================================================*/
 
@@ -30,7 +31,7 @@ AS
    c_fail      CONSTANT CHAR (1) := '0';
    
   -- version of this package
-  version_c constant varchar2(20 char) := '2.6.1';   
+  version_c constant varchar2(20 char) := '2.6.2';   
   
   TYPE vc_arr_t IS TABLE OF VARCHAR2 (32767) INDEX BY BINARY_INTEGER;
   g_empty_vc_arr vc_arr_t;
@@ -107,16 +108,25 @@ the escaped data
 Function: check_get_request
 
 Parameters:
-   This is where you would describe the parameters.
+   p_url    the url to be called
 
 Returns:
-   This is where you would describe the return value.
-   returns a char
+   Returns c_fail or c_success
 
-See Also:
-   This is where you would include relevant links.
 */
    FUNCTION check_get_request (p_url VARCHAR2)
+      RETURN CHAR;
+      
+/*
+Function: check_acl
+
+Parameters:
+   p_url    the url to be called
+
+Returns:
+   Returns c_fail or c_success
+*/
+   FUNCTION check_acl (p_url VARCHAR2)
       RETURN CHAR;
 END;
 /

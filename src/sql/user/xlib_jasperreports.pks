@@ -32,7 +32,7 @@ AS
 =========================================================================*/
 
   -- version of this package
-  version_c constant varchar2(20 char) := '2.6.1';   
+  version_c constant varchar2(20 char) := '2.6.2';   
 
    -- constants
    -- supported formats
