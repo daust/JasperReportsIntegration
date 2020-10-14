@@ -22,12 +22,12 @@ wwv_flow_api.import_begin (
 end;
 /
  
-prompt APPLICATION 344 - Jasper Reports Integration Test (v2.6.1)
+prompt APPLICATION 344 - Jasper Reports Integration Test (v2.6.2)
 --
 -- Application Export:
 --   Application:     344
---   Name:            Jasper Reports Integration Test (v2.6.1)
---   Date and Time:   14:44 Saturday October 3, 2020
+--   Name:            Jasper Reports Integration Test (v2.6.2)
+--   Date and Time:   20:52 Tuesday October 13, 2020
 --   Exported By:     DIETMAR.AUST
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -37,8 +37,8 @@ prompt APPLICATION 344 - Jasper Reports Integration Test (v2.6.1)
 
 -- Application Statistics:
 --   Pages:                      9
---     Items:                   49
---     Processes:               14
+--     Items:                   50
+--     Processes:               15
 --     Regions:                 33
 --     Buttons:                 14
 --     Dynamic Actions:          5
@@ -82,7 +82,7 @@ begin
 wwv_flow_api.create_flow(
  p_id=>wwv_flow.g_flow_id
 ,p_owner=>nvl(wwv_flow_application_install.get_schema,'JRI_TEST')
-,p_name=>nvl(wwv_flow_application_install.get_application_name,'Jasper Reports Integration Test (v2.6.1)')
+,p_name=>nvl(wwv_flow_application_install.get_application_name,'Jasper Reports Integration Test (v2.6.2)')
 ,p_alias=>nvl(wwv_flow_application_install.get_application_alias,'344')
 ,p_page_view_logging=>'YES'
 ,p_page_protection_enabled_y_n=>'Y'
@@ -104,7 +104,7 @@ wwv_flow_api.create_flow(
 ,p_app_builder_icon_name=>'app-icon.svg'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'2.6.1'
+,p_flow_version=>'2.6.2'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -116,7 +116,7 @@ wwv_flow_api.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Jasper Reports Integration Test (v#APP_VERSION#)'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20201003144329'
+,p_last_upd_yyyymmddhh24miss=>'20201013205138'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
 ,p_ui_type_name => null
@@ -413,7 +413,7 @@ wwv_flow_api.create_flow_process(
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '-- will be picked up by the defaults from table xlib_jasperreports_conf',
 '-- calling set_report_url now optional',
-'-- xlib_jasperreports.set_report_url(:p0_report_url);',
+'-- xlib_jasperreports.set_report_url(:p1_report_url);',
 '',
 'xlib_jasperreports.show_image(p_image_name => apex_application.g_x01);'))
 );
@@ -12167,7 +12167,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20201001223126'
+,p_last_upd_yyyymmddhh24miss=>'20201013204720'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(27529013892831279)
@@ -12324,7 +12324,7 @@ wwv_flow_api.create_page_plug(
 '    $END',
 '',
 '',
-'  SELECT HTTPURITYPE (:p0_server_url).getclob ()',
+'  SELECT HTTPURITYPE (:p1_server_url).getclob ()',
 '    INTO l_clob',
 '    from dual;',
 '',
@@ -12340,14 +12340,14 @@ wwv_flow_api.create_page_plug(
 '      ',
 '      l_str := replace(l_str, ''#SQLERRM#'', l_sqlerrm);',
 '      l_str := replace(l_str, ''#USER#'', sys_context(''userenv'', ''current_user''));',
-'      l_str := replace(l_str, ''#HOST#'', :p0_server);',
+'      l_str := replace(l_str, ''#HOST#'', :p1_server);',
 '',
 '      htp.p(l_str);',
 '    else',
 '      -- no ACL problem',
 '      -- ok',
 '      htp.p(''All tests PASSED.'');',
-'',
+'      ',
 '    end if;',
 '  ',
 'end;',
@@ -12546,8 +12546,8 @@ wwv_flow_api.create_report_region(
 '                                 1, ''#IMAGE_PREFIX#Fndokay1.gif'',',
 '                                 ''#IMAGE_PREFIX#FNDCANCE.gif''',
 '                                ) status',
-'                    FROM (SELECT xlib_http.check_get_request',
-'                                                 (:P1_INTEGRATION_CONTEXT_URL || ''''',
+'                    FROM (SELECT xlib_http.check_acl',
+'                                                 (:p1_server_url || ''''',
 '                                                 ) installed',
 '                            FROM DUAL)',
 '            )',
@@ -12788,7 +12788,7 @@ wwv_flow_api.create_page_plug(
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(81584588054656808)
-,p_plug_name=>'Check 4: Can the talk to the J2EE server?'
+,p_plug_name=>'Check 4: Can we talk to the J2EE server?'
 ,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_api.id(27438253912831202)
@@ -12890,7 +12890,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20201002175756'
+,p_last_upd_yyyymmddhh24miss=>'20201013203400'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(27530678025831282)
@@ -12918,7 +12918,7 @@ wwv_flow_api.create_page_plug(
 'This report tester will only pass the parameters to the J2EE',
 'application. <br>',
 '<br>',
-'The different parameters are explained in the local report tester as part of the J2EE application: <a href="&P0_INTEGRATION_CONTEXT_URL." target="_new">&P0_INTEGRATION_CONTEXT_URL.</a><br>'))
+'The different parameters are explained in the local report tester as part of the J2EE application: <a href="&P1_INTEGRATION_CONTEXT_URL." target="_new">&P1_INTEGRATION_CONTEXT_URL.</a><br>'))
 ,p_plug_query_row_template=>wwv_flow_api.id(27463995186831216)
 ,p_plug_query_headings_type=>'QUERY_COLUMNS'
 ,p_plug_query_num_rows=>15
@@ -13737,7 +13737,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20201002161712'
+,p_last_upd_yyyymmddhh24miss=>'20201013201024'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(27828624759290567)
@@ -13763,7 +13763,8 @@ wwv_flow_api.create_page_plug(
 '       DEMO_PARAM2_VALUE,',
 '       DEMO_PARAM3_LABEL,',
 '       DEMO_PARAM3_VALUE,',
-'       DEMO_REPORT_TIME_ZONE',
+'       DEMO_REPORT_TIME_ZONE,',
+'       '''' run_report_action',
 '  from XLIB_JASPERREPORTS_DEMOS'))
 ,p_plug_source_type=>'NATIVE_IR'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
@@ -13940,6 +13941,18 @@ wwv_flow_api.create_worksheet_column(
 ,p_column_type=>'OTHER'
 ,p_rpt_show_filter_lov=>'N'
 );
+wwv_flow_api.create_worksheet_column(
+ p_id=>wwv_flow_api.id(27853054537620122)
+,p_db_column_name=>'RUN_REPORT_ACTION'
+,p_display_order=>134
+,p_column_identifier=>'Q'
+,p_column_label=>'Run Report'
+,p_column_link=>'f?p=&APP_ID.:5:&SESSION.:RUN_REPORT:&DEBUG.:RP,5:P5_DEMO_CODE:#DEMO_CODE#'
+,p_column_linktext=>'<span aria-hidden="true" class="fa fa-file-text-o"></span>'
+,p_column_link_attr=>'target="_blank" title="run report directly"'
+,p_column_type=>'STRING'
+,p_column_alignment=>'CENTER'
+);
 wwv_flow_api.create_worksheet_rpt(
  p_id=>wwv_flow_api.id(27832265110291312)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -13947,24 +13960,11 @@ wwv_flow_api.create_worksheet_rpt(
 ,p_report_alias=>'278323'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'DEMO_TITLE:DEMO_REPORT_NAME:DEMO_DESCRIPTION:DEMO_REPORT_FORMAT:DEMO_REPORT_LOCALE:DEMO_PARAM1_LABEL:DEMO_PARAM1_VALUE:DEMO_PARAM2_LABEL:DEMO_PARAM2_VALUE'
+,p_report_columns=>'DEMO_TITLE:DEMO_DESCRIPTION:RUN_REPORT_ACTION:DEMO_REPORT_NAME:DEMO_DATA_SOURCE:DEMO_REPORT_FORMAT:DEMO_REPORT_LOCALE:DEMO_PARAM1_LABEL:DEMO_PARAM1_VALUE:DEMO_PARAM2_LABEL:DEMO_PARAM2_VALUE:'
 ,p_sort_column_1=>'DEMO_REPORT_NAME'
-,p_sort_direction_1=>'ASC'
+,p_sort_direction_1=>'DESC'
 ,p_sort_column_2=>'DEMO_CODE'
 ,p_sort_direction_2=>'ASC'
-);
-wwv_flow_api.create_worksheet_rpt(
- p_id=>wwv_flow_api.id(27850024985609478)
-,p_application_user=>'APXWS_ALTERNATIVE'
-,p_name=>'All Details'
-,p_report_seq=>10
-,p_report_alias=>'278501'
-,p_status=>'PUBLIC'
-,p_is_default=>'Y'
-,p_report_columns=>'DEMO_CODE:DEMO_TITLE:DEMO_REPORT_NAME:DEMO_DESCRIPTION:DEMO_REPORT_FORMAT:DEMO_DATA_SOURCE:DEMO_REPORT_LOCALE:DEMO_REPORT_ENCODING:DEMO_PARAM1_LABEL:DEMO_PARAM1_VALUE:DEMO_PARAM2_LABEL:DEMO_PARAM2_VALUE:DEMO_PARAM3_LABEL:DEMO_PARAM3_VALUE:DEMO_REPORT'
-||'_TIME_ZONE'
-,p_sort_column_1=>'DEMO_CODE'
-,p_sort_direction_1=>'ASC'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(55369949758207936)
@@ -13993,6 +13993,14 @@ wwv_flow_api.create_page_button(
 ,p_button_redirect_url=>'f?p=&APP_ID.:14:&SESSION.::&DEBUG.:14'
 ,p_grid_new_grid=>false
 );
+wwv_flow_api.create_page_item(
+ p_id=>wwv_flow_api.id(27852907752620121)
+,p_name=>'P5_DEMO_CODE'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_api.id(27828624759290567)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
 wwv_flow_api.create_page_da_event(
  p_id=>wwv_flow_api.id(27830790182290576)
 ,p_name=>'Edit Report - Dialog Closed'
@@ -14012,6 +14020,70 @@ wwv_flow_api.create_page_da_action(
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_api.id(27828624759290567)
 ,p_stop_execution_on_error=>'Y'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(27852890369620120)
+,p_process_sequence=>10
+,p_process_point=>'BEFORE_HEADER'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'Run Report'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'declare',
+'  l_proc varchar2(100) := ''show report'';',
+'  l_demo xlib_jasperreports_demos%rowtype;',
+'BEGIN',
+'  select *',
+'    into l_demo',
+'    from xlib_jasperreports_demos',
+'   where demo_code=:p5_demo_code;',
+'  ',
+'  /*',
+'   using use_images_no_tunnel will allow you to call the images directly from the J2EE application server ',
+'   and not through the database. Anyhow, this is secured through the java session (cookie JSESSIONID) which ',
+'   was established by calling the J2ee server through the database via UTL_HTTP. ',
+'',
+'   When both ORDS and JRI are running on the same J2EE server, you then can call ',
+'       xlib_jasperreports.use_images_no_tunnel();',
+'   in order to access the generated images from the report directly. This is a lot faster than tunneling each image. ',
+'   ',
+'   Developers might face the rare case where ORDS is running on the local machine but JRI is spawned in a separate',
+'   application server (Jetty or Tomcat) on the same machine as well but using a different port. ',
+'   Thus, they would pass the server uri and cookie path as well: ',
+'       xlib_jasperreports.use_images_no_tunnel(p_server_uri => ''http://localhost:8099'', p_cookie_path => ''/jri'');',
+'  */ ',
+'',
+'  --xlib_jasperreports.use_images_no_tunnel();',
+'  xlib_jasperreports.show_report (p_rep_name => apex_util.url_encode(l_demo.demo_report_name),',
+'          p_rep_format          => apex_util.url_encode(l_demo.demo_report_format),',
+'          p_data_source         => apex_util.url_encode(l_demo.demo_data_source),',
+'          p_out_filename        => apex_util.url_encode(l_demo.demo_out_filename),                        ',
+'          p_rep_locale          => apex_util.url_encode(l_demo.demo_report_locale),',
+'          p_rep_encoding        => apex_util.url_encode(l_demo.demo_report_encoding),',
+'          p_additional_params   => ''&''  || apex_util.url_encode(l_demo.demo_param1_label)',
+'                                   ||''=''|| apex_util.url_encode(l_demo.demo_param1_value)',
+'--                                   ||''=''|| utl_url.escape(l_demo.demo_param1_value,true,''UTF-8'')',
+'                                   ||''&''|| apex_util.url_encode(l_demo.demo_param2_label)',
+'                                   ||''=''|| apex_util.url_encode(l_demo.demo_param2_value)',
+'                                   ||''&''|| apex_util.url_encode(l_demo.demo_param3_label)',
+'                                   ||''=''|| apex_util.url_encode(l_demo.demo_param3_value),',
+'          p_rep_time_zone       => apex_util.url_encode(l_demo.demo_report_time_zone)',
+'          );',
+'  ',
+'  -- this was used before apex 4.1',
+'  --apex_application.g_unrecoverable_error := true;',
+'  apex_application.stop_apex_engine();',
+'',
+'exception',
+'  when apex_application.e_stop_apex_engine then',
+'    null; -- ok, stop engine raises exception, we can ignore that',
+'  when others then ',
+'    xlog(l_proc, substr(dbms_utility.format_error_backtrace,1,3500), ''ERROR'');',
+'    raise;',
+'end;  ',
+'                                     '))
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'RUN_REPORT'
+,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
 );
 end;
 /
@@ -14055,7 +14127,7 @@ wwv_flow_api.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20201003144329'
+,p_last_upd_yyyymmddhh24miss=>'20201013205138'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(27820833814290562)
@@ -14171,6 +14243,15 @@ wwv_flow_api.create_page_button(
 ,p_button_condition=>'P14_DEMO_CODE'
 ,p_button_condition_type=>'ITEM_IS_NULL'
 ,p_database_action=>'INSERT'
+);
+wwv_flow_api.create_page_branch(
+ p_id=>wwv_flow_api.id(27852734082620119)
+,p_branch_name=>'after create, stay on page'
+,p_branch_action=>'f?p=&APP_ID.:14:&SESSION.::&DEBUG.:RP,14:P14_ROWID:&P14_ROWID.&success_msg=#SUCCESS_MSG#'
+,p_branch_point=>'AFTER_PROCESSING'
+,p_branch_type=>'REDIRECT_URL'
+,p_branch_when_button_id=>wwv_flow_api.id(27826892824290566)
+,p_branch_sequence=>10
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(27547201051902549)
@@ -14663,6 +14744,7 @@ wwv_flow_api.create_page_process(
 '          p_rep_encoding        => apex_util.url_encode(l_demo.demo_report_encoding),',
 '          p_additional_params   => ''&''  || apex_util.url_encode(l_demo.demo_param1_label)',
 '                                   ||''=''|| apex_util.url_encode(l_demo.demo_param1_value)',
+'--                                   ||''=''|| utl_url.escape(l_demo.demo_param1_value,true,''UTF-8'')',
 '                                   ||''&''|| apex_util.url_encode(l_demo.demo_param2_label)',
 '                                   ||''=''|| apex_util.url_encode(l_demo.demo_param2_value)',
 '                                   ||''&''|| apex_util.url_encode(l_demo.demo_param3_label)',
@@ -14741,7 +14823,7 @@ wwv_flow_api.create_page_process(
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
-,p_process_when=>'CREATE,SAVE,DELETE'
+,p_process_when=>'SAVE,DELETE'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'
 );
 wwv_flow_api.create_page_process(

@@ -128,6 +128,37 @@ type=<b>jndi</b>
 name=<b>jndi_test</b>
 </pre>
 
+In order to use JDNI datasources (not only Oracle but any jdbc datasource that is supported by Tomcat), you need to configure the file ``$CATALINA_BASE/conf/[enginename]/[hostname]/jri.xml``. In most cases this will be ``$CATALINA_BASE/conf/Catalina/localhost/jri.xml``. The .xml file has the same name as the .war file. In our case this is jri.war and thus jri.xml. But if you change the name of the .war file the config file name will be different as well. 
+
+Here is an example of a proper ``jri.xml`` file: 
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Context debug="0" reloadable="false" crossContext="true">
+
+    <!-- default data source, when no _dataSource parameter is given -->
+    <!-- parameter definition: http://commons.apache.org/dbcp/configuration.html -->
+    <!-- minimum connections in pool: 3 -->
+    <!-- check valid session: each 5 minutes  -->
+
+    <Resource name="jdbc/jndi_test" auth="Container" type="javax.sql.DataSource"
+              driverClassName="oracle.jdbc.OracleDriver"
+              maxActive="20" maxIdle="10" maxWait="-1"
+              initialSize="4" minIdle="3" validationQuery="select user from dual"
+              testWhileIdle="true" testOnBorrow="true" timeBetweenEvictionRunsMillis="300000"
+              numTestsPerEvictionRun="100" minEvictableIdleTimeMillis="10000"
+
+              url="jdbc:oracle:thin:@127.0.0.1:1521:XE" 
+              username="user"
+              password="pwd" 
+              />
+                        
+</Context>
+```
+In the resource definition you need to prefix your datasource name with ``"jdbc/"``, but you access it without it. 
+
+
+
 ### 2.4 Encrypting all passwords in the ``application.properties`` file
 
 You can optionally encrypt the passwords in the ``application.properties`` file. Just follow the following steps, the file will automatically be updated with the encrypted passwords for all of the datasources.
@@ -152,6 +183,8 @@ encryptPasswords.cmd <path to application.properties file>
 
 ### 2.5 Configure Apache Tomcat
 
+#### Configure Memory Settings
+
 You can configure the Java environment for Apache Tomcat and set specific startup parameters for the Java VM. See https://www.xwiki.org/xwiki/bin/view/Documentation/AdminGuide/Installation/InstallationWAR/InstallationTomcat/ for details. 
 
 Example for Windows: 
@@ -166,6 +199,21 @@ Example for *nix:
 #!/bin/sh
 export JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true -server -Xms2048m -Xms2048m -XX:MaxPermSize=192m"
 ```
+
+#### Configure JNDI Data Sources
+
+In order to use JDNI Data Sources, it is recommended to configure your host in the Tomcat ``server.xml`` file like this: 
+```
+      <Host appBase="webapps" autoDeploy="true" name="localhost" unpackWARs="true"
+          deployXML="true" copyXML="true">
+```
+* autoDeploy: .war files in the directory webapps will be deployed automatically
+* unpackWARs: .war files will be automatically "unzipped" and the deployment directory will be created (exploded)
+* deployXML: any JNDI data sources defined in jri.war/META-INF/context.xml will be used, else ignored
+* copyXML: the template file from jri.war/META-INF/context.xml will be copied into the local Tomcat configuration directory $TOMCAT_HOME/conf/Catalina/localhost/
+
+**Those settings are sometimes disallowed by your administrator for security reasons, so please check with your admin.**
+
 
 ### 2.6 Deploy the J2EE application
 
@@ -260,19 +308,27 @@ sqlplus "sys/[sys password]@[database] as sysdba"
 cd sql
 ```
 
-3. Connect as the application schema to the local instance (using sqlplus)
+3. Change encoding to Unicode for the sql files
+```
+On Windows: set NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+On Linux/Unix: export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+```
+
+4. Connect as the application schema to the local instance (using sqlplus)
 ```
 sqlplus [application schema]/[application schema password]@[database]
 ```
 
-4. Run the installation script
+5. Run the installation script
 ```
 @user_install.sql
 ```
 
 ### <a name="install.installation.apex"></a>4. Installation of the test application
 
-The test application will allow for basic testing of the integration with all relevant parts. Install the application file ``apex\f121_JasperReportsIntegration-Test_x.x.x.x.sql`` into your workspace.
+The test application will allow for basic testing of the integration with all relevant parts. Install the application file ``apex\[apex version]\f201_JasperReportsIntegration-Test_[version].sql`` into your workspace. 
+
+Please always pick the highest APEX version, e.g. when running APEX 19.1 and above (19.2, 20.1, ...), please install ``apex\APEX 19.1\f201_JasperReportsIntegration-Test_2.6.1.sql``.
 
 It will perform checks on the installation and allow you to run the test reports.
 

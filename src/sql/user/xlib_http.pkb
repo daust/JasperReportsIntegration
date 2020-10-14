@@ -23,6 +23,7 @@ AS
  2.3.0.0 09.05.2015  D. Aust          pass JSESSIONID from backend J2EE server to client 
                                         for image rendering in html reports                                         
  2.6.1   28.09.2020  D. Aust          - #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
+ 2.6.2   13.10.2020  D. Aust          - added function check_acl()
 
 =========================================================================*/
 
@@ -299,6 +300,39 @@ AS
       WHEN OTHERS
       THEN
          RETURN c_fail;
+   END;
+   
+   FUNCTION check_acl (p_url VARCHAR2)
+      RETURN CHAR
+   IS
+      l_clob   CLOB;
+   BEGIN
+      IF p_url IS NULL
+      THEN
+         RETURN c_fail;
+      END IF;
+
+      SELECT HTTPURITYPE (p_url).getclob ()
+        INTO l_clob
+        FROM DUAL;
+
+      /*SELECT c_success
+        INTO l_ret
+        FROM DUAL
+       WHERE EXISTS (SELECT HTTPURITYPE (p_url).getclob ()
+                       FROM DUAL);
+                       */
+      RETURN c_success;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         -- acl problem
+         if sqlcode=24247 then
+           RETURN c_fail;
+         else
+            -- no acl problem
+            return c_success;
+         end if;
    END;
 END;
 /

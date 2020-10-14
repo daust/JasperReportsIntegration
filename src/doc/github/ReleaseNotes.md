@@ -1,6 +1,35 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.6.2 (release: 14.10.2020)
+
+This release contains a number of fixes that came up after the release 2.6.1. 
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/6?closed=1). 
+
+## New features
+  * #52 - Uptake JasperReports Library 6.15.0
+
+## Bug fixes
+  * #57 - Invalid character found in the request target. The valid characters are defined in RFC 7230 and RFC 3986
+  * #53 - Documentation bugs 
+  * #55 - Barcodes produce classnotfounderror
+  * #54 - Timeout value from default table not working
+  * #51 - Batch files on Windows throw error: main class not found
+
+## Changed behaviour
+  * *none*
+
+## Deprecated features (still available but will go away eventually)
+  * *none*
+
+## Obsoleted features (no longer available)
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues . 
+
+
 # Version 2.6.1 (release: 03.10.2020)
 
 *(version 2.6.1 includes all changes from 2.6.0 as well)*

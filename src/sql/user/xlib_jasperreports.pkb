@@ -1,34 +1,35 @@
 CREATE OR REPLACE PACKAGE BODY "XLIB_JASPERREPORTS"
 AS
-   /*=========================================================================
-     Purpose  :
+/*=========================================================================
+  Purpose  : 
 
-     License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
-                Licensed under a BSD style license (license.txt)
-                http://www.opal-consulting.de/pls/apex/f?p=20090928:14
+  License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
+             Licensed under a BSD style license (license.txt)
+             http://www.opal-consulting.de/pls/apex/f?p=20090928:14
 
-     $LastChangedDate: 2018-09-30 09:00:44 +0200 (So, 30 Sep 2018) $
-     $LastChangedBy: dietmar.aust $
+  $LastChangedDate: 2018-09-30 09:00:44 +0200 (So, 30 Sep 2018) $
+  $LastChangedBy: dietmar.aust $
 
-     Version  Date        Author          Comment
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              06.01.2010  D. Aust   Initial creation
-              06.05.2011  D. Aust   added constants for xlsx and docx
-              05.08.2012  D. Aust   added version 2.0.0 features:
-                                    - direct printing
-                                    - save file on server
-              11.05.2013  D. Aust   added support for tunneling images for html
-                                      exports only
-     2.3.0.0  19.05.2014  D. Aust   - #294 - Fix chunked encoding problem in
-                                        xlib_http.get_report
-                                    - added version information to this package
-     2.4.0.0  15.10.2017  D. Aust   FEATURE: #3941 - Support for timeZones
-                                    (report parameter REPORT_TIME_ZONE)
-     2.5.0.0  29.09.2018  D. Aust   FEATURE: #9 - Ability to set Printjob name (programmatically)
-     2.5.0.1  30.09.2018  D. Aust     fix bool2string issue
-     2.6.1    01.10.2020  D. Aust   add get_default_configuration() and set_default_configuration()
+  Version  Date        Author          Comment
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           06.01.2010  D. Aust   Initial creation
+           06.05.2011  D. Aust   added constants for xlsx and docx
+           05.08.2012  D. Aust   added version 2.0.0 features:
+                                 - direct printing
+                                 - save file on server
+           11.05.2013  D. Aust   added support for tunneling images for html
+                                   exports only
+  2.3.0.0  19.05.2014  D. Aust   - #294 - Fix chunked encoding problem in 
+                                     xlib_http.get_report
+                                 - added version information to this package
+  2.4.0.0  15.10.2017  D. Aust   FEATURE: #3941 - Support for timeZones 
+                                 (report parameter REPORT_TIME_ZONE)
+  2.5.0.0  29.09.2018  D. Aust   FEATURE: #9 - Ability to set Printjob name (programmatically)   
+  2.5.0.1  30.09.2018  D. Aust     fix bool2string issue
+  2.6.1    01.10.2020  D. Aust   add get_default_configuration() and set_default_configuration()
+  2.6.2    13.10.2020  D. Aust   #54 - Timeout value from default table not working
 
-   =========================================================================*/
+=========================================================================*/
 
 
    m_module       constant varchar2 (100) := $$plsql_unit;
@@ -74,9 +75,10 @@ AS
         
         -- override http transfer timeout it not defined
         utl_http.get_transfer_timeout( timeout => l_timeout );
-        if l_timeout is null then
+        --xlog(p_module => m_module, p_msg => 'Current setting of transfer_timeout: '||l_timeout, p_type=> 'DEBUG');
+        if (l_timeout is null or l_timeout=60 /*60 is the default*/) then
             utl_http.set_transfer_timeout(l_conf.conf_http_transfer_timeout);
-            xlog(p_module => m_module, p_msg => 'Override http transfer timeout from defaults: '|| l_conf.conf_http_transfer_timeout, p_type=> 'DEBUG');
+            xlog(p_module => m_module, p_msg => 'Override http transfer timeout ('||l_timeout||'s) from defaults: '|| l_conf.conf_http_transfer_timeout ||'s', p_type=> 'DEBUG');
         end if;
         
     end;
@@ -340,12 +342,27 @@ AS
       l_url := l_url || '&_saveIsEnabled=' || bool2string (p_save_is_enabled);
       l_url := l_url || '&_saveFileName=' || p_save_filename;
 
+      
+/*
+      Each additional parameter needs to be escaped using utl_url.escape()
+       utl_url.escape(
+        url                    => p_additional_params,
+        escape_reserved_chars  => true,
+                   url_charset            => 'UTF-8'
+        );
+*/
+
       -- additional report parameter passed?
       IF (p_additional_params IS NOT NULL)
       THEN
-         l_url := l_url || '&' || p_additional_params;
+--         l_url := l_url || '&' || p_additional_params;
+         l_url := l_url || '&' || utl_url.escape(
+                                        url                    => p_additional_params,
+                                        escape_reserved_chars  => false,
+                                                   url_charset            => 'UTF-8'
+        );
       END IF;
-
+      
       -------------------------------------------------------
       -- call J2EE server
       -------------------------------------------------------
@@ -425,7 +442,12 @@ AS
       -- additional report parameter passed?
       IF (p_additional_params IS NOT NULL)
       THEN
-         l_url := l_url || '&' || p_additional_params;
+--         l_url := l_url || '&' || p_additional_params;
+         l_url := l_url || '&' || utl_url.escape(
+                                        url                    => p_additional_params,
+                                        escape_reserved_chars  => false,
+                                                   url_charset            => 'UTF-8'
+        );
       END IF;
 
       -------------------------------------------------------

@@ -11,6 +11,8 @@
   18.09.2020  D. Aust   added missing jasperreports.properties file to WEB-INF/classes
   03.10.2020  D. Aust   fixed bug in generating eclipse project file, 
                         now it is back to using "bin/default" as the default output dir, should be "build"
+  07.10.2020  D. Aust   #52 - Uptake JasperReports Library 6.15.0
+  07.10.2020  D. Aust   #55 - Barcodes produce classnotfound error
  */
 
 plugins {
@@ -33,7 +35,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.6.1'
+  project.version           = '2.6.2'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -41,7 +43,7 @@ import org.gradle.internal.os.OperatingSystem
   archivesBaseName          = "jri"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.14.0'  
+  def jasperreportsVersion  ='6.15.0'  
 
 //-----------------------------------------------------------------------------
 //-- Groovy helper functions
@@ -70,6 +72,13 @@ dependencies {
     implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '19.+'
     // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ucp
     implementation group: 'com.oracle.database.jdbc', name: 'ucp', version: '19.+'
+
+    // https://mvnrepository.com/artifact/xalan/serializer
+    // see bug: #55 - Barcodes produce classnotfounderror
+    compile group: 'xalan', name: 'serializer', version: '2.7.1'
+    // https://mvnrepository.com/artifact/org.apache.xmlgraphics/xmlgraphics-commons
+    // see bug: #55 - Barcodes produce classnotfounderror
+    compile group: 'org.apache.xmlgraphics', name: 'xmlgraphics-commons', version: '2.+'
 
     // *** Only for TESTING
     testCompileOnly 'junit:junit:4.12'
