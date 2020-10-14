@@ -144,6 +144,22 @@ gretty {
 } 
 ```
 
+## Checklist for a new release
+
+What are the steps for releasing a new version of JRI?
+
+* Update the release notes
+* Test all use cases in the APEX application
+* Do a full install on Windows following the full installation guidelines
+* Do a full install on Linux following the full installation guidelines
+* Merge the current branch into the main branch
+* Close the current milestone ( https://github.com/daust/JasperReportsIntegration/milestones ) 
+* Create a new release
+* Build the current release
+* Upload the binaries
+* Blogpost on dietmaraust.com
+* Update the latest blogpost on dietmaraust.com and reference the new blogpost saying that a new version available, see: https://dietmaraust.com/jasperreportsintegration-2-6-1-released
+
 ## Development with Eclipse
 
 * the following task will create all required files for Eclipse
