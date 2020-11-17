@@ -6,6 +6,7 @@
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NH8MWBUXWQ73W&source=url"><img alt="Donate" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"></a>
 
 * [What is the JasperReportsIntegration?](#intro)
+* [Related Projects](#relatedProjects)
 * [Download](#download)
 * [Installation](#install)
     * System Requirements
@@ -90,6 +91,24 @@ The J2EE application will use a JDBC connection from the connection pool to conn
 Since the report format in our example is specified as PDF, the reporting engine will return a PDF document.
 
 This PDF document will be returned as a BLOB and thus can be displayed directly in our application, stored in the database or sent via email.
+
+# <a name="relatedProjects"></a> Related Projects
+
+You might want to check out the project [JRI Publisher](https://davidghedini.com/jri-publisher/) which uses JasperReportsIntegration as the foundation and builds infrastructure around it. 
+
+JRI Publisher is a Webmin module for installing, configuring, and managing JasperReportsIntegration.
+
+JRI Publisher can serve as a stand-alone Oracle Reporting solution or to simply looking to get up and running quickly and easily with JasperReportsIntegration.
+
+While JasperReportsIntegration was originally designed for Oracle APEX (and can be used for APEX), JRI Publisher does not require APEX or installation of the SQL Schema files. Thus it can be used with or without APEX. 
+
+In addition to Oracle, JRI Publisher includes one-click JNDI support for PostgreSQL, MySQL, and SQL Server
+
+JRI Publisher takes just a few minutes to install and has been tested on CentOS 7 and 8 and Ubuntu 18.
+
+* [JRI Homepage](https://davidghedini.com/jri-publisher/)
+* [JRI Documentation](https://jripub.davidghedini.com/)
+* [JRI on GitHub](https://github.com/DavidGhedini/jri-publisher)
 
 # <a name="download"></a>Download
 
