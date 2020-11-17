@@ -3,6 +3,8 @@
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="net.sf.jasperreports.engine.*" %>
+<%@page import="org.apache.commons.lang3.*" %>
+<%@page import="java.io.File" %>
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1" import="de.oc.*"%>
@@ -34,7 +36,7 @@
 
 </head>
 <body>
-	<h1>JasperReportsIntegration-@project.version@-@jasperreports.version@</h1>
+	<h1>jri-@project.version@-jasper-@jasperreports.version@</h1>
 	<h2>Configuration Info</h2>
 	<ul>
 		<li>The current configuration is loaded from: <span
@@ -50,11 +52,11 @@
 		<li>Logs-Directory: <span
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getLogsDir() %></span></li>
 		<li>Java-Runtime-Version: <span
-			style="font-family: Consolas, Arial; font-weight: bold;"><%=  System.getProperty("java.version") %></span></li>
+			style="font-family: Consolas, Arial; font-weight: bold;"><%= System.getProperty("java.version") %></span></li>
 		<li>JasperReports-Version: <span
-			style="font-family: Consolas, Arial; font-weight: bold;"><%=  JasperCompileManager.class.getPackage().getImplementationVersion() %></span></li>
+			style="font-family: Consolas, Arial; font-weight: bold;"><%= JasperCompileManager.class.getPackage().getImplementationVersion() %></span></li>
 		<li>Your ip address: <span
-			style="font-family: Consolas, Arial; font-weight: bold;"><%=  request.getRemoteAddr() %></span></li>
+			style="font-family: Consolas, Arial; font-weight: bold;"><%= request.getRemoteAddr() %></span></li> 
 	</ul>
 	
 	<h2>Documentation</h2>
@@ -86,8 +88,7 @@
 				
 				
 				//System.out.println("key,val: " + key + "," + val);
-			}
-		%>
+			} %>
 		<tr>
 			<td></td><td></td><td></td>
 		</tr>		
@@ -363,5 +364,11 @@
 
 	</form>
 	<p>
+		<h2>Configuration Info-Classpath</h2>
+	<ul>
+		<li>Classpath: <span
+			style="font-family: Consolas, Arial; font-weight: bold;"><%= StringUtils.join(StringUtils.split((String) System.getProperties().get("java.class.path"),File.pathSeparator), System.lineSeparator()+"<br />") %></span></li> 
+	</ul>
+	
 </body>
 </html>

@@ -13,6 +13,9 @@
                         now it is back to using "bin/default" as the default output dir, should be "build"
   07.10.2020  D. Aust   #52 - Uptake JasperReports Library 6.15.0
   07.10.2020  D. Aust   #55 - Barcodes produce classnotfound error
+  17.11.2020  D. Aust   #66 - Uptake JasperReports Library 6.15.0
+                        #63 - Optimization for developers - adding your own .jar files
+                        switch to version 2.7.0
  */
 
 plugins {
@@ -35,7 +38,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.6.2'
+  project.version           = '2.7.0'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -43,7 +46,7 @@ import org.gradle.internal.os.OperatingSystem
   archivesBaseName          = "jri"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.15.0'  
+  def jasperreportsVersion  ='6.16.0'  
 
 //-----------------------------------------------------------------------------
 //-- Groovy helper functions
@@ -242,7 +245,7 @@ eclipse {
 
 war {
     dependsOn configurations.compile
-    archiveName = "${archivesBaseName}-${project.version}-${jasperreportsVersion}.war"
+    archiveName = "${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.war"
 
     // replaces tokens in the respective files only for the assembly of the .war file:
     // @project.version@ => 
@@ -282,8 +285,8 @@ war {
     //webInf { from 'src/conf/weblogic.xml' }  // adds a file-set to the WEB-INF dir.  
 }
 
-distZip.setArchiveName("${archivesBaseName}-${project.version}-${jasperreportsVersion}.zip")
-distTar.setArchiveName("${archivesBaseName}-${project.version}-${jasperreportsVersion}.tar")
+distZip.setArchiveName("${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.zip")
+distTar.setArchiveName("${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.tar")
 
 distributions {
     main {

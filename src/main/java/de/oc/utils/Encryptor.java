@@ -1,5 +1,6 @@
 package de.oc.utils;
 
+
 /*
  * Sample from: http://stackoverflow.com/questions/15554296/simple-java-aes-encrypt-decrypt-example
  */
@@ -20,8 +21,8 @@ public class Encryptor {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
             byte[] encrypted = cipher.doFinal(value.getBytes());
-            System.out.println("encrypted string:"
-                    + Base64.encodeBase64String(encrypted));
+            //System.out.println("encrypted string:"
+            //        + Base64.encodeBase64String(encrypted));
             return Base64.encodeBase64String(encrypted);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -45,7 +46,7 @@ public class Encryptor {
         }
         return null;
     }
-
+    
     public static void main(String[] args) {
 
         String key1 = "Bar12345Bar12345"; // 128 bit key
