@@ -116,6 +116,20 @@ username=<b>HR</b>
 password=<b>hr_password</b>
 </pre>
 
+You can also connect to your Oracle Cloud database:
+
+<pre>
+#====================================================================
+# JDBC datasource configuration
+# http://www.orafaq.com/wiki/JDBC#Thin_driver
+#====================================================================
+[datasource:default]
+name=default
+url=jdbc:oracle:thin:<b>@tnsnames_entry?TNS_ADMIN=/path/to/wallet</b>
+username=<b>HR</b>
+password=<b>hr_password</b>
+</pre>
+
 Alternatively you could use the native JNDI data source of your application server. See the documentation there on how to configure it. In this configuration file you would have to register just the JNDI datasource you want to use:
 
 <pre>

@@ -1,6 +1,30 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.7.0 (release: 18.11.2020)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/5?closed=1). 
+
+## New features
+  * #66 - Uptake JasperReports Library 6.16.0
+  * #26 - Connecting to ATP Database
+  * #63 - Optimization for developers - adding your own .jar files
+
+## Bug fixes
+  * *none*
+
+## Changed behaviour
+  * *none*
+
+## Deprecated features (still available but will go away eventually)
+  * *none*
+
+## Obsoleted features (no longer available)
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+
 # Version 2.6.2 (release: 14.10.2020)
 
 This release contains a number of fixes that came up after the release 2.6.1. 

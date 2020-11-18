@@ -57,6 +57,8 @@
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= JasperCompileManager.class.getPackage().getImplementationVersion() %></span></li>
 		<li>Your ip address: <span
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= request.getRemoteAddr() %></span></li> 
+		<li>Classpath: <span
+			style="font-family: Consolas, Arial; font-weight: bold;"><%= StringUtils.join(StringUtils.split((String) System.getProperties().get("java.class.path"),File.pathSeparator), System.lineSeparator()+"<br />") %></span></li> 
 	</ul>
 	
 	<h2>Documentation</h2>
@@ -363,12 +365,6 @@
 		</table>
 
 	</form>
-	<p>
-		<h2>Configuration Info-Classpath</h2>
-	<ul>
-		<li>Classpath: <span
-			style="font-family: Consolas, Arial; font-weight: bold;"><%= StringUtils.join(StringUtils.split((String) System.getProperties().get("java.class.path"),File.pathSeparator), System.lineSeparator()+"<br />") %></span></li> 
-	</ul>
-	
+	<p>	
 </body>
 </html>

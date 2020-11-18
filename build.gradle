@@ -48,6 +48,10 @@ import org.gradle.internal.os.OperatingSystem
   // version of jasperreports to be used
   def jasperreportsVersion  ='6.16.0'  
 
+  // Download Oracle JDBC drivers, must be the full version:
+  // https://www.oracle.com/database/technologies/appdev/jdbc-ucp-19c-downloads.html
+  // put files into folder lib/additional-war-libraries
+
 //-----------------------------------------------------------------------------
 //-- Groovy helper functions
 //-----------------------------------------------------------------------------
@@ -71,10 +75,24 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-configuration/commons-configuration
     implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.8'
 
+/*
     // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8
     implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '19.+'
     // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ucp
     implementation group: 'com.oracle.database.jdbc', name: 'ucp', version: '19.+'
+
+    // https://mvnrepository.com/artifact/com.oracle.ojdbc/oraclepki
+    implementation group: 'com.oracle.ojdbc', name: 'oraclepki', version: '19.+'
+
+    // https://mvnrepository.com/artifact/com.oracle.ojdbc/osdt_cert
+    implementation group: 'com.oracle.ojdbc', name: 'osdt_cert', version: '19.+'
+
+    // https://mvnrepository.com/artifact/com.oracle.ojdbc/osdt_core
+    implementation group: 'com.oracle.ojdbc', name: 'osdt_core', version: '19.+'
+
+    // https://mvnrepository.com/artifact/com.oracle.ojdbc/orai18n
+    compile group: 'com.oracle.ojdbc', name: 'orai18n', version: '19.+'
+ */
 
     // https://mvnrepository.com/artifact/xalan/serializer
     // see bug: #55 - Barcodes produce classnotfounderror
@@ -92,6 +110,8 @@ dependencies {
 
     // dependencies from jasperreports.proj
     compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
+    // dependencies from oracle jdbc
+    compile fileTree(dir: "lib/additional-war-libraries", include: ['*'])
 }
 
 gretty {
@@ -315,7 +335,7 @@ distributions {
 
             from ("lib/jasper-reports/$jasperreportsVersion"){include 'jasperreports*.jar' into 'lib'}
             from (jar.outputs){into 'lib'}
-            from ('lib/additional'){into 'lib'}
+            from ('lib/additional-commandline-libraries'){into 'lib'}
 
             // copy war file directly into jetty/webapps
             // rather not, make zip distribution too large
