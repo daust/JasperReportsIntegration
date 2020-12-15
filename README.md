@@ -420,6 +420,31 @@ The second paragraph, all in capital letters, is a standard legal boilerplate no
         </pre>
     - Restart the application server
     - Then you can find the log entries in the file ``logs/JasperReportsIntegration.log``.
+    
+* Error connecting to Oracle Cloud Database on Windows:
+
+  This is weird, you might get one of the following errors: 
+  ```
+  Invalid connection string format, a valid format is: "host:port:sid"
+  ```
+  or
+  ```
+  Dez 15, 2020 1:14:00 PM oracle.net.resolver.EZConnectResolver parseExtendedProperties
+   SCHWERWIEGEND: Extended settings parsing failed.
+  java.lang.RuntimeException: Invalid character at 32 : \
+	at oracle.net.resolver.EZConnectResolver.parseExtendedProperties(EZConnectResolver.java:393)
+	at oracle.net.resolver.EZConnectResolver.parseExtendedSettings(EZConnectResolver.java:366)
+  ```
+  when using a JDBC url like: 
+  ```
+  url=jdbc:oracle:thin:@tnsnames_entry?TNS_ADMIN=C:\mywalletpath
+  ```
+  You can see the details and multiple workarounds here: https://github.com/daust/JasperReportsIntegration/issues/68 . 
+  
+  The simplest workaround is to replace all ``\`` with ``/``, e.g.:
+  ```
+  url=jdbc:oracle:thin:@tnsnames_entry?TNS_ADMIN=C:/mywalletpath
+  ```
 
 # <a name="support"></a>Support / Forum
 
