@@ -130,6 +130,11 @@ username=<b>HR</b>
 password=<b>hr_password</b>
 </pre>
 
+On Windows you might have to use ``/`` instead of ``\`` when you experience connection errors (see for details: https://github.com/daust/JasperReportsIntegration/issues/68), e.g.: 
+```
+url=jdbc:oracle:thin:<b>@tnsnames_entry?TNS_ADMIN=c:/path/to/wallet</b>
+```
+
 Alternatively you could use the native JNDI data source of your application server. See the documentation there on how to configure it. In this configuration file you would have to register just the JNDI datasource you want to use:
 
 <pre>
