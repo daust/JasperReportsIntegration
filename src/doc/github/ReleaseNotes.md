@@ -4,7 +4,7 @@
 # Version 2.7.1 (release: 14.12.2021)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/7?closed=1). 
-
+ 
 ## New features
   * *none*
 
