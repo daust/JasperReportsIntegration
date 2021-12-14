@@ -1,48 +1,22 @@
-/* TODO ... update documentation */
+-----------------------------------------------------------------------------
+-- Local instructions for Dietmar
+-----------------------------------------------------------------------------
 
-java -Dlog4j.configuration=file:/Users/daust/Dropbox/Projekt/prj_JasperReportsIntegration/conf/log4j-quiet.properties -jar build/JasperReportsIntegration-2.2.0.0-onejar.war encryptPasswords build/dist/conf/application.properties 
+*) Development
 
-./setConfigDir.sh ../webapp/jri.war "d:\program files\jasperReports"
-./setConfigDir.sh ../webapp/jri.war "/Users/daust/oc-jasper"
-
-./getConfigDir.sh ../webapp/jri.war.tmp.war
-./encryptPasswords.sh /Users/daust/oc-jasper/conf/application.properties
-
-
-Bei der Entwicklung immer folgende Dateien offen haben
-====================================================================================
-
-- Github: 
-https://github.com/daust/JasperReportsIntegration
-
-- Patch/<versionsnummer>/_install.sql
-	- Hier jeden Installationsschritt für ein Upgrade dokumentieren
-
-Entwicklungsversionen
-====================================================================================
-- APEX Applikationen: 
-	- http://daust.dyndns.org:5001/apex/f?p=121:1:7029833017773468::NO (APEX 4.2)
-	- Workspace: OC, User: Dietmar.Aust
-
-	- http://vm1/ords  (APEX 18.1)
+- APEX:
+	- http://vm1/ords
 	- Workspace: JRI_TEST, User: Dietmar.Aust
+	- APEX Application: Jasper Reports Integration Test (v2.6.2)
 	
 - Datenbank-Schema: 
-	- Server: opal-dev-min
+	- Server: vm1
 	- Port: 1521
 	- SID: XE
 	- User: JRI_TEST	
 
-Release erstellen
-====================================================================================
-	
-Neues Release initialisieren
-====================================================================================
-- Neue Versionsnummer eintragen in build.properties
-- Neues Patchverzeichnis erstellen
-
-Neue Bibliotheken JasperReportsIntegration aktualisieren
-====================================================================================
+- Patch/<versionsnummer>/_install.sql
+	- Hier jeden Installationsschritt für ein Upgrade dokumentieren
 
 --------------------------------------------------------------
 -- Apache Ivy konfigurieren (nur einmalig)
@@ -62,7 +36,7 @@ cp /usr/local/Cellar/groovy/2.4.7/libexec/lib/ivy-2.4.0.jar /usr/local/Cellar/an
 
 
 -----------------------------------------------------------------------------
--- BACKGROUND Decisions
+-- Design Decisions
 -----------------------------------------------------------------------------
 
 *) Which Java JDK to use for creating the .war file?

@@ -16,14 +16,18 @@
   17.11.2020  D. Aust   #66 - Uptake JasperReports Library 6.15.0
                         #63 - Optimization for developers - adding your own .jar files
                         switch to version 2.7.0
+  14.12.2021  D. Aust   #87 - Security warning: New zero-day in the Log4j Java library
  */
 
 plugins {
   id "war"
   id "eclipse"
   id "distribution"
+  id "org.gretty" version "3.0.7"
 }
-apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
+// version 4.0 of gretty requires Java 11
+// apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
+
 //for Ant filter
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.internal.os.OperatingSystem
@@ -38,7 +42,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.7.0'
+  project.version           = '2.7.1'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -51,6 +55,8 @@ import org.gradle.internal.os.OperatingSystem
   // Download Oracle JDBC drivers, must be the full version:
   // https://www.oracle.com/database/technologies/appdev/jdbc-ucp-19c-downloads.html
   // put files into folder lib/additional-war-libraries
+
+  // Download JasperReports files from: https://sourceforge.net/projects/jasperreports/files/jasperreports/
 
 //-----------------------------------------------------------------------------
 //-- Groovy helper functions

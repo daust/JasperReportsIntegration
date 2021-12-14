@@ -1,6 +1,29 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.7.1 (release: 14.12.2021)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/7?closed=1). 
+
+## New features
+  * *none*
+
+## Bug fixes / Security fixes
+  * #87 - (CVE-2021-44228) Security warning: New zero-day in the Log4j Java library
+
+## Changed behaviour
+  * *none*
+
+## Deprecated features (still available but will go away eventually)
+  * *none*
+
+## Obsoleted features (no longer available)
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+
+
 # Version 2.7.0 (release: 18.11.2020)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/5?closed=1). 
