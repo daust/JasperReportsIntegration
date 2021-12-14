@@ -445,6 +445,14 @@ The second paragraph, all in capital letters, is a standard legal boilerplate no
   ```
   url=jdbc:oracle:thin:@tnsnames_entry?TNS_ADMIN=C:/mywalletpath
   ```
+* Error in APEX: ``Unexpected token % in JSON at position 0``
+
+  When you create a button to call a pl/sql process you might encounter the error message: 
+  ```
+  1 error has occurred
+  Error: SyntaxError: Unexpected token % in JSON at position 0
+  ```
+  The solution is to change the setting ``Advanced/Reload on Submit: Only for success`` to ``Always``. 
 
 # <a name="support"></a>Support / Forum
 
