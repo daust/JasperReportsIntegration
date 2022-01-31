@@ -17,6 +17,9 @@
                         #63 - Optimization for developers - adding your own .jar files
                         switch to version 2.7.0
   14.12.2021  D. Aust   #87 - Security warning: New zero-day in the Log4j Java library
+  16.12.2021  D. Aust   Remove all spring* references, library not used and Vulnerable Library - spring-core-5.1.4.RELEASE.jar
+  31.01.2022  D. Aust   Ignore/remove older log4j2 libraries included in jasperreports-libraries
+
  */
 
 plugins {
@@ -50,13 +53,14 @@ import org.gradle.internal.os.OperatingSystem
   archivesBaseName          = "jri"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.16.0'  
+  def jasperreportsVersion  ='6.18.1'  
 
   // Download Oracle JDBC drivers, must be the full version:
   // https://www.oracle.com/database/technologies/appdev/jdbc-ucp-19c-downloads.html
   // put files into folder lib/additional-war-libraries
 
   // Download JasperReports files from: https://sourceforge.net/projects/jasperreports/files/jasperreports/
+  // or from https://github.com/TIBCOSoftware/jasperreports/releases
 
 //-----------------------------------------------------------------------------
 //-- Groovy helper functions
@@ -77,6 +81,12 @@ dependencies {
 
     // https://mvnrepository.com/artifact/log4j/log4j
     implementation group: 'log4j', name: 'log4j', version: '1.2.16'
+
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jcl
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.17.1'
+ 
 
     // https://mvnrepository.com/artifact/commons-configuration/commons-configuration
     implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.8'
@@ -428,6 +438,14 @@ task jriDownloadJasperLibraries{
             exclude "net.tascalate.javaflow*jar"
             exclude "testng*jar"
             exclude "servlet-api*"
+            // https://github.com/TIBCOSoftware/jasperreports/issues/241
+            // CVE-2021-22096 - Medium Severity Vulnerability,  Vulnerable Library - spring-core-5.1.4.RELEASE.jar
+            // spring boot framework should not be required anyway
+            exclude "spring-core-*"
+            exclude "spring-beans-*"
+
+            // ignore/remove older log4j2 libraries included in jasperreports-libraries
+            exclude "log4j-*-2.14*"
     }
   }
 }   
