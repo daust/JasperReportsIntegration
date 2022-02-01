@@ -81,6 +81,11 @@ dependencies {
     // *** Only for compilation, NOT distributed
     //compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
 
+    // https://mvnrepository.com/artifact/org.springframework/spring-core
+    implementation group: 'org.springframework', name: 'spring-core', version: '5.+'
+    // https://mvnrepository.com/artifact/org.springframework/spring-beans
+    implementation group: 'org.springframework', name: 'spring-beans', version: '5.+'
+
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.+'
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jcl
@@ -437,9 +442,8 @@ task jriDownloadJasperLibraries{
             exclude "servlet-api*"
             // https://github.com/TIBCOSoftware/jasperreports/issues/241
             // CVE-2021-22096 - Medium Severity Vulnerability,  Vulnerable Library - spring-core-5.1.4.RELEASE.jar
-            // spring boot framework should not be required anyway
-            //exclude "spring-core-*"
-            //exclude "spring-beans-*"
+            exclude "spring-core-*"
+            exclude "spring-beans-*"
 
             // ignore/remove older log4j2 libraries included in jasperreports-libraries
             exclude "log4j-*-2.14*"
