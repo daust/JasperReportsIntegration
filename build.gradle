@@ -20,6 +20,7 @@
   16.12.2021  D. Aust   Remove all spring* references, library not used and Vulnerable Library - spring-core-5.1.4.RELEASE.jar
   31.01.2022  D. Aust   Ignore/remove older log4j2 libraries included in jasperreports-libraries
   31.01.2022  D. Aust   #93: Upgrading log4j 1.x to log4j 2.x (2.17.1)
+  01.02.2022  D. Aust   #70: Upgrade Oracle JDBC libraries 
 
  */
 
@@ -80,37 +81,31 @@ dependencies {
     // *** Only for compilation, NOT distributed
     //compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
 
-    // Upgrading log4j 1.x to log4j 2.x (2.17.1) #93 => remove log4j-1.x dependency
-    // https://mvnrepository.com/artifact/log4j/log4j
-    //implementation group: 'log4j', name: 'log4j', version: '1.2.16'
-
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.+'
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jcl
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.17.1'
- 
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.+'
 
     // https://mvnrepository.com/artifact/commons-configuration/commons-configuration
-    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.8'
+    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.+'
 
-/*
-    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8
-    implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '19.+'
-    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ucp
-    implementation group: 'com.oracle.database.jdbc', name: 'ucp', version: '19.+'
+    // Get BOM file and choose Oracle JDBC driver (ojdbc8.jar) and Universal Connection Pool (ucp.jar)
+    // https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
+    // check the current version 
+    implementation(enforcedPlatform("com.oracle.database.jdbc:ojdbc-bom:21.4.0.0.1"))
+    implementation("com.oracle.database.jdbc:ojdbc8")
+    implementation("com.oracle.database.jdbc:ucp")
 
-    // https://mvnrepository.com/artifact/com.oracle.ojdbc/oraclepki
-    implementation group: 'com.oracle.ojdbc', name: 'oraclepki', version: '19.+'
+    // Additional Jars for using Oracle Wallets 
+    implementation("com.oracle.database.security:oraclepki")
+    implementation("com.oracle.database.security:osdt_core")
+    implementation("com.oracle.database.security:osdt_cert")
 
-    // https://mvnrepository.com/artifact/com.oracle.ojdbc/osdt_cert
-    implementation group: 'com.oracle.ojdbc', name: 'osdt_cert', version: '19.+'
-
-    // https://mvnrepository.com/artifact/com.oracle.ojdbc/osdt_core
-    implementation group: 'com.oracle.ojdbc', name: 'osdt_core', version: '19.+'
-
-    // https://mvnrepository.com/artifact/com.oracle.ojdbc/orai18n
-    compile group: 'com.oracle.ojdbc', name: 'orai18n', version: '19.+'
- */
+    // Additional Jars for High Availability 
+    // ons removed due to Timeout issue when connecting to cloud database #69
+    // https://github.com/daust/JasperReportsIntegration/issues/69
+    //implementation("com.oracle.database.ha:ons")
+    implementation("com.oracle.database.ha:simplefan")
 
     // https://mvnrepository.com/artifact/xalan/serializer
     // see bug: #55 - Barcodes produce classnotfounderror

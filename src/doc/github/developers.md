@@ -233,3 +233,35 @@ Then you can just start Eclipse and import the root directory into Eclipse as a 
 
 Markdown files are used for the documentation, they are written in Markdown syntax as described [here](https://guides.github.com/features/mastering-markdown/). In Visual Studio Code you can use plugins to display the Markdown preview in a separate window. But you can also use a Google Chrome Extension to render the markdown files in the browser, e.g. [the Markdown Viewer](https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk).
 
+## Coding 
+
+### Updating Oracle JDBC Libraries
+
+See: 
+- https://blogs.oracle.com/developers/post/oracle-database-client-libraries-for-java-now-on-maven-central
+- https://www.oracle.com/database/technologies/maven-central-guide.html
+
+For the newest version, check: https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
+
+Then, update the ``build.gradle`` file: 
+```
+    // Get BOM file and choose Oracle JDBC driver (ojdbc8.jar) and Universal Connection Pool (ucp.jar)
+    // https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
+    // check the current version 
+    implementation(enforcedPlatform("com.oracle.database.jdbc:ojdbc-bom:21.4.0.0.1"))
+    implementation("com.oracle.database.jdbc:ojdbc8")
+    implementation("com.oracle.database.jdbc:ucp")
+
+    // Additional Jars for using Oracle Wallets 
+    implementation("com.oracle.database.security:oraclepki")
+    implementation("com.oracle.database.security:osdt_core")
+    implementation("com.oracle.database.security:osdt_cert")
+
+    // Additional Jars for High Availability 
+    // ons removed due to Timeout issue when connecting to cloud database #69
+    // https://github.com/daust/JasperReportsIntegration/issues/69
+    //implementation("com.oracle.database.ha:ons")
+    implementation("com.oracle.database.ha:simplefan")
+```
+
+
