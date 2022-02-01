@@ -16,7 +16,8 @@ import javax.print.attribute.standard.Media;
 import javax.print.attribute.standard.SheetCollate;
 import javax.print.attribute.standard.Sides;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.oc.integration.jasper.webapp.AppConfig;
 import de.oc.utils.Utils;
@@ -29,7 +30,7 @@ import net.sf.jasperreports.export.SimplePrintServiceExporterConfiguration;
 public class PrinterUtilities {
 
 	private ArrayList<PrintService> printers;
-	private static Logger logger = Logger.getLogger(PrinterUtilities.class);
+	private static final Logger logger = LogManager.getLogger(PrinterUtilities.class);
 
 	/**
 	 * constructor
@@ -38,8 +39,7 @@ public class PrinterUtilities {
 		printers = new ArrayList<PrintService>();
 
 		/* Create an array of PrintServices */
-		PrintService[] services = PrintServiceLookup.lookupPrintServices(null,
-				null);
+		PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
 
 		for (int i = 0; i < services.length; i++) {
 			// Printer printer=new Printer(services[i]);
@@ -94,14 +94,13 @@ public class PrinterUtilities {
 	 * lookup media, e.g. the printer tray
 	 * 
 	 * @param printService the printService
-	 * @param mediaName the media name
+	 * @param mediaName    the media name
 	 * 
 	 * @return the media object
 	 */
 	public Media lookupMedia(PrintService printService, String mediaName) {
 
-		Media medias[] = (Media[]) printService.getSupportedAttributeValues(
-				Media.class, null, null);
+		Media medias[] = (Media[]) printService.getSupportedAttributeValues(Media.class, null, null);
 		Media selectedMedia = null;
 
 		// first identical search
@@ -121,11 +120,9 @@ public class PrinterUtilities {
 
 		if (selectedMedia != null) {
 			logger.trace("Media selected:" + selectedMedia.getValue());
-			logger.trace("Media selected:"
-					+ selectedMedia.getCategory().getName());
+			logger.trace("Media selected:" + selectedMedia.getCategory().getName());
 			logger.trace("Media selected:" + selectedMedia.getName());
-			logger.trace("Media selected:"
-					+ selectedMedia.getClass().toString());
+			logger.trace("Media selected:" + selectedMedia.getClass().toString());
 			logger.trace("Media selected:" + selectedMedia.toString());
 		}
 
@@ -134,18 +131,17 @@ public class PrinterUtilities {
 
 	/**
 	 * 
-	 * @param jasperPrint jasperPrint
-	 * @param printerName name of the printer
-	 * @param trayName name of the tray
-	 * @param copies number of copies to be printed
-	 * @param duplex duplex mode or not
-	 * @param collated collated or not
+	 * @param jasperPrint  jasperPrint
+	 * @param printerName  name of the printer
+	 * @param trayName     name of the tray
+	 * @param copies       number of copies to be printed
+	 * @param duplex       duplex mode or not
+	 * @param collated     collated or not
 	 * @param printJobName name of the print job as displayed in the report queue
-	 * @param locale the locale used for the printJobName
+	 * @param locale       the locale used for the printJobName
 	 */
-	public void print(JasperPrint jasperPrint, String printerName,
-			String trayName, int copies, boolean duplex, boolean collated, String printJobName,
-			Locale locale) {
+	public void print(JasperPrint jasperPrint, String printerName, String trayName, int copies, boolean duplex,
+			boolean collated, String printJobName, Locale locale) {
 
 		// ----------------------------------------------------
 		// lookup printer by name
@@ -207,8 +203,8 @@ public class PrinterUtilities {
 		// http://docs.oracle.com/javase/1.4.2/docs/api/javax/print/attribute/SetOfIntegerSyntax.html
 		/*
 		 * logger.debug("set pageRanges(1)"); printRequestAttributeSet.add(new
-		 * PageRanges(1, 1)); if (validateAttribute(job, new PageRanges(1, 1),
-		 * null)) { logger.info("PageRanges(1) validated"); } else {
+		 * PageRanges(1, 1)); if (validateAttribute(job, new PageRanges(1, 1), null)) {
+		 * logger.info("PageRanges(1) validated"); } else {
 		 * logger.info("PageRanges(1) *NOT* validated"); }
 		 */
 
@@ -220,16 +216,16 @@ public class PrinterUtilities {
 			}
 			printRequestAttributeSet.add(SheetCollate.COLLATED);
 		}
-		
+
 		// PRINT JOB NAME
-		if (!printJobName.isEmpty()){
+		if (!printJobName.isEmpty()) {
 			logger.trace("set printJobName: " + printJobName);
 			if (!validateAttribute(printerJob, new JobName(printJobName, locale), null)) {
 				logger.warn("printJobName not validated: " + printJobName);
 			}
 			printRequestAttributeSet.add(new JobName(printJobName, locale));
 		}
-		
+
 		/*
 		 * logger.debug("set format A4");
 		 * printRequestAttributeSet.add(MediaSizeName.ISO_A4); if
@@ -246,8 +242,8 @@ public class PrinterUtilities {
 		// ----------------------------------------------------
 		logger.trace("create JRPrintServiceExporter()");
 		JRPrintServiceExporter printExporter = new JRPrintServiceExporter();
-		SimplePrintServiceExporterConfiguration configuration=new SimplePrintServiceExporterConfiguration();
-		
+		SimplePrintServiceExporterConfiguration configuration = new SimplePrintServiceExporterConfiguration();
+
 		// set parameters for the service exporter
 		// use a jasperPrintList so that pageRanges are not suppressed
 
@@ -261,15 +257,15 @@ public class PrinterUtilities {
 		configuration.setPrintServiceAttributeSet(printService.getAttributes());
 		configuration.setPrintRequestAttributeSet(printRequestAttributeSet);
 		configuration.setDisplayPageDialog(Boolean.FALSE);
-		
-		// display the print dialog depending on the configuration 
+
+		// display the print dialog depending on the configuration
 		// setting in the application.properties file
-		if (AppConfig.getInstance().displayPrintDialog){
+		if (AppConfig.getInstance().displayPrintDialog) {
 			configuration.setDisplayPageDialog(Boolean.TRUE);
-		}else{
+		} else {
 			configuration.setDisplayPageDialog(Boolean.FALSE);
 		}
-		
+
 		printExporter.setConfiguration(configuration);
 
 		logger.trace("exportReport()");
@@ -284,12 +280,10 @@ public class PrinterUtilities {
 	/**
 	 * @return true if the attribute is supported on the current PrintService
 	 */
-	private boolean validateAttribute(PrinterJob printJob, Attribute att,
-			PrintRequestAttributeSet attributeSet) {
+	private boolean validateAttribute(PrinterJob printJob, Attribute att, PrintRequestAttributeSet attributeSet) {
 		// return printJob.getPrintService().isAttributeValueSupported(att,
 		// DocFlavor.BYTE_ARRAY.POSTSCRIPT, attributeSet);
-		return printJob.getPrintService().isAttributeValueSupported(att, null,
-				null);
+		return printJob.getPrintService().isAttributeValueSupported(att, null, null);
 
 		// byte_array.postscript
 		// service_formatted.pageable

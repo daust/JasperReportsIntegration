@@ -13,13 +13,14 @@
  */
 
 package de.oc.jasper;
- 
+
 import java.io.File;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.oc.integration.jasper.webapp.AppConfig;
 import de.oc.servlet.ServletUtilities;
@@ -28,9 +29,8 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 
 public class ReportUtilities {
 
-	private static Logger logger = Logger.getLogger(ServletUtilities.class
-			.getName());
-	
+	private static final Logger logger = LogManager.getLogger(ServletUtilities.class);
+
 	private static AppConfig _appConfig = AppConfig.getInstance();
 
 	/**
@@ -54,70 +54,69 @@ public class ReportUtilities {
 		}
 		logger.info("logRequestParameters() - end");
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param pRepName name of the report
 	 * 
-	 * @return
-	 * 	0: .jasper File() object
-	 *  1: reportsDirectory
-	 *  2: 
-	 *  
+	 * @return 0: .jasper File() object 1: reportsDirectory 2:
+	 * 
 	 */
-	public static ReportDefinitionFile getReportDefinitionFile( String pRepName ){
-				
-		String errMsg="";
-		String reportsDir=_appConfig.getReportsDir();
-		String reportFileNameBase = reportsDir + File.separator	+ pRepName;
-		
+	public static ReportDefinitionFile getReportDefinitionFile(String pRepName) {
+
+		String errMsg = "";
+		String reportsDir = _appConfig.getReportsDir();
+		String reportFileNameBase = reportsDir + File.separator + pRepName;
+
 		File jasperFile = new File(reportFileNameBase + ".jasper");
-		
+
 		// does the report definition file exist?
 		if (!jasperFile.exists()) {
 			errMsg = "File " + reportFileNameBase + ".jasper not found.";
-			
+
 			throw new RuntimeException(errMsg);
 		}
 
 		String reportFileDir = jasperFile.getParentFile().getAbsolutePath();
 		ReportDefinitionFile reportFile = new ReportDefinitionFile(jasperFile, reportFileDir, reportsDir);
-		
-		
+
 		return reportFile;
 	}
 
-	/** Compiles the pRepName.jrxml file into a pRepName.jasper file if it exists and the timestamp is newer than the .jasper file
+	/**
+	 * Compiles the pRepName.jrxml file into a pRepName.jasper file if it exists and
+	 * the timestamp is newer than the .jasper file
 	 * 
 	 * @param pRepName name of the report
-	 *  
+	 * 
 	 */
-	public static void compileJRXMLIfNecessary( String pRepName ){
-				
-		String errMsg=""; 
-		String reportsDir=_appConfig.getReportsDir();
-		String reportFileNameBase = reportsDir + File.separator	+ pRepName;
-		
+	public static void compileJRXMLIfNecessary(String pRepName) {
+
+		String errMsg = "";
+		String reportsDir = _appConfig.getReportsDir();
+		String reportFileNameBase = reportsDir + File.separator + pRepName;
+
 		File jasperFile = new File(reportFileNameBase + ".jasper");
 		File jrxmlFile = new File(reportFileNameBase + ".jrxml");
-		
+
 		// compilation is only required if jrxml file actually exists
 		if (jrxmlFile.exists()) {
-			// compile if no .jasper exists or timestamp is older than that of the .jrxml file
-			if (!jasperFile.exists() || (jasperFile.lastModified() < jrxmlFile.lastModified()))  {
+			// compile if no .jasper exists or timestamp is older than that of the .jrxml
+			// file
+			if (!jasperFile.exists() || (jasperFile.lastModified() < jrxmlFile.lastModified())) {
 				try {
-					logger.info("compiling file " + reportFileNameBase + ".jrxml on the fly" );
+					logger.info("compiling file " + reportFileNameBase + ".jrxml on-the-fly");
 
-					JasperCompileManager.compileReportToFile(reportFileNameBase + ".jrxml", reportFileNameBase + ".jasper" );
+					JasperCompileManager.compileReportToFile(reportFileNameBase + ".jrxml",
+							reportFileNameBase + ".jasper");
 				} catch (JRException e) {
 					e.printStackTrace();
-					errMsg = "Error compiling " + reportFileNameBase + ".jrxml: " + e.getMessage() ;
-					
+					errMsg = "Error compiling " + reportFileNameBase + ".jrxml: " + e.getMessage();
+
 					throw new RuntimeException(errMsg);
 				}
 			}
-		}		
+		}
 	}
 
 }

@@ -11,7 +11,7 @@ You can download the files from [here](https://github.com/daust/JasperReportsInt
 
 ### <a name="install.installation.installJ2EE"></a>2. Installation in the J2EE server
 
-We need to install the J2EE application and configure the data sources in this step. The J2EE application has to find various configuration files (e.g. ``conf/application.properties``, ``conf/log4j.properties``) and also the different reports that we can run (e.g. ``reports/test.jasper``).
+We need to install the J2EE application and configure the data sources in this step. The J2EE application has to find various configuration files (e.g. ``conf/application.properties``, ``conf/log4j2.xml``) and also the different reports that we can run (e.g. ``reports/test.jasper``).
 
 It is recommended practice to separate the configuration-/report files from the J2EE application itself. In the early versions of the JasperReportsIntegration all reports were placed directly in the web application itself, for example into the directory ``$TOMCAT_HOME/webapps/reports``. In order to easily upgrade your installation in the future it is recommended to put the configuration and report files into a separate directory and not store them inside of the J2EE application.
 

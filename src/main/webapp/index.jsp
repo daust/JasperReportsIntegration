@@ -5,13 +5,17 @@
 <%@page import="net.sf.jasperreports.engine.*" %>
 <%@page import="org.apache.commons.lang3.*" %>
 <%@page import="java.io.File" %>
+<%@page import="org.apache.logging.log4j.*" %>
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1" import="de.oc.*"%>
 
 <%!// variable declaration in the class
-	AppConfig appConfig = AppConfig.getInstance();%>
+	AppConfig appConfig = AppConfig.getInstance();
+	Logger logger = LogManager.getLogger(AppConfig.class);
+%>
 <%
+	logger.traceEntry();
 	// script
 	// validate configuration, has the config file been changed since last time?
 	appConfig.validateConfiguration(application);
@@ -368,3 +372,6 @@
 	<p>	
 </body>
 </html>
+<%
+	logger.traceExit();
+%>

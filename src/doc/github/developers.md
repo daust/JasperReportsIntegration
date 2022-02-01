@@ -66,7 +66,7 @@ The following file system structure will be created for you:
 .
 ├── conf
 │   ├── application.properties
-│   └── log4j.properties
+│   └── log4j2.xml
 ├── logs
 └── reports
     ├── test.jasper
@@ -143,6 +143,68 @@ gretty {
   jvmArgs = ['-Djava.awt.headless=true']
 } 
 ```
+
+```
+--------------------------------------------------------------------------------
+-- Test cases
+--------------------------------------------------------------------------------
+
+*) local install
+gradle clean
+gradle installDist
+
+cd /Users/daust/LOCAL-FILES/50-Projects/JasperReportsIntegration/build/install/JasperReportsIntegration/bin
+
+*) edit configuration
+vi ../conf/application.properties
+
+Modify default data source: 
+
+[datasource:default]
+type=jdbc
+name=default
+url=jdbc:oracle:thin:@vm1:1521:XE
+username=schema1
+password=oracle1
+
+*) encryptPasswords
+
+./encryptPasswords.sh ../conf/application.properties
+
+*) check encryption
+
+cat ../conf/application.properties
+
+*) start 
+./deployJasperReportsIntegration.sh
+./startJasperReportsIntegration.sh
+
+open http://localhost:8090/jri/
+
+*) compilation of .jrxml => .jasper on-the-fly
+
+open http://localhost:8090/jri/report?_repName=test&_repFormat=pdf&_dataSource=default&_outFilename=&_repLocale=&_repEncoding=&_repTimeZone=&_printIsEnabled=&_printPrinterName=&_printJobName=&_printPrinterTray=&_printCopies=&_printDuplex=&_printCollate=&_saveIsEnabled=&_saveFileName=
+
+*) get config directory - should be empty
+
+./getConfigDir.sh ../webapp/jri.war
+ConfigDir: /tmp/jri
+
+*) set config dir
+
+./setConfigDir.sh ../webapp/jri.war /tmp/jri
+process web.xml
+replace config.home with directory: /tmp/jri
+
+*) get config directory - should be empty
+
+./getConfigDir.sh ../webapp/jri.war
+ConfigDir: /tmp/jri
+
+After that, do the same thing on Windows. 
+
+```
+
 
 ## Checklist for a new release
 

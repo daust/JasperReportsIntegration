@@ -16,13 +16,13 @@ package de.oc.integration.jasper.webapp;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.jasperreports.j2ee.servlets.ImageServlet;
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.oc.db.DBUtils;
 import de.oc.servlet.ServletUtilities;
 import de.oc.utils.Utils;
+import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 
 public class URLCallInterface {
 
@@ -35,7 +35,7 @@ public class URLCallInterface {
 	public String repEncoding;
 	public String repTimeZone;
 	public String imagesURI;
-	
+
 	// direct printing
 	public Boolean printIsEnabled; // send report to printer in this request?
 	public String printPrinterName;
@@ -44,47 +44,47 @@ public class URLCallInterface {
 	public Boolean printDuplex;
 	public Boolean printCollate;
 	public String printJobName;
-	
+
 	// save file on server
 	public Boolean saveIsEnabled;
 	public String saveFileName;
-	
-	private static Logger logger = Logger.getLogger(URLCallInterface.class.getName());
 
-	
-	private Boolean parseBoolean(String requestParameter){
+	private static final Logger logger = LogManager.getLogger(URLCallInterface.class);
+
+	private Boolean parseBoolean(String requestParameter) {
 		Boolean retVal;
-		
-		if (requestParameter == null || requestParameter.isEmpty()){
+
+		if (requestParameter == null || requestParameter.isEmpty()) {
 			retVal = null;
 		} else {
-			retVal = Boolean.valueOf(requestParameter);	
+			retVal = Boolean.valueOf(requestParameter);
 		}
-		
+
 		return retVal;
 	}
-	private Integer parseInteger(String requestParameter){
+
+	private Integer parseInteger(String requestParameter) {
 		Integer retVal;
-		
-		if (requestParameter == null || requestParameter.isEmpty()){
+
+		if (requestParameter == null || requestParameter.isEmpty()) {
 			retVal = null;
 		} else {
-			retVal = Integer.valueOf(requestParameter);	
+			retVal = Integer.valueOf(requestParameter);
 		}
-		
+
 		return retVal;
 	}
-	
+
 	/**
 	 * Constructor
 	 * 
 	 * @param request the default request from the servletRequest
 	 */
 	public URLCallInterface(HttpServletRequest request) {
+		logger.traceEntry();
 
-		logger.debug("read variables from url call interface");
 		ServletUtilities.logRequestParameters(request);
-		
+
 		// ----------------------------------------------------
 		// get url parameters
 		// ----------------------------------------------------
@@ -98,15 +98,15 @@ public class URLCallInterface {
 		imagesURI = request.getParameter("_imagesURI");
 
 		// direct printing
-		printIsEnabled = parseBoolean(request.getParameter("_printIsEnabled"));	
+		printIsEnabled = parseBoolean(request.getParameter("_printIsEnabled"));
 		printPrinterName = request.getParameter("_printPrinterName");
 		printPrinterTray = request.getParameter("_printPrinterTray");
-		
+
 		printCopies = parseInteger(request.getParameter("_printCopies"));
 		printDuplex = parseBoolean(request.getParameter("_printDuplex"));
 		printCollate = parseBoolean(request.getParameter("_printCollate"));
 		printJobName = request.getParameter("_printJobName");
-		
+
 		// save file in filesystem
 		saveIsEnabled = parseBoolean(request.getParameter("_saveIsEnabled"));
 		saveFileName = request.getParameter("_saveFileName");
@@ -121,53 +121,70 @@ public class URLCallInterface {
 		repLocale = DBUtils.nvl(repLocale, "de_DE");
 		repEncoding = DBUtils.nvl(repEncoding, "UTF-8");
 		// no default for TimeZone ... should be picked up by Java environment
-		repTimeZone = DBUtils.nvl(repTimeZone, java.util.TimeZone.getDefault().getID() );
-		
+		repTimeZone = DBUtils.nvl(repTimeZone, java.util.TimeZone.getDefault().getID());
+
 		imagesURI = DBUtils.nvl(imagesURI, "report_image?" + ImageServlet.IMAGE_NAME_REQUEST_PARAMETER + "={0}");
-		
+
 		printIsEnabled = DBUtils.nvl(printIsEnabled, Boolean.FALSE);
 		printCopies = DBUtils.nvl(printCopies, new Integer(1));
 		printDuplex = DBUtils.nvl(printDuplex, Boolean.FALSE);
 		printCollate = DBUtils.nvl(printCollate, Boolean.FALSE);
-		 
+
 		saveIsEnabled = DBUtils.nvl(saveIsEnabled, Boolean.FALSE);
-		
+
 		// ----------------------------------------------------
 		// debug
 		// ----------------------------------------------------
 		logger.debug("URL parameters including defaults:");
-		logger.debug("	dataSource=" + dataSource);
-		logger.debug("	repName=" + repName);
-		logger.debug("	repFormat=" + repFormat);
-		logger.debug("	repLocale=" + repLocale);
-		logger.debug("	repEncoding=" + repEncoding);
-		logger.debug("	repTimeZone=" + repTimeZone);
-		logger.debug("	outFilename=" + outFilename);
-		
-		logger.debug("	printUsePrinter=" + printIsEnabled);
-		logger.debug("	printPrinterName=" + printPrinterName);
-		logger.debug("	printPrinterTray=" + printPrinterTray);
-		logger.debug("	printCopies=" + printCopies);
-		logger.debug("	printDuplex=" + printDuplex);
-		logger.debug("	printCollate=" + printCollate);
-		logger.debug("	printJobName=" + printJobName);
-		
-		logger.debug("	saveIsEnabled=" + saveIsEnabled);
-		logger.debug("	saveFileName=" + saveFileName);
-		
+		if (dataSource!=null)
+			logger.debug("	dataSource=" + dataSource);
+		if (repName!=null)
+			logger.debug("	repName=" + repName);
+		if (repFormat!=null)
+			logger.debug("	repFormat=" + repFormat);
+		if (repLocale!=null)
+			logger.debug("	repLocale=" + repLocale);
+		if (repEncoding!=null)
+			logger.debug("	repEncoding=" + repEncoding);
+		if (repTimeZone!=null)
+			logger.debug("	repTimeZone=" + repTimeZone);
+		if (outFilename!=null)
+			logger.debug("	outFilename=" + outFilename);
+		if (printIsEnabled) {
+			logger.debug("	printUsePrinter=" + printIsEnabled);
+			if (printPrinterName!=null)
+				logger.debug("	printPrinterName=" + printPrinterName);
+			if (printPrinterTray!=null)
+				logger.debug("	printPrinterTray=" + printPrinterTray);
+			if (printCopies!=null)
+				logger.debug("	printCopies=" + printCopies);
+			if (printDuplex)
+				logger.debug("	printDuplex=" + printDuplex);
+			if (printCollate)
+				logger.debug("	printCollate=" + printCollate);
+			if (printJobName!=null)
+				logger.debug("	printJobName=" + printJobName);
+		}
+		if (saveIsEnabled) {
+			logger.debug("	saveIsEnabled=" + saveIsEnabled);
+			if (saveFileName!=null)
+				logger.debug("	saveFileName=" + saveFileName);
+
+		}
+
 		// ----------------------------------------------------
 		// Assert input values
 		// ----------------------------------------------------
 		// valid report format?
-		if (!repFormat.equals("pdf") && !repFormat.equals("rtf")
-				&& !repFormat.equals("html") && !repFormat.equals("xls")
-				&& !repFormat.equals("xlsx") && !repFormat.equals("docx")
-				&& !repFormat.equals("html") && !repFormat.equals("pptx")
-				&& !repFormat.equals("jxl") && !repFormat.equals("csv")
-				&& !repFormat.equals("html2")) {
-			
+		if (!repFormat.equals("pdf") && !repFormat.equals("rtf") && !repFormat.equals("html")
+				&& !repFormat.equals("xls") && !repFormat.equals("xlsx") && !repFormat.equals("docx")
+				&& !repFormat.equals("html") && !repFormat.equals("pptx") && !repFormat.equals("jxl")
+				&& !repFormat.equals("csv") && !repFormat.equals("html2")) {
+
 			Utils.throwRuntimeException("Unknown _repFormat: " + repFormat);
 		}
 		logger.debug("input values asserted");
+
+		logger.traceExit();
 	}
 }

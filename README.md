@@ -392,6 +392,20 @@ The second paragraph, all in capital letters, is a standard legal boilerplate no
 
 # <a name="faq"></a>FAQ / Troubleshooting
 
+## Enable Debugging
+
+JasperReportsIntegration is using the log4j2 framework for logging. 
+The configuration file for logging is ``conf/log4j2.xml``. 
+
+* Edit the file ``conf/log4j2.xml`` and change the log level from ``INFO`` to ``TRACE``, ``DEBUG``, ``WARN`` or ``ERROR``: 
+    <pre>&lt;Logger name="de.oc" level="<b>info</b>" additivity="false" \&gt;</pre>
+  to
+    <pre>&lt;Logger name="de.oc" level="<b>debug</b>" additivity="false" \&gt;</pre>
+* You can restart the application server, but you don't have it. It should pick up the change after 30 seconds automatically without restarting. 
+* Then you can find the log entries in the file ``logs/jri.log``.
+    
+## Known Issues
+
 * When using "headless" Linux servers (https://www.howtogeek.com/660841/what-is-a-headless-server/, ), you might encounter error messages regarding awt like the following: ``"java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11GraphicsEnvironment"``.  
     - Solution: You need to configure your application server (e.g. Tomcat) in headless mode. You can get more information here: https://www.xwiki.org/xwiki/bin/view/Documentation/AdminGuide/Installation/InstallationWAR/InstallationTomcat/
     - For Windows, create a file named ``setenv.bat`` in the directory ``%TOMCAT_HOME%/bin``. It will be called from ``catalina.bat``:
@@ -405,22 +419,6 @@ The second paragraph, all in capital letters, is a standard legal boilerplate no
         export JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true"
         ```
 
-* Enable debug messages
-    - Edit the file ``conf/log4j.properties`` and change
-        <pre>
-        # opal-consulting logging
-        # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
-        log4j.logger.de.oc=<b>OFF</b>
-        </pre>
-      to
-        <pre>
-        # opal-consulting logging
-        # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
-        log4j.logger.de.oc=<b>DEBUG</b>
-        </pre>
-    - Restart the application server
-    - Then you can find the log entries in the file ``logs/JasperReportsIntegration.log``.
-    
 * Error connecting to Oracle Cloud Database on Windows:
 
   This is weird, you might get one of the following errors: 

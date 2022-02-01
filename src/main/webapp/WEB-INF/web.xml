@@ -17,7 +17,7 @@
   	<context-param>
    		<!-- the log4j default properties file is located within the web application -->
    		<param-name>log4j-init-file</param-name>
-   		<param-value>log4j.properties</param-value>
+   		<param-value>log4j2.xml</param-value>
    	</context-param>
 	<!--=======================-->
 	<!--  SERVLETS             -->

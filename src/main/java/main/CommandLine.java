@@ -18,25 +18,24 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.oc.integration.jasper.webapp.AppConfig;
 
 public class CommandLine {
 
-	private final static Logger logger = Logger.getLogger(CommandLine.class);
+	private static final Logger logger = LogManager.getLogger(CommandLine.class);
 
 	/**
 	 * main function to run tests
 	 * 
-	 * @param args automatically passed by the Java environment (i.e. the list of parameters)
+	 * @param args automatically passed by the Java environment (i.e. the list of
+	 *             parameters)
 	 */
 	public static void main(String[] args) {
-
-		BasicConfigurator.configure(); // enough for configuring log4j
-		Logger.getRootLogger().setLevel(Level.ERROR); // changing log level
+		Logger logger = LogManager.getRootLogger();
+		logger.info("Configuration File Defined To Be :: " + System.getProperty("log4j.configurationFile"));
 
 		logger.info("CommandLine called ...");
 		logger.debug("#arguments passed: " + args.length);
@@ -55,8 +54,7 @@ public class CommandLine {
 			 * encryptPasswords
 			 */
 			if (cntArguments < 2) {
-				System.err
-						.println("Please specify the application.properties file.");
+				System.err.println("Please specify the application.properties file.");
 				showHelp(arg0);
 				System.exit(-1);
 			}
@@ -67,8 +65,7 @@ public class CommandLine {
 			 * setConfigDir
 			 */
 			if (cntArguments < 3) {
-				System.err
-						.println("Please specify the path to the jri.war file and the configuration directory.");
+				System.err.println("Please specify the path to the jri.war file and the configuration directory.");
 				showHelp(arg0);
 				System.exit(-1);
 			}
@@ -79,8 +76,7 @@ public class CommandLine {
 			 * getConfigDir
 			 */
 			if (cntArguments < 2) {
-				System.err
-						.println("Please specify the path to the jri.war.");
+				System.err.println("Please specify the path to the jri.war.");
 				showHelp(arg0);
 				System.exit(-1);
 			}
@@ -108,8 +104,7 @@ public class CommandLine {
 
 		// does the file actually exist?
 		if (!configFile.exists()) {
-			throw new RuntimeException("File " + configFileName
-					+ " cannot be found.");
+			throw new RuntimeException("File " + configFileName + " cannot be found.");
 		}
 
 		// load the configuration
@@ -118,9 +113,8 @@ public class CommandLine {
 		// ----------------------------------------------------
 		// Read config file
 		// ----------------------------------------------------
-		props = AppConfig.getInstance().loadApplicationProperties(
-				configFileName);
-		AppConfig.getInstance().logApplicationProperties();
+		props = AppConfig.getInstance().loadApplicationProperties(configFileName);
+		AppConfig.getInstance().logApplicationProperties(configFileName);
 
 		// loop over datasource-sections
 		Iterator<String> it = props.getSections().iterator();
@@ -158,8 +152,7 @@ public class CommandLine {
 
 		// does the file actually exist?
 		if (!configFile.exists()) {
-			System.err.println("Configuration file could not be found: "
-					+ configFilename);
+			System.err.println("Configuration file could not be found: " + configFilename);
 			System.exit(-1);
 		}
 
@@ -176,8 +169,7 @@ public class CommandLine {
 				if (line.trim().startsWith("password")) {
 					String pwd = line.substring(line.indexOf("=") + 1);
 					logger.debug("pwd=" + pwd);
-					line = "password="
-							+ AppConfig.getInstance().encryptPWD(pwd);
+					line = "password=" + AppConfig.getInstance().encryptPWD(pwd);
 				}
 				pw.println(line);
 			}
@@ -196,13 +188,12 @@ public class CommandLine {
 	/**
 	 * setConfigDir sets the new path of the configuration dir in the .war file
 	 * 
-	 * @param warFilename name of the war file (the fully specified path)
-	 * @param configDirname the fully qualified path to the configuration directory 
+	 * @param warFilename   name of the war file (the fully specified path)
+	 * @param configDirname the fully qualified path to the configuration directory
 	 * 
 	 */
 	public static void setConfigDir(String warFilename, String configDirname) {
-		logger.info("setConfigDir(" + configDirname + ") for war file: "
-				+ warFilename);
+		logger.info("setConfigDir(" + configDirname + ") for war file: " + warFilename);
 
 		File configDir = new File(configDirname);
 		File warFile = new File(warFilename);
@@ -210,16 +201,14 @@ public class CommandLine {
 
 		// does the file actually exist?
 		if (!configDir.exists()) {
-			System.err.println("WARNING: Configuration directory could not be found: "
-					+ configDirname);
-			System.err.println("You can use the script createConfigDir to create an initial configuration directoy with all required files.\n ");
+			System.err.println("WARNING: Configuration directory could not be found: " + configDirname);
+			System.err.println(
+					"You can use the script createConfigDir to create an initial configuration directoy with all required files.\n ");
 			// System.exit(-1);
 		}
 		// does the war file actually exist?
 		if (!warFile.exists()) {
-			System.err
-					.println("War file (jri.war) could not be found: "
-							+ warFilename);
+			System.err.println("War file (jri.war) could not be found: " + warFilename);
 			System.exit(-1);
 		}
 
@@ -229,20 +218,18 @@ public class CommandLine {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		// now delete the original file and rename the new to the old
-		
+
 		warFile.delete();
-		
+
 		tmpWarFile.renameTo(new File(warFilename));
 	}
 
-
-	public static void updateWebXML(String origWarFilePath,
-			String newWarFilePath, String configDirname) throws IOException {
+	public static void updateWebXML(String origWarFilePath, String newWarFilePath, String configDirname)
+			throws IOException {
 		ZipFile zipFile = new ZipFile(origWarFilePath);
-		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(
-				newWarFilePath));
+		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(newWarFilePath));
 
 		logger.info("create new war file: " + newWarFilePath);
 		String newConfigDirName = configDirname.replaceAll("\\\\", "/");
@@ -253,7 +240,7 @@ public class CommandLine {
 			if (!entryIn.getName().contains("web.xml")) {
 				try {
 					// all files but web.xml are being just simply copied into the new .war file
-					//System.out.println("  - " + entryIn.getName());
+					// System.out.println(" - " + entryIn.getName());
 					logger.debug("  - " + entryIn.getName());
 					zos.putNextEntry(entryIn);
 					InputStream is = zipFile.getInputStream(entryIn);
@@ -261,10 +248,10 @@ public class CommandLine {
 					int len;
 					while ((len = (is.read(buf))) > 0) {
 						zos.write(buf, 0, len);
-					}					
+					}
 				} catch (Exception ex) {
 					logger.warn("Warning: " + ex.getLocalizedMessage());
-					//System.out.println("Warning: " + ex.getLocalizedMessage());
+					// System.out.println("Warning: " + ex.getLocalizedMessage());
 				}
 			} else {
 				System.out.println("process web.xml");
@@ -280,8 +267,7 @@ public class CommandLine {
 						buf = s.replaceAll(
 								"(?ms)<context-param>.*<param-name>oc.jasper.config.home</param-name>.*?</context-param>",
 								"<context-param><param-name>oc.jasper.config.home</param-name><param-value>"
-										+ newConfigDirName
-										+ "</param-value></context-param>")
+										+ newConfigDirName + "</param-value></context-param>")
 								.getBytes();
 					}
 					zos.write(buf, 0, (len < buf.length) ? len : buf.length);
@@ -290,10 +276,10 @@ public class CommandLine {
 			zos.closeEntry();
 		}
 		zos.close();
-		
+
 		// strange, cannot delete file on windows
 		zipFile.close();
-		
+
 		logger.info("done!");
 	}
 
@@ -327,15 +313,13 @@ public class CommandLine {
 					logger.info("process web.xml");
 
 					InputStream is = zipFile.getInputStream(entryIn);
-					
+
 					Scanner sc = new Scanner(is, "UTF-8");
 					Pattern p = Pattern.compile(
-					    "<context-param>.*<param-name>oc.jasper.config.home</param-name>.*?<param-value>(.*?)</param-value></context-param>"
-					);
-					while (sc.findWithinHorizon(p, 0) != null)
-					{
-					  MatchResult m = sc.match();
-					  configDir = m.group(1);
+							"<context-param>.*<param-name>oc.jasper.config.home</param-name>.*?<param-value>(.*?)</param-value></context-param>");
+					while (sc.findWithinHorizon(p, 0) != null) {
+						MatchResult m = sc.match();
+						configDir = m.group(1);
 					}
 					sc.close();
 				}
@@ -350,22 +334,21 @@ public class CommandLine {
 		return configDir;
 	}
 
-	
 	/**
-	 * @param command the command to be passed on the command line, can be encryptpasswords,
-	 * 	setconfigdir, ...
+	 * @param command the command to be passed on the command line, can be
+	 *                encryptpasswords, setconfigdir, ...
 	 * 
 	 */
 	public static void showHelp(String command) {
 		final String OS = System.getProperty("os.name").toLowerCase();
-		
+
 		System.out.println("");
-		
+
 		logger.info("operating system: " + OS);
-		
+
 		// windows
-		if (OS.indexOf("win") >= 0){
-			// the rest (max, linux, solaris)	
+		if (OS.indexOf("win") >= 0) {
+			// the rest (max, linux, solaris)
 			if (command.toLowerCase().equals("encryptpasswords")) {
 
 				System.out.println("encryptPasswords.cmd <path to application.properties file>");
@@ -383,14 +366,14 @@ public class CommandLine {
 				System.out.println("getConfigDir.sh <path to .war file>");
 				System.out.println("  e.g.: getConfigDir.cmd ..\\webapp\\jri.war");
 				System.out.println("");
-				
+
 			} else {
 				logger.error("unknown command: " + command.toLowerCase());
 				System.exit(-1);
-			}			
-			
+			}
+
 		} else {
-			// the rest (max, linux, solaris)	
+			// the rest (max, linux, solaris)
 			if (command.toLowerCase().equals("encryptpasswords")) {
 
 				System.out.println("encryptPasswords.sh <path to application.properties file>");
@@ -408,13 +391,13 @@ public class CommandLine {
 				System.out.println("getConfigDir.sh <path to .war file>");
 				System.out.println("  e.g.: ./getConfigDir.sh ../webapp/jri.war");
 				System.out.println("");
-				
+
 			} else {
 				logger.error("unknown command: " + command.toLowerCase());
 				System.exit(-1);
-			}			
+			}
 		}
-		
+
 	}
 
 	/**
@@ -422,50 +405,34 @@ public class CommandLine {
 	 */
 	public static void showHelpJavaCall() {
 		System.out.println("");
-		System.out
-				.println("Usage: java -jar jri.war <COMMAND> [arguments] \n");
+		System.out.println("Usage: java -jar jri.war <COMMAND> [arguments] \n");
 		System.out.println("The following commands are available: \n");
-		System.out
-				.println("getConfigDir <path to jri.war file>  : This will return the config directory as specified in the web.xml file \n");
-		System.out
-				.println("   example: java -jar jri.war getConfigDir ./jri.war\n");
-		System.out
-				.println("setConfigDir     : This will set the config directory and update the web.xml file \n");
-		System.out
-				.println("   example: java -jar jri.war setConfigDir jri.war /jri");
-		System.out
-				.println("   example: java -jar jri.war setConfigDir jri.war d:\\jri\n");
-		System.out
-				.println("encryptPasswords <path to application.properties file> \n");
-		System.out
-				.println("   example: java -jar jri.war encryptPasswords /jri/conf/application.properties");
-		System.out
-				.println("   example: java -jar jri.war encryptPasswords d:\\jri\\conf\\application.properties\n");
+		System.out.println(
+				"getConfigDir <path to jri.war file>  : This will return the config directory as specified in the web.xml file \n");
+		System.out.println("   example: java -jar jri.war getConfigDir ./jri.war\n");
+		System.out.println("setConfigDir     : This will set the config directory and update the web.xml file \n");
+		System.out.println("   example: java -jar jri.war setConfigDir jri.war /jri");
+		System.out.println("   example: java -jar jri.war setConfigDir jri.war d:\\jri\n");
+		System.out.println("encryptPasswords <path to application.properties file> \n");
+		System.out.println("   example: java -jar jri.war encryptPasswords /jri/conf/application.properties");
+		System.out.println("   example: java -jar jri.war encryptPasswords d:\\jri\\conf\\application.properties\n");
 	}
 
 	public static void showHelpOldOneJAR() {
 		System.out.println("");
-		System.out
-				.println("Usage: java -jar jri.war <COMMAND> [arguments] \n");
+		System.out.println("Usage: java -jar jri.war <COMMAND> [arguments] \n");
 		System.out.println("The following commands are available: \n");
-		System.out
-				.println("getConfigDir <path to jri.war file>  : This will return the config directory as specified in the web.xml file \n");
-		System.out
-				.println("   example: java -jar jri.war getConfigDir ./jri.war\n");
-		System.out
-				.println("setConfigDir     : This will set the config directory and update the web.xml file \n");
-		System.out
-				.println("   example: java -jar jri.war setConfigDir jri.war /jri");
-		System.out
-				.println("   example: java -jar jri.war setConfigDir jri.war d:\\jri\n");
-		System.out
-				.println("encryptPasswords <path to application.properties file> \n");
-		System.out
-				.println("   example: java -jar jri.war encryptPasswords /jri/conf/application.properties");
-		System.out
-				.println("   example: java -jar jri.war encryptPasswords d:\\jri\\conf\\application.properties\n");
-		System.out
-				.println("You can suppress all info messages by using -Done-jar.silent=true, \n e.g. java -Done-jar.silent=true -jar jri.war getConfigDir jri.war\n");
+		System.out.println(
+				"getConfigDir <path to jri.war file>  : This will return the config directory as specified in the web.xml file \n");
+		System.out.println("   example: java -jar jri.war getConfigDir ./jri.war\n");
+		System.out.println("setConfigDir     : This will set the config directory and update the web.xml file \n");
+		System.out.println("   example: java -jar jri.war setConfigDir jri.war /jri");
+		System.out.println("   example: java -jar jri.war setConfigDir jri.war d:\\jri\n");
+		System.out.println("encryptPasswords <path to application.properties file> \n");
+		System.out.println("   example: java -jar jri.war encryptPasswords /jri/conf/application.properties");
+		System.out.println("   example: java -jar jri.war encryptPasswords d:\\jri\\conf\\application.properties\n");
+		System.out.println(
+				"You can suppress all info messages by using -Done-jar.silent=true, \n e.g. java -Done-jar.silent=true -jar jri.war getConfigDir jri.war\n");
 	}
 
 }

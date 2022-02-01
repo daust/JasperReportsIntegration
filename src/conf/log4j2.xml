@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--    
+    To enable DEBUGGING, set the level for the logger "de.oc" to DEBUG or TRACE, e.g.
+        change
+        <Logger name="de.oc" level="info" additivity="false">
+        to
+        <Logger name="de.oc" level="debug" additivity="false">
+
+    You don't have to restart the server, the "monitorInterval=30" setting indicates, that the
+    configuration will be reloaded automatically. 
+
+    The logging is done using file rollovers with 10MB per file and max. 20 files. 
+    Thus, at most, you will need 200MB space for the log files. 
+
+    If you only want a single log file, you can comment out the <File section
+    but also need to comment the <RollingFile section. Only one can be used at the 
+    same time. 
+
+    The path to the logfile taken from the system property oc.jasper.log.dir
+    and referenced via ${sys:oc.jasper.log.dir} .
+    It is determined in AppConfig.java at runtime when this configuration file is loaded. 
+
+-->
+<!-- Configuration status=WARNing messages for the log4j framework itself -->
+<Configuration status="WARN" monitorInterval="30">
+  <Properties>
+    <Property name="patternDefault">%d{HH:mm:ss} [%p] %c{3}.%M - %m%n</Property>
+    <!--Property name="patternDefault">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property-->
+  </Properties>
+  <Appenders>
+    <!-- logging to the console -->
+    <Console name="logToConsole" target="SYSTEM_OUT">
+      <PatternLayout pattern="${patternDefault}"/>
+    </Console>
+    <!-- logging into a single log file without rollover
+    <File name="logToFile" fileName="/tmp/jri/logs/jri.log">
+        <PatternLayout pattern="${patternDefault}"/>
+    </File>-->
+    <!-- rolling log files-->
+    <RollingFile    name="logToFile" 
+                    fileName="${sys:oc.jasper.log.dir}/jri.log" 
+                    filepattern="${sys:oc.jasper.log.dir}/jri.%d{YYYY-MM-dd}-%i.log.zip" >
+        <PatternLayout pattern="${patternDefault}"/>
+        <Policies>
+            <SizeBasedTriggeringPolicy size="10MB" />
+        </Policies>
+        <DefaultRolloverStrategy max="20" />
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="logToConsole"/>
+      <AppenderRef ref="logToFile"/>
+    </Root>
+    <Logger name="de.oc" level="info" additivity="false">
+      <AppenderRef ref="logToConsole"/>
+      <AppenderRef ref="logToFile"/>
+    </Logger>
+  </Loggers>
+</Configuration>
