@@ -253,7 +253,7 @@ public class ReportWrapper extends HttpServlet {
 		} catch (SQLException e) {
 			Utils.throwRuntimeException(e.getMessage());
 		} catch (JRException e) {
-			Utils.throwRuntimeException(e.getMessage());
+			Utils.throwRuntimeException(e.getCause() + e.getMessage());
 		} finally {
 			DBUtils.closeQuietly(conn);
 		}
