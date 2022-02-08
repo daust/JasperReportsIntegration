@@ -13,6 +13,8 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   01.10.2020  D. Aust         Added configuration table XLIB_JASPERREPORTS_CONF
                               Added demo table XLIB_JASPERREPORT_DEMOS
+                              
+  08.02.2022  D. Aust         Documented the expected ORA- errors 
 
 =========================================================================*/
 
@@ -54,6 +56,12 @@ end;
 prompt ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 prompt ~~ Tables
 prompt ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+prompt *** You will get ORA-Errors when the tables already exist
+prompt ***   ORA-00955: object exists
+prompt ***   ORA-02260: primary key exists
+prompt ***   ORA-00001: Unique Constraint (XLIB_JASPERREPORTS_CONF_PK) violated
+prompt *** They can be safely ignored
 
 @@user/xlib_jasperreports_conf.sql
 @@user/xlib_jasperreports_demos.sql

@@ -8,9 +8,10 @@
   Date        Author          Comment
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   02.10.2020  D. Aust         Initial creation
+  08.02.2022  D. Aust         Don't delete before inserting
 
 =========================================================================*/
-delete from xlib_jasperreports_demos;
+--delete from xlib_jasperreports_demos;
 
 REM INSERTING into JRI_TEST.XLIB_JASPERREPORTS_DEMOS
 SET DEFINE OFF;

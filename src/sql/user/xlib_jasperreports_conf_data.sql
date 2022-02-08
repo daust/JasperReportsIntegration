@@ -17,7 +17,7 @@
 
 insert into xlib_jasperreports_conf(conf_id, conf_protocol, conf_server, conf_port, conf_context_path)
 values
-('MAIN', 'http', 'localhost', '80', 'jri');
+('MAIN', 'http', 'localhost', '8080', 'jri');
 
 commit;
 
