@@ -21,6 +21,7 @@
   31.01.2022  D. Aust   Ignore/remove older log4j2 libraries included in jasperreports-libraries
   31.01.2022  D. Aust   #93: Upgrading log4j 1.x to log4j 2.x (2.17.1)
   01.02.2022  D. Aust   #70: Upgrade Oracle JDBC libraries 
+  08.02.2022  D. Aust   #82: Unable to start JRI with tomcat 10 - buildWarTomcat10 task created
 
  */
 
@@ -451,3 +452,35 @@ task jriDownloadJasperLibraries{
     }
   }
 }   
+
+/* build a new war file that will work on Tomcat10 */
+task buildWarTomcat10{
+  description = "build a new war file that will work on Tomcat10"
+  //def cmd="$project.projectDir/src/build-support/jakartaee-migration-1.0.0/bin/migrate.sh $project.projectDir/build/distributions/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.zip $project.projectDir/build/distributions/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}-tomcat10.zip -zipInMemory -exclude=\"*.jar\" -exclude=\"*jetty*.war\""
+
+  def cmd="$project.projectDir/src/build-support/jakartaee-migration-1.0.0/bin/migrate.sh $project.projectDir/build/libs/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.war $project.projectDir/build/distributions/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}-tomcat10.war -zipInMemory -exclude=\"*.jar\" -exclude=\"*jetty*.war\""
+
+  doLast{
+   	println "run command: " + cmd
+    runCommand.call( cmd )
+  }
+}
+
+/* build and deploy a version to the local Tomcat10 installation for testing */
+task buildWarTomcat10DeployLocal{
+  description = "build a new war file that will work on Tomcat10"
+  def tomcatHome="/Users/daust/Downloads/KEEP/tomcat/apache-tomcat-10.0.16"
+  def cmd="$project.projectDir/src/build-support/jakartaee-migration-1.0.0/bin/migrate.sh $project.projectDir/build/libs/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.war $tomcatHome/webapps/jri.war -zipInMemory -exclude=\"*.jar\" -exclude=\"*jetty*.war\""
+  
+  doLast{
+
+    println "shut down Tomcat10"
+    runCommand.call( "$tomcatHome/bin/shutdown.sh")
+   	
+    println "run command: " + cmd
+    runCommand.call( cmd )
+
+    println "start up Tomcat10"
+    runCommand.call( "$tomcatHome/bin/startup.sh")
+  }
+}
