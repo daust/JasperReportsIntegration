@@ -22,8 +22,11 @@ AS
                                       - added version information to this package
  2.3.0.0 09.05.2015  D. Aust          pass JSESSIONID from backend J2EE server to client 
                                         for image rendering in html reports                                         
- 2.6.1   28.09.2020  D. Aust          - #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
+ 2.6.1   28.09.2020  D. Aust          #40 - APEX 20.1 security bundle (PSE 30990551) 
+                                        rejects response header "Cache-Control: private"
  2.6.2   13.10.2020  D. Aust          - added function check_acl()
+ 2.8.0   08.02.2022  D. Aust          #79: XLIB_HTTP http_version
+                                        - added optional parameter for http version
 
 =========================================================================*/
 
@@ -34,7 +37,8 @@ AS
       p_mime_type_override   IN   VARCHAR2 DEFAULT NULL,
       p_charset              IN   VARCHAR2 DEFAULT NULL,
       p_header_name_arr      IN   vc_arr_t default g_empty_vc_arr,
-      p_header_value_arr     IN   vc_arr_t default g_empty_vc_arr
+      p_header_value_arr     IN   vc_arr_t default g_empty_vc_arr,
+      p_http_version         IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
    )
    IS
       l_http_request       UTL_HTTP.req;
@@ -65,7 +69,7 @@ AS
       
       l_http_request := UTL_HTTP.begin_request (url          => p_url,
                                                 method       => 'GET',
-                                                http_version => utl_http.http_version_1_0);
+                                                http_version => p_http_version);
       
       utl_http.set_header (l_http_request, 'Connection', 'Keep-Alive');
       
@@ -188,9 +192,10 @@ AS
    END;
 
    PROCEDURE retrieve_blob_from_url (
-      p_url               VARCHAR2,
-      o_blob        OUT   BLOB,
-      o_mime_type   OUT   VARCHAR2
+      p_url             IN   VARCHAR2,
+      o_blob            OUT  BLOB,
+      o_mime_type       OUT  VARCHAR2,
+      p_http_version    IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
    )
    IS
       l_http_request    UTL_HTTP.req;
@@ -207,7 +212,7 @@ AS
       dbms_lob.createtemporary (o_blob, false);
       l_http_request := utl_http.begin_request (url          => p_url,
                                                 method       => 'GET',
-                                                http_version => utl_http.http_version_1_0);
+                                                http_version => p_http_version);
                                                 
       l_http_response := UTL_HTTP.get_response (l_http_request);
 
