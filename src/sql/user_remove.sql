@@ -4,13 +4,14 @@
              XLIB_HTTP
              XLIB_JASPERREPORTS
              XLIB_JASPERREPORTS_CONF
-             XLIB_JASPERREPORT_DEMOS
+             XLIB_JASPERREPORTS_DEMOS
              XLIB_COMPONENT
              XLIB_COMPONENTS
              XLIB_LOG
              XLIB_LOGS
              XLOG
              XLIB_SEQ
+             XLIB_JASPERREPORTS_IMG (Package)
   
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
              Licensed under a BSD style license (license.txt)
@@ -22,6 +23,8 @@
   06.01.2010  D. Aust         Initial creation
   29.09.2020  D. Aust         simplified installation / removal scripts
   01.10.2020  D. Aust         Added configuration table XLIB_JASPERREPORTS_CONF
+  08.02.2022  D. Aust         #76 Adding XLIB_JASPERREPORTS_IMG to the _remove_user.sql script
+                              - also added XLIB_JASPERREPORTS_DEMOS
 
 =========================================================================*/
 
@@ -42,8 +45,15 @@ prompt
   select object_name, object_type
     from user_objects 
    where object_name in ('XLIB_HTTP', 'XLIB_JASPERREPORTS', 'XLIB_JASPERREPORTS_CONF', 'XLIB_JASPERREPORT_DEMOS'
-                       , 'XLIB_COMPONENT', 'XLIB_COMPONENTS', 'XLIB_LOG', 'XLIB_LOGS', 'XLOG', 'XLIB_SEQ')
+                       , 'XLIB_COMPONENT', 'XLIB_COMPONENTS', 'XLIB_LOG', 'XLIB_LOGS', 'XLOG', 'XLIB_SEQ' 
+                       , 'XLIB_JASPERREPORTS_IMG', 'XLIB_JASPERREPORTS_DEMOS')
    order by 1;
+   
+/*
+select object_name, object_type
+    from user_objects 
+   where object_name like 'XLIB%';
+*/
 
 prompt   Are you sure?
 
@@ -58,7 +68,8 @@ begin
               select object_name, object_type
                 from user_objects 
                where object_name in ('XLIB_HTTP', 'XLIB_JASPERREPORTS', 'XLIB_JASPERREPORTS_CONF', 'XLIB_JASPERREPORT_DEMOS'
-                                   , 'XLIB_COMPONENT', 'XLIB_COMPONENTS', 'XLIB_LOG', 'XLIB_LOGS', 'XLOG', 'XLIB_SEQ')
+                                   , 'XLIB_COMPONENT', 'XLIB_COMPONENTS', 'XLIB_LOG', 'XLIB_LOGS', 'XLOG', 'XLIB_SEQ'
+                                   , 'XLIB_JASPERREPORTS_IMG', 'XLIB_JASPERREPORTS_DEMOS')
                  and object_type not in ('PACKAGE BODY')
                order by 1
              ) loop
