@@ -32,6 +32,7 @@ plugins {
 }
 // version 4.0 of gretty requires Java 11
 // apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
+// apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
 
 //for Ant filter
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -133,7 +134,7 @@ dependencies {
 }
 
 gretty {
-  //servletContainer = 'tomcat9' // can be changed to Tomcat, by default jetty9 is used
+  servletContainer = 'jetty9' // can be changed to Tomcat, by default jetty9 is used
   httpPort      = 8099
   //initParameter 'oc.jasper.config.home', "/tmp/jri"
   contextPath   = "/jri"

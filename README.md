@@ -402,7 +402,7 @@ The configuration file for logging is ``conf/log4j2.xml``.
   to
     <pre>&lt;Logger name="de.oc" level="<b>debug</b>" additivity="false" \&gt;</pre>
 * You can restart the application server, but you don't have it. It should pick up the change after 30 seconds automatically without restarting. 
-* Then you can find the log entries in the file ``logs/jri.log``.
+* Then you can find the log entries in the file ``logs/JasperReportsIntegration.log``.
     
 ## Known Issues
 

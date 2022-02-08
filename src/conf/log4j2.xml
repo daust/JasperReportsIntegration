@@ -33,13 +33,13 @@
       <PatternLayout pattern="${patternDefault}"/>
     </Console>
     <!-- logging into a single log file without rollover
-    <File name="logToFile" fileName="/tmp/jri/logs/jri.log">
+    <File name="logToFile" fileName="/tmp/jri/logs/JasperReportsIntegration.log">
         <PatternLayout pattern="${patternDefault}"/>
     </File>-->
     <!-- rolling log files-->
     <RollingFile    name="logToFile" 
-                    fileName="${sys:oc.jasper.log.dir}/jri.log" 
-                    filepattern="${sys:oc.jasper.log.dir}/jri.%d{YYYY-MM-dd}-%i.log.zip" >
+                    fileName="${sys:oc.jasper.log.dir}/JasperReportsIntegration.log" 
+                    filepattern="${sys:oc.jasper.log.dir}/JasperReportsIntegration.%d{YYYY-MM-dd}-%i.log.zip" >
         <PatternLayout pattern="${patternDefault}"/>
         <Policies>
             <SizeBasedTriggeringPolicy size="10MB" />
