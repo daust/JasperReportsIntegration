@@ -1,6 +1,39 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.8.0 (release: 09.02.2022)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/8?closed=1). 
+ 
+## New features
+  * #93 Upgrading log4j 1.x to log4j 2.x (2.17.1)
+  * #84 Variable for report path
+    - You can now specify a list of report locations like a search path
+  * #79 ``XLIB_HTTP.http_version_1_0`` was outdated and is upgraded to 1.1 and implemented as an optional parameter. You can downgrade to 1.0 if this is needed. 
+  * #82 Unable to start JRI with tomcat 10. Tomcat changed in release 10 some of the library packages: https://tomcat.apache.org/migration-10.html#Specification_APIs. I will continue to develop using the old packages and create a modified ``jri.war`` file just for Tomcat10, e.g. ``jri-2.8.0-jasper-6.18.1-tomcat10.war``. 
+  * #70 Upgrade Oracle JDBC libraries to 21.4.0.0.1
+  * #90 Upgrade spring boot libraries. For security reasons, we include a higher version of the spring boot libraries. 
+  * #80 Upgrade to JasperReportsLibraries 6.18.1
+
+## Bug fixes
+  * #96 Connection pool error when session is killed on server, now reconnects gracefully
+  * #77 Documentation fix
+  * #76 Adding XLIB_JASPERREPORTS_IMG to the _remove_user.sql. Fixed the deinstall script.
+  * #69 Timeout issue when connecting to cloud database. Oracle notification services ons.jar are now removed from the build. 
+
+
+## Changed behaviour
+  * #79 By default, all http requests are now done using ``XLIB_HTTP.http_version_1_1``. If this causes issues in your application, you can downgrade to 1.0. It is a new optional parameter in ``xlib_jasperreports.
+
+## Deprecated features (still available but will go away eventually)
+  * *none*
+
+## Obsoleted features (no longer available)
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+
 # Version 2.7.1 (release: 14.12.2021)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/7?closed=1). 

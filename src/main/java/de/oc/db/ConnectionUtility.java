@@ -23,7 +23,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.oc.integration.jasper.webapp.AppConfig;
 import de.oc.utils.Utils;
@@ -34,11 +35,10 @@ import oracle.ucp.jdbc.PoolDataSourceFactory;
 public class ConnectionUtility {
 	private static ConnectionUtility instance;
 	private HashMap<String, PoolDataSource> dataSources = new HashMap<String, PoolDataSource>();
-	private static Logger logger = Logger.getLogger(ConnectionUtility.class
-			.getName());
+	private static final Logger logger = LogManager.getLogger(ConnectionUtility.class);
 	private String jndiPrefix = "";
 	private Context initialContext = null; // will be created only once
-	
+
 	/**
 	 * constructor
 	 * 
@@ -47,7 +47,7 @@ public class ConnectionUtility {
 		// don't do much, the connection pools are populated upon demand
 		// makes for a faster startup
 		this.jndiPrefix = jndiPrefix;
-		
+
 		try {
 			initialContext = new InitialContext();
 		} catch (NamingException e) {
@@ -71,26 +71,25 @@ public class ConnectionUtility {
 	}
 
 	/**
-	 * Get a connection for a data source from the connection pool. First we try
-	 * to get a connection from the JNDI datasources. If there is no
-	 * configuration available for this datasource, then create a regular JDBC
-	 * connection. The connection pool is created upon the first request.
+	 * Get a connection for a data source from the connection pool. First we try to
+	 * get a connection from the JNDI datasources. If there is no configuration
+	 * available for this datasource, then create a regular JDBC connection. The
+	 * connection pool is created upon the first request.
 	 * 
 	 * @param dsName the name of the data source, e.g. "default"
 	 * @return Connection
 	 */
 	public Connection getConnection(String dsName) {
-		
+
 		logger.trace("lookup dataSource:" + dsName);
-		
-		DataSourceDefinition dataSourceDef = AppConfig.getInstance()
-				.getDataSourceDefinition(dsName);		
+
+		DataSourceDefinition dataSourceDef = AppConfig.getInstance().getDataSourceDefinition(dsName);
 		Connection conn = null;
-		
+
 		if (dataSourceDef == null)
 			Utils.throwRuntimeException("Datasource " + dsName + " could not be found.");
-		
-		if (dataSourceDef.type.equals("jndi")){
+
+		if (dataSourceDef.type.equals("jndi")) {
 			// ----------------------------------------------------
 			// use the JNDILookup first
 			// ----------------------------------------------------
@@ -105,13 +104,14 @@ public class ConnectionUtility {
 						conn = ds.getConnection();
 					}
 				} catch (Exception e) {
-					//logger.info("JNDI lookup failed for " + jndiName);
+					// logger.info("JNDI lookup failed for " + jndiName);
 					logger.error("JNDI datasource " + dsName + " could not be found. Lookup was done with " + jndiName);
-					Utils.throwRuntimeException("JNDI datasource " + dsName + " could not be found. Lookup was done with " + jndiName);
+					Utils.throwRuntimeException(
+							"JNDI datasource " + dsName + " could not be found. Lookup was done with " + jndiName);
 
 				}
-			}		
-		} else if (dataSourceDef.type.equals("jdbc")){
+			}
+		} else if (dataSourceDef.type.equals("jdbc")) {
 			// ----------------------------------------------------
 			// use JDBC connection next
 			// http://docs.oracle.com/cd/B19306_01/java.102/b14355/concache.htm
@@ -120,48 +120,48 @@ public class ConnectionUtility {
 				logger.debug("use JDBC to lookup dataSource:" + dsName);
 
 				PoolDataSource poolDataSource;
-								
+
 				try {
 					logger.trace("retrieve connectionPoolDataSource from HashMap first");
-					poolDataSource = dataSources
-							.get(dsName);
+					poolDataSource = dataSources.get(dsName);
 
 					if (poolDataSource == null) {
-						logger.trace("dataSource not found in HashMap, initialize a new connection pool and store in HashMap");
+						logger.trace(
+								"dataSource not found in HashMap, initialize a new connection pool and store in HashMap");
 
-					    //java.util.Properties prop = new java.util.Properties();
-					    
-					    poolDataSource = PoolDataSourceFactory.getPoolDataSource();
-					    poolDataSource.setConnectionFactoryClassName(OracleDataSource.class.getName());
-					    poolDataSource.setURL(dataSourceDef.url);
-					    poolDataSource.setUser(dataSourceDef.username);
-					    poolDataSource.setPassword(dataSourceDef.password);
-					    
-					    poolDataSource.setInitialPoolSize(5);
-					    poolDataSource.setMinPoolSize(5);
-					    poolDataSource.setMaxPoolSize(50);
-					    // remove additional connections from pool after 10min idle time
-					    poolDataSource.setInactiveConnectionTimeout(600);
-					    
+						// java.util.Properties prop = new java.util.Properties();
+
+						poolDataSource = PoolDataSourceFactory.getPoolDataSource();
+						poolDataSource.setConnectionFactoryClassName(OracleDataSource.class.getName());
+						poolDataSource.setURL(dataSourceDef.url);
+						poolDataSource.setUser(dataSourceDef.username);
+						poolDataSource.setPassword(dataSourceDef.password);
+						poolDataSource.setConnectionPoolName(dsName);
+
+						poolDataSource.setInitialPoolSize(5);
+						poolDataSource.setMinPoolSize(5);
+						poolDataSource.setMaxPoolSize(50);
+
+						// remove additional connections from pool after 10min idle time
+						poolDataSource.setInactiveConnectionTimeout(600);
+						poolDataSource.setValidateConnectionOnBorrow(true);
+
 						dataSources.put(dsName, poolDataSource);
 					}
 
 					conn = poolDataSource.getConnection();
-
+					
 					logger.debug("initial pool size: " + poolDataSource.getInitialPoolSize());
 					logger.debug("min pool size: " + poolDataSource.getMinPoolSize());
 					logger.debug("max pool size: " + poolDataSource.getMaxPoolSize());
-				
-					logger.info("successfully connected to " + dataSourceDef.url
-							+ " with user: " + dataSourceDef.username);
+
+					logger.info(
+							"successfully connected to " + dataSourceDef.url + " with user: " + dataSourceDef.username);
 				} catch (SQLException e) {
-					Utils.throwRuntimeException("Could not connect via JDBC: "
-							+ e.getMessage());
+					Utils.throwRuntimeException("Could not connect via JDBC: " + e.getMessage());
 				}
-			}			
+			}
 		}
-		if (conn != null)
-			logger.info("dataSource loaded:" + dsName);
 
 		return conn;
 	}

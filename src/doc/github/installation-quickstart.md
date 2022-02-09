@@ -16,7 +16,6 @@ Edit the file ``conf/application.properties`` and configure the data source ``de
 # http://www.orafaq.com/wiki/JDBC#Thin_driver
 #====================================================================
 [datasource:default]
-name=default
 url=jdbc:oracle:thin:<b>@192.168.2.114:1521:XE</b>
 username=<b>HR</b>
 password=<b>hr_password</b>

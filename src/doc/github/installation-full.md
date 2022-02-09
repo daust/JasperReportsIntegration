@@ -11,7 +11,7 @@ You can download the files from [here](https://github.com/daust/JasperReportsInt
 
 ### <a name="install.installation.installJ2EE"></a>2. Installation in the J2EE server
 
-We need to install the J2EE application and configure the data sources in this step. The J2EE application has to find various configuration files (e.g. ``conf/application.properties``, ``conf/log4j.properties``) and also the different reports that we can run (e.g. ``reports/test.jasper``).
+We need to install the J2EE application and configure the data sources in this step. The J2EE application has to find various configuration files (e.g. ``conf/application.properties``, ``conf/log4j2.xml``) and also the different reports that we can run (e.g. ``reports/test.jasper``).
 
 It is recommended practice to separate the configuration-/report files from the J2EE application itself. In the early versions of the JasperReportsIntegration all reports were placed directly in the web application itself, for example into the directory ``$TOMCAT_HOME/webapps/reports``. In order to easily upgrade your installation in the future it is recommended to put the configuration and report files into a separate directory and not store them inside of the J2EE application.
 
@@ -110,7 +110,6 @@ Edit the file ``conf/application.properties`` and configure the data source ``de
 # http://www.orafaq.com/wiki/JDBC#Thin_driver
 #====================================================================
 [datasource:default]
-name=default
 url=jdbc:oracle:thin:<b>@192.168.2.114:1521:XE</b>
 username=<b>HR</b>
 password=<b>hr_password</b>
@@ -124,7 +123,6 @@ You can also connect to your Oracle Cloud database:
 # http://www.orafaq.com/wiki/JDBC#Thin_driver
 #====================================================================
 [datasource:default]
-name=default
 url=jdbc:oracle:thin:<b>@tnsnames_entry?TNS_ADMIN=/path/to/wallet</b>
 username=<b>HR</b>
 password=<b>hr_password</b>
@@ -200,7 +198,31 @@ encryptPasswords.cmd <path to application.properties file>
   e.g.: encryptPasswords.cmd c:\app\JasperReportsIntegration\conf\application.properties
 ```
 
-### 2.5 Configure Apache Tomcat
+### 2.5 Setting the reports path
+
+By default, all reports will be found in the directory ``OC_JASPER_CONFIG_HOME/reports``, i.e. a subdirectory to the main configuration home. 
+
+But you can define a list of locations of where reports will be searched for. 
+
+```
+# report definition files will be looked up in the following order as
+#   specified by the reportsPath, e.g.: 
+#     Linux/macOS: reportsPath=../reports,/path/to/reports1,/path/to/reports2,/path/to/reports3
+#     Windows: reportsPath=..\\reports,c:\\path\\to\\reports1,c:\\path\\to\\reports2,c:\\path\\to\\reports3
+#
+#   Each entry is separated by a "," !!!
+#
+#   If the reportsPath is left empty or not defined, then the default is "../reports" (*nix) or
+#      "..\\reports" (windows) respectively, will start from the location of the application.properties (this)
+#      file
+reportsPath=
+```
+This is an example for Linux: 
+```
+reportsPath=/tmp/jri/reports,../reports,/tmp/reports
+```
+
+### 2.6 Configure Apache Tomcat
 
 #### Configure Memory Settings
 
@@ -234,7 +256,7 @@ In order to use JDNI Data Sources, it is recommended to configure your host in t
 **Those settings are sometimes disallowed by your administrator for security reasons, so please check with your admin.**
 
 
-### 2.6 Deploy the J2EE application
+### 2.7 Deploy the J2EE application
 
 Take the application server of your choice and deploy the file ``webapp/jri.war`` to it. For an Apache Tomcat this typically means to copy the file ``jri.war`` into the directory ``webapps`` of your Tomcat application. If the Tomcat doesn't deploy it automatically, you would have to restart the Tomcat.
 
@@ -245,7 +267,7 @@ Here you will find the included documentation, information about the location of
 <img src="image/jri-j2ee-homepage.png" style="border: 1px solid black"></img>
 
 
-### 2.6 Securing the homepage of the J2EE application
+### 2.8 Securing the homepage of the J2EE application
 
 Since the homepage tells you a lot about the system you will typically protect that information in a production environment.
 Therefore you can edit the file ``conf/application.properties`` and set the config parameter ``infoPageIsEnabled=false``.
@@ -255,7 +277,7 @@ Therefore you can edit the file ``conf/application.properties`` and set the conf
 # Application properties (global)
 #====================================================================
 [application]
-configFileVersion=2.3.0
+configFileVersion=2.8.0
 jndiPrefix=java:comp/env/jdbc/
 # infoPageIsEnabled will show the initial start page of the j2ee application
 # including testing and the environment settings

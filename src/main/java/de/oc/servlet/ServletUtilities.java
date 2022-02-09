@@ -18,12 +18,12 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ServletUtilities {
 
-	private static Logger logger = Logger.getLogger(ServletUtilities.class
-			.getName());
+	private static final Logger logger = LogManager.getLogger(ServletUtilities.class);
 
 	/**
 	 * log all url parameters
@@ -31,19 +31,12 @@ public class ServletUtilities {
 	 * @param pRequest the httpServletRequest
 	 */
 	public static void logRequestParameters(HttpServletRequest pRequest) {
-
-		logger.info("logRequestParameters() - start");
-
-		// Enumerate all system properties
+		logger.info("Request parameters:");
 		for (Enumeration<?> e = pRequest.getParameterNames(); e.hasMoreElements();) {
-			// Get parameter name
 			String paramName = (String) e.nextElement();
-
-			// Get parameter value
 			String paramValue = (String) pRequest.getParameter(paramName);
-
-			logger.info(paramName + ": " + paramValue);
+			if (paramValue != null && !paramValue.isEmpty())
+				logger.info("   " + paramName + ": " + paramValue);
 		}
-		logger.info("logRequestParameters() - end");
 	}
 }

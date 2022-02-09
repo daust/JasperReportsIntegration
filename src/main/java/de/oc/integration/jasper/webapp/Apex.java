@@ -28,6 +28,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
+
+import de.oc.utils.Utils;
 import net.sf.jasperreports.engine.JRAbstractExporter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -50,22 +55,18 @@ import net.sf.jasperreports.export.SimpleHtmlReportConfiguration;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-
-import de.oc.utils.Utils;
-
-/** Report integration for Oracle APEX, merge a xml feed with 
- *  a jasper report on the fly. Still experimental! 
+/**
+ * Report integration for Oracle APEX, merge a xml feed with a jasper report on
+ * the fly. Still experimental!
  * 
  * @author daust
  *
  */
 public class Apex extends HttpServlet {
 	/**
-	 */  
+	 */
 	private static final long serialVersionUID = 3232059099842053441L;
- 
+
 	// request, response and out stream
 	HttpServletRequest _request = null;
 	HttpServletResponse _response = null;
@@ -88,11 +89,9 @@ public class Apex extends HttpServlet {
 	String _repEncoding = "UTF-8";
 
 	/** value parsing. */
-	//private static final String VALUE_PARSING = "##.0";
-	
-	private static Logger logger = Logger.getLogger(Apex.class
-			.getName());
+	// private static final String VALUE_PARSING = "##.0";
 
+	private static final Logger logger = LogManager.getLogger(Apex.class);
 
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -134,8 +133,8 @@ public class Apex extends HttpServlet {
 		_xml = request.getParameter("xml");
 		_template = request.getParameter("template");
 		_repFormat = nvl(request.getParameter("_xf"), "pdf");
-		
-		// switch excel format name, all other format names are 
+
+		// switch excel format name, all other format names are
 		// supported
 		if (_repFormat.equals("Excel"))
 			_repFormat = "xls";
@@ -157,26 +156,23 @@ public class Apex extends HttpServlet {
 	void generateReport() throws IOException, ServletException {
 		JasperReport jasperReport = null;
 		JasperPrint jasperPrint = null;
-		JRAbstractExporter <ReportExportConfiguration,ExporterConfiguration,ExporterOutput,JRExporterContext> exporter = null;
-		
+		JRAbstractExporter<ReportExportConfiguration, ExporterConfiguration, ExporterOutput, JRExporterContext> exporter = null;
+
 		String reportsDir = _repJRXMLFile.getParentFile().getAbsolutePath();
 
 		// ----------------------------------------------------
 		// compile report design into .jasper file
 		// ----------------------------------------------------
-		try
-	    {
-	      jasperReport = JasperCompileManager.compileReport(_repJRXMLFileName);
-	    }
-	    catch (JRException e)
-	    {
-	      e.printStackTrace();
-	    }
-		
+		try {
+			jasperReport = JasperCompileManager.compileReport(_repJRXMLFileName);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+
 		Map<String, Object> reportParams = new HashMap<String, Object>();
 		// add parameters to the reportParameters
 		reportParams.put("BaseDir", reportsDir);
-		
+
 		// ----------------------------------------------------
 		// set format specific parameters
 		// ----------------------------------------------------
@@ -188,35 +184,32 @@ public class Apex extends HttpServlet {
 		}
 		if (_repFormat.equals("html")) {
 			exporter = (JRAbstractExporter) new HtmlExporter();
-			SimpleHtmlReportConfiguration configuration=new SimpleHtmlReportConfiguration();
-			
-			//exporter.setConfiguration(HtmlExporter.);
-			/*
-			exporter.setParameter(
-					JRHtmlExporterParameter.IS_OUTPUT_IMAGES_TO_DIR,
-					Boolean.TRUE);
-			exporter.setParameter(JRHtmlExporterParameter.IMAGES_DIR_NAME,
-					_baseDir + File.separator + "tmp");
-			exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,
-					"/JasperReportsIntegration/tmp/");
+			SimpleHtmlReportConfiguration configuration = new SimpleHtmlReportConfiguration();
 
-			*/
-			
+			// exporter.setConfiguration(HtmlExporter.);
+			/*
+			 * exporter.setParameter( JRHtmlExporterParameter.IS_OUTPUT_IMAGES_TO_DIR,
+			 * Boolean.TRUE); exporter.setParameter(JRHtmlExporterParameter.IMAGES_DIR_NAME,
+			 * _baseDir + File.separator + "tmp");
+			 * exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,
+			 * "/JasperReportsIntegration/tmp/");
+			 * 
+			 */
+
 			exporter.setConfiguration(configuration);
-			
 
 			reportParams.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
 		}
 		if (_repFormat.equals("xls")) {
 			exporter = (JRAbstractExporter) new JRXlsExporter();
 			SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
-			
+
 			configuration.setOnePagePerSheet(Boolean.FALSE);
 			configuration.setIgnorePageMargins(Boolean.TRUE);
 			configuration.setWhitePageBackground(Boolean.FALSE);
 			configuration.setRemoveEmptySpaceBetweenRows(Boolean.TRUE);
 			exporter.setConfiguration(configuration);
-			
+
 			reportParams.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
 
 		}
@@ -226,22 +219,16 @@ public class Apex extends HttpServlet {
 		// ----------------------------------------------------
 		try {
 
-			ByteArrayInputStream str = new ByteArrayInputStream(_xml
-					.getBytes("UTF-8"));
+			ByteArrayInputStream str = new ByteArrayInputStream(_xml.getBytes("UTF-8"));
 			Document document = JRXmlUtils.parse(str);
-			reportParams.put(
-					JRXPathQueryExecuterFactory.PARAMETER_XML_DATA_DOCUMENT,
-					document);
-			reportParams.put(JRXPathQueryExecuterFactory.XML_DATE_PATTERN,
-					"yyyy-MM-dd");
-			reportParams.put(JRXPathQueryExecuterFactory.XML_NUMBER_PATTERN,
-					"#,##0.##");
-			reportParams.put(JRXPathQueryExecuterFactory.XML_LOCALE,
-					Locale.ENGLISH);
+			reportParams.put(JRXPathQueryExecuterFactory.PARAMETER_XML_DATA_DOCUMENT, document);
+			reportParams.put(JRXPathQueryExecuterFactory.XML_DATE_PATTERN, "yyyy-MM-dd");
+			reportParams.put(JRXPathQueryExecuterFactory.XML_NUMBER_PATTERN, "#,##0.##");
+			reportParams.put(JRXPathQueryExecuterFactory.XML_LOCALE, Locale.ENGLISH);
 			reportParams.put(JRParameter.REPORT_LOCALE, Locale.US);
 
 			jasperPrint = JasperFillManager.fillReport(jasperReport, reportParams);
-			
+
 		} catch (JRException e) {
 			e.printStackTrace(new PrintWriter(_out));
 		}
@@ -252,11 +239,12 @@ public class Apex extends HttpServlet {
 		logger.info("export report");
 		try {
 			SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(_out);
-			
+
 			exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
 			exporter.setExporterOutput(exporterOutput);
-			
-			//exporter.setParameter(JRExporterParameter.CHARACTER_ENCODING,	urlCallInterface.repEncoding);
+
+			// exporter.setParameter(JRExporterParameter.CHARACTER_ENCODING,
+			// urlCallInterface.repEncoding);
 			exporter.exportReport();
 		} catch (JRException e) {
 			Utils.throwRuntimeException(e.getMessage());
@@ -268,8 +256,7 @@ public class Apex extends HttpServlet {
 	// ----------------------------------------------------
 	// init the servlet, set variables
 	// ----------------------------------------------------
-	void init(HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+	void init(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		OutputStream out = response.getOutputStream();
 
 		// set the physical directories
@@ -315,16 +302,15 @@ public class Apex extends HttpServlet {
 	// ----------------------------------------------------
 	// MAIN service function
 	// ----------------------------------------------------
-	public void service(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		// set initial content type if anything goes wrong
 		response.setContentType("text/html");
 		request.setCharacterEncoding("UTF-8");
 
-		//DynamicJasperReport d=new DynamicJasperReport();
-		//d.info(); 
-		
+		// DynamicJasperReport d=new DynamicJasperReport();
+		// d.info();
+
 		// ----------------------------------------------------
 		// initialize the local variables
 		// ----------------------------------------------------

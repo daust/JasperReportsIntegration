@@ -5,13 +5,17 @@
 <%@page import="net.sf.jasperreports.engine.*" %>
 <%@page import="org.apache.commons.lang3.*" %>
 <%@page import="java.io.File" %>
+<%@page import="org.apache.logging.log4j.*" %>
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1" import="de.oc.*"%>
 
 <%!// variable declaration in the class
-	AppConfig appConfig = AppConfig.getInstance();%>
+	AppConfig appConfig = AppConfig.getInstance();
+	Logger logger = LogManager.getLogger(AppConfig.class);
+%>
 <%
+	logger.traceEntry();
 	// script
 	// validate configuration, has the config file been changed since last time?
 	appConfig.validateConfiguration(application);
@@ -45,8 +49,8 @@
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getConfigDir() %></span></li>
 		<li>Config-File: <span
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getApplicationPropertiesFileName() %></span></li>
-		<li>Reports-Directory: <span
-			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getReportsDir() %></span></li>
+		<li>Reports-Path: <span
+			style="font-family: Consolas, Arial; font-weight: bold;"><%= de.oc.utils.StringUtils.convertStringArrayToString(appConfig.getReportsPath(), ",") %></span></li>
 		<li>Temp-Directory: <span
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getTmpDir() %></span></li>
 		<li>Logs-Directory: <span
@@ -368,3 +372,6 @@
 	<p>	
 </body>
 </html>
+<%
+	logger.traceExit();
+%>

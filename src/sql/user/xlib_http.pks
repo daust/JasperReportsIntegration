@@ -3,11 +3,11 @@ AS
 /*=========================================================================
 
   Purpose  : Make http callouts
-  
+
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
              Licensed under a BSD style license (license.txt)
              http://www.opal-consulting.de/pls/apex/f?p=20090928:14
-               
+
  Version Date        Author           Comment
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          19.02.2007  D. Aust          initial creation
@@ -22,21 +22,24 @@ AS
                                       - added version information to this package
  2.3.0.0 09.05.2015  D. Aust          pass JSESSIONID from backend J2EE server to client 
                                         for image rendering in html reports                                         
- 2.6.1   28.09.2020  D. Aust          - #40 - APEX 20.1 security bundle (PSE 30990551) rejects response header "Cache-Control: private"
+ 2.6.1   28.09.2020  D. Aust          #40 - APEX 20.1 security bundle (PSE 30990551) 
+                                        rejects response header "Cache-Control: private"
  2.6.2   13.10.2020  D. Aust          - added function check_acl()
+ 2.8.0   08.02.2022  D. Aust          #79: XLIB_HTTP http_version
+                                        - added optional parameter for http version
 
 =========================================================================*/
 
    c_success   CONSTANT CHAR (1) := '1';
    c_fail      CONSTANT CHAR (1) := '0';
-   
+
   -- version of this package
-  version_c constant varchar2(20 char) := '2.6.2';   
-  
+  version_c constant varchar2(20 char) := '2.8.0';   
+
   TYPE vc_arr_t IS TABLE OF VARCHAR2 (32767) INDEX BY BINARY_INTEGER;
   g_empty_vc_arr vc_arr_t;
 
-/* Function: MyFunction
+/* Function: display_url_raw
  *
  * Parameters:
  *
@@ -49,7 +52,8 @@ AS
       p_mime_type_override   IN   VARCHAR2 DEFAULT NULL,
       p_charset              IN   VARCHAR2 DEFAULT NULL,
       p_header_name_arr      IN   vc_arr_t default g_empty_vc_arr,
-      p_header_value_arr     IN   vc_arr_t default g_empty_vc_arr
+      p_header_value_arr     IN   vc_arr_t default g_empty_vc_arr,
+      p_http_version         IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
    );
 
 /* Procedure: retrieve_blob_from_url
@@ -73,9 +77,10 @@ AS
       <escape_form_data>
 */
    PROCEDURE retrieve_blob_from_url (
-      p_url               VARCHAR2,
-      o_blob        OUT   BLOB,
-      o_mime_type   OUT   VARCHAR2
+      p_url             IN   VARCHAR2,
+      o_blob            OUT  BLOB,
+      o_mime_type       OUT  VARCHAR2,
+      p_http_version    IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
    );
 
 /* 
@@ -116,7 +121,7 @@ Returns:
 */
    FUNCTION check_get_request (p_url VARCHAR2)
       RETURN CHAR;
-      
+
 /*
 Function: check_acl
 

@@ -156,17 +156,21 @@ You can find the instructions [here](src/doc/github/integration-usage.md).
 ## <a name="configuration.jasperreports_properties"></a> jasperreports.properties file
 ```
 #====================================================================
-# 2.3.0.0	D. Aust		08.04.2015	New config parameter: 
-#									- application.infoPageIsEnabled
-# 2.6.1     D. Aust     15.09.2020  New config parameter: 
+# 2.3.0.0   D. Aust   08.04.2015  New config parameter: 
+#                                   - application.infoPageIsEnabled
+# 2.6.1     D. Aust   15.09.2020  New config parameter: 
 #                                   - application.ipAddressesAllowed
+# 2.8.0     D. Aust   08.02.2022  #84: Variable for report path
+#                                   - application.reportsPath
+#                                   "name" in jdbc connection definition
+#                                     no longer required
 #====================================================================
 
 #====================================================================
 # Application properties (global)
 #====================================================================
 [application]
-configFileVersion=2.6.1
+configFileVersion=2.8.0
 
 # set the jndiPrefix, this is different for different
 # containers, e.g. 
@@ -180,9 +184,18 @@ infoPageIsEnabled=true
 
 # this parameter is limiting access to the integration for the 
 # specified list of ip addresses, e.g.: 
-# ipAddressListAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# ipAddressesAllowed=127.0.0.1,10.10.10.10,192.168.178.31
 # if the list is empty, ALL addresses are allowed
 # ipAddressesAllowed=0:0:0:0:0:0:0:1
+
+# report definition files will be looked up in the following order as
+#   specified by the reportsPath, e.g.: 
+#     Linux/macOS: reportsPath=../reports,/path/to/reports1:/path/to/reports2:/path/to/reports3
+#     Windows: reportsPath=..\\reports;c:\\path\\to\\reports1;c:\\path\\to\\reports2;c:\\path\\to\\reports3
+#   If the reportsPath is left empty or not defined, then the default is "../reports" (*nix) or
+#      "..\\reports" (windows) respectively, will start from the location of the application.properties (this)
+#      file
+reportsPath=
 
 #====================================================================
 # JDBC datasource configuration
@@ -191,7 +204,6 @@ infoPageIsEnabled=true
 #====================================================================
 [datasource:default]
 type=jdbc
-name=default
 url=jdbc:oracle:thin:@127.0.0.1:1521:XE
 username=my_oracle_user
 password=my_oracle_user_pwd
@@ -210,7 +222,7 @@ password=my_oracle_user_pwd
 # additional jdbc configurations, please uncomment
 #====================================================================
 #[datasource:test]
-#name=test
+#type=jdbc
 #url=jdbc:oracle:thin:@127.0.0.1:1521:XE
 #username=my_oracle_user
 #password=my_oracle_user_pwd
@@ -234,6 +246,7 @@ displayPrintDialog=false
 isEnabled=false
 
 # allow only certain directories on the server to write to
+# Use "," to separate between path entries
 #directoryWhitelist=/Users/daust/oc-jasper/tmp,/Users/daust/oc-jasper
 
 #====================================================================
@@ -392,6 +405,20 @@ The second paragraph, all in capital letters, is a standard legal boilerplate no
 
 # <a name="faq"></a>FAQ / Troubleshooting
 
+## Enable Debugging
+
+JasperReportsIntegration is using the log4j2 framework for logging. 
+The configuration file for logging is ``conf/log4j2.xml``. 
+
+* Edit the file ``conf/log4j2.xml`` and change the log level from ``INFO`` to ``TRACE``, ``DEBUG``, ``WARN`` or ``ERROR``: 
+    <pre>&lt;Logger name="de.oc" level="<b>info</b>" additivity="false" \&gt;</pre>
+  to
+    <pre>&lt;Logger name="de.oc" level="<b>debug</b>" additivity="false" \&gt;</pre>
+* You can restart the application server, but you don't have it. It should pick up the change after 30 seconds automatically without restarting. 
+* Then you can find the log entries in the file ``logs/JasperReportsIntegration.log``.
+    
+## Known Issues
+
 * When using "headless" Linux servers (https://www.howtogeek.com/660841/what-is-a-headless-server/, ), you might encounter error messages regarding awt like the following: ``"java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11GraphicsEnvironment"``.  
     - Solution: You need to configure your application server (e.g. Tomcat) in headless mode. You can get more information here: https://www.xwiki.org/xwiki/bin/view/Documentation/AdminGuide/Installation/InstallationWAR/InstallationTomcat/
     - For Windows, create a file named ``setenv.bat`` in the directory ``%TOMCAT_HOME%/bin``. It will be called from ``catalina.bat``:
@@ -405,22 +432,6 @@ The second paragraph, all in capital letters, is a standard legal boilerplate no
         export JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true"
         ```
 
-* Enable debug messages
-    - Edit the file ``conf/log4j.properties`` and change
-        <pre>
-        # opal-consulting logging
-        # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
-        log4j.logger.de.oc=<b>OFF</b>
-        </pre>
-      to
-        <pre>
-        # opal-consulting logging
-        # ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
-        log4j.logger.de.oc=<b>DEBUG</b>
-        </pre>
-    - Restart the application server
-    - Then you can find the log entries in the file ``logs/JasperReportsIntegration.log``.
-    
 * Error connecting to Oracle Cloud Database on Windows:
 
   This is weird, you might get one of the following errors: 

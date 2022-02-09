@@ -14,10 +14,12 @@
 
 package de.oc.db;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-/** Defines a data source, holds all information for a jdbc database connection.
- * <br> 
+/**
+ * Defines a data source, holds all information for a jdbc database connection.
+ * <br>
  * 
  * @author D. Aust
  *
@@ -29,8 +31,8 @@ public class DataSourceDefinition {
 	public String url;
 	public String username;
 	public String password;
-	
-	private final static Logger logger = Logger.getLogger(DataSourceDefinition.class);
+
+	private static final Logger logger = LogManager.getLogger(DataSourceDefinition.class);
 
 	public DataSourceDefinition(String type, String name, String url, String username, String password) {
 		this.type = type;
@@ -39,13 +41,13 @@ public class DataSourceDefinition {
 		this.username = username;
 		this.password = password;
 	}
-	
-	public void dump(){
-		logger.debug("dataSource("+this.name+"):");
-		logger.debug("	type:"+this.type);
-		logger.debug("	name:"+this.name);
-		logger.debug("	url:"+this.url);
-		logger.debug("	username:"+this.username);
+
+	public void dump() {
+		logger.debug("dataSource(" + this.name + "):");
+		logger.debug("	type:" + this.type);
+		logger.debug("	name:" + this.name);
+		logger.debug("	url:" + this.url);
+		logger.debug("	username:" + this.username);
 		logger.debug("	password:*******");
 	}
 }

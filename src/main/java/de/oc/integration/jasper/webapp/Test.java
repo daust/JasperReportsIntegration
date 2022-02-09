@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.oc.db.DBUtils;
 import de.oc.utils.Utils;
@@ -36,7 +37,7 @@ import de.oc.utils.Utils;
 public class Test extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String CONTENT_TYPE = "text/html; charset=windows-1252";
-	private static Logger logger = Logger.getLogger(Test.class.getName());
+	private static final Logger logger = LogManager.getLogger(Test.class);
 
 	/**
 	 * 
@@ -48,11 +49,11 @@ public class Test extends HttpServlet {
 	/**
 	 * 
 	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		logger.info("doGet() - start");
-		
+		logger.traceEntry();
+		logger.info("*** servlet /test START");
+
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -60,16 +61,18 @@ public class Test extends HttpServlet {
 		AppConfig appConfig = AppConfig.getInstance();
 		// validate configuration, has the config file been changed since last time?
 		appConfig.validateConfiguration(getServletContext());
-		
-	    // #684 - Security: disable j2ee info and test page (as a configurable parameter)
-	    if (!appConfig.infoPageIsEnabled){
-	    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "This page is protected." );	
-	    }
-	    // #37 Security: Whitelisting of ip addresses to access the /JasperReportsIntegration service
-	    if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())){
-	    	response.sendError ( HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access th." );	
-	    }
-		
+
+		// #684 - Security: disable j2ee info and test page (as a configurable
+		// parameter)
+		if (!appConfig.infoPageIsEnabled) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "This page is protected.");
+		}
+		// #37 Security: Whitelisting of ip addresses to access the
+		// /JasperReportsIntegration service
+		if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access th.");
+		}
+
 		// extract all relevant url parameters from the url
 		URLCallInterface urlCallInterface = new URLCallInterface(request);
 
@@ -80,8 +83,7 @@ public class Test extends HttpServlet {
 		out.println("<link rel=StyleSheet href=\"JasperReportsIntegration.css\" type=\"text/css\">");
 		out.println("<head><title>test</title></head>");
 		out.println("<body>");
-		out.println("<h1>Basic connectivity test for dataSource="
-				+ urlCallInterface.dataSource + "</h1>");
+		out.println("<h1>Basic connectivity test for dataSource=" + urlCallInterface.dataSource + "</h1>");
 
 		try {
 			conn = appConfig.getConnection(urlCallInterface.dataSource);
@@ -91,31 +93,22 @@ public class Test extends HttpServlet {
 					+ "       sys_context('userenv', 'instance_name') instance_name,"
 					+ "       sys_context('userenv', 'db_name') db_name,"
 					+ "       sys_context('userenv', 'server_host') server_host,"
-					+ "       to_char(sysdate, 'dd.mm.yyyy hh24:mi:ss') curr_time"
-					+ "  from dual");
+					+ "       to_char(sysdate, 'dd.mm.yyyy hh24:mi:ss') curr_time" + "  from dual");
 
 			out.write("<h3>Session Info</h3><BR />");
 			out.write("<table class=\"newspaper-b\">");
-			out.write("<tr><th>Session User</th>"
-					    + "<th>Parsing User</th>"
-					    + "<th>Instance Name</th>"
-					    + "<th>DB Name</th>"
-					    + "<th>Server Host</th>"
-					    + "<th>Current Time</th>"
-					    + "</tr>");
+			out.write("<tr><th>Session User</th>" + "<th>Parsing User</th>" + "<th>Instance Name</th>"
+					+ "<th>DB Name</th>" + "<th>Server Host</th>" + "<th>Current Time</th>" + "</tr>");
 
 			while (rs.next()) {
 
 				out.write("<tr>");
-				
-				out.write("<td>" + rs.getString("SESSION_USER") + "</td>"
-						+ "<td>" + rs.getString("PARSING_USER") + "</td>"
-						+ "<td>" + rs.getString("INSTANCE_NAME") + "</td>"
-						+ "<td>" + rs.getString("DB_NAME") + "</td>"
-						+ "<td>" + rs.getString("SERVER_HOST") + "</td>"
-						+ "<td>" + rs.getString("CURR_TIME") + "</td>"
-						);
-				
+
+				out.write("<td>" + rs.getString("SESSION_USER") + "</td>" + "<td>" + rs.getString("PARSING_USER")
+						+ "</td>" + "<td>" + rs.getString("INSTANCE_NAME") + "</td>" + "<td>" + rs.getString("DB_NAME")
+						+ "</td>" + "<td>" + rs.getString("SERVER_HOST") + "</td>" + "<td>" + rs.getString("CURR_TIME")
+						+ "</td>");
+
 				out.write("</tr>");
 
 			}
@@ -124,11 +117,10 @@ public class Test extends HttpServlet {
 			// close handles
 			stmt.close();
 			rs.close();
-			conn.close();			
-			
+			conn.close();
+
 		} catch (SQLException e) {
-			Utils.throwRuntimeException("Error while selecting user objects: "
-					+ e.getMessage());
+			Utils.throwRuntimeException("Error while selecting user objects: " + e.getMessage());
 		} finally {
 			DBUtils.closeQuietly(conn, stmt, rs);
 		}
@@ -136,17 +128,17 @@ public class Test extends HttpServlet {
 		out.println("</body></html>");
 		out.close();
 
-		logger.info("doGet() - end");
+		logger.info("*** servlet /test END");
+		logger.traceExit();
 	}
 
 	/**
-	 * @param request default
-	 * @param response default 
-	 * @throws ServletException default 
-	 * @throws IOException default
+	 * @param request  default
+	 * @param response default
+	 * @throws ServletException default
+	 * @throws IOException      default
 	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
 }
