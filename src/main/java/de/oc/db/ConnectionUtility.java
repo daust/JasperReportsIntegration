@@ -136,18 +136,21 @@ public class ConnectionUtility {
 						poolDataSource.setURL(dataSourceDef.url);
 						poolDataSource.setUser(dataSourceDef.username);
 						poolDataSource.setPassword(dataSourceDef.password);
+						poolDataSource.setConnectionPoolName(dsName);
 
 						poolDataSource.setInitialPoolSize(5);
 						poolDataSource.setMinPoolSize(5);
 						poolDataSource.setMaxPoolSize(50);
+
 						// remove additional connections from pool after 10min idle time
 						poolDataSource.setInactiveConnectionTimeout(600);
+						poolDataSource.setValidateConnectionOnBorrow(true);
 
 						dataSources.put(dsName, poolDataSource);
 					}
 
 					conn = poolDataSource.getConnection();
-
+					
 					logger.debug("initial pool size: " + poolDataSource.getInitialPoolSize());
 					logger.debug("min pool size: " + poolDataSource.getMinPoolSize());
 					logger.debug("max pool size: " + poolDataSource.getMaxPoolSize());
