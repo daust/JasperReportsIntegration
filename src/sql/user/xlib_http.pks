@@ -3,11 +3,11 @@ AS
 /*=========================================================================
 
   Purpose  : Make http callouts
-  
+
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
              Licensed under a BSD style license (license.txt)
              http://www.opal-consulting.de/pls/apex/f?p=20090928:14
-               
+
  Version Date        Author           Comment
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          19.02.2007  D. Aust          initial creation
@@ -32,10 +32,10 @@ AS
 
    c_success   CONSTANT CHAR (1) := '1';
    c_fail      CONSTANT CHAR (1) := '0';
-   
+
   -- version of this package
   version_c constant varchar2(20 char) := '2.8.0';   
-  
+
   TYPE vc_arr_t IS TABLE OF VARCHAR2 (32767) INDEX BY BINARY_INTEGER;
   g_empty_vc_arr vc_arr_t;
 
@@ -121,7 +121,7 @@ Returns:
 */
    FUNCTION check_get_request (p_url VARCHAR2)
       RETURN CHAR;
-      
+
 /*
 Function: check_acl
 

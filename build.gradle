@@ -31,9 +31,8 @@ plugins {
   id "distribution"
   id "org.gretty" version "3.0.7"
 }
-// version 4.0 of gretty requires Java 11
-// apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
-// apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+// version 4.0 of gretty requires Java 11: https://gretty-gradle-plugin.github.io/gretty-doc/Gretty-configuration.html
+//apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
 
 //for Ant filter
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -73,6 +72,7 @@ import org.gradle.internal.os.OperatingSystem
 /* define repositories to look for maven modules */
 repositories {
     maven {url "https://plugins.gradle.org/m2/"}
+    gradlePluginPortal()
     maven {url "https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts"}
     mavenCentral()
     flatDir {dirs "lib/jasper-reports/$jasperreportsVersion"}
@@ -135,8 +135,8 @@ dependencies {
 }
 
 gretty {
-  servletContainer = 'jetty9' // can be changed to Tomcat, by default jetty9 is used
-  httpPort      = 8099
+  servletContainer = 'tomcat9' // can be changed to Tomcat, by default jetty9 is used
+  httpPort      = 8090
   //initParameter 'oc.jasper.config.home', "/tmp/jri"
   contextPath   = "/jri"
   jvmArgs = [
@@ -456,6 +456,7 @@ task jriDownloadJasperLibraries{
 /* build a new war file that will work on Tomcat10 */
 task buildWarTomcat10{
   description = "build a new war file that will work on Tomcat10"
+  dependsOn build
   //def cmd="$project.projectDir/src/build-support/jakartaee-migration-1.0.0/bin/migrate.sh $project.projectDir/build/distributions/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.zip $project.projectDir/build/distributions/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}-tomcat10.zip -zipInMemory -exclude=\"*.jar\" -exclude=\"*jetty*.war\""
 
   def cmd="$project.projectDir/src/build-support/jakartaee-migration-1.0.0/bin/migrate.sh $project.projectDir/build/libs/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.war $project.projectDir/build/distributions/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}-tomcat10.war -zipInMemory -exclude=\"*.jar\" -exclude=\"*jetty*.war\""
@@ -469,6 +470,9 @@ task buildWarTomcat10{
 /* build and deploy a version to the local Tomcat10 installation for testing */
 task buildWarTomcat10DeployLocal{
   description = "build a new war file that will work on Tomcat10"
+
+  dependsOn build
+
   def tomcatHome="/Users/daust/Downloads/KEEP/tomcat/apache-tomcat-10.0.16"
   def cmd="$project.projectDir/src/build-support/jakartaee-migration-1.0.0/bin/migrate.sh $project.projectDir/build/libs/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.war $tomcatHome/webapps/jri.war -zipInMemory -exclude=\"*.jar\" -exclude=\"*jetty*.war\""
   

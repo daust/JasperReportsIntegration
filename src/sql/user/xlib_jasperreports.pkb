@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE BODY "XLIB_JASPERREPORTS"
+create or replace PACKAGE BODY "XLIB_JASPERREPORTS"
 AS
 /*=========================================================================
   Purpose  : 
@@ -28,7 +28,8 @@ AS
   2.5.0.1  30.09.2018  D. Aust     fix bool2string issue
   2.6.1    01.10.2020  D. Aust   add get_default_configuration() and set_default_configuration()
   2.6.2    13.10.2020  D. Aust   #54 - Timeout value from default table not working
-
+  2.8.0    08.02.2022  D. Aust   #79: XLIB_HTTP http_version
+                                   - added optional parameter for http version
 =========================================================================*/
 
 
@@ -57,13 +58,13 @@ AS
       l_timeout PLS_INTEGER;
     begin
         l_conf := get_default_configuration();
-        
+
         -- override report url if not defined
         if m_report_url is null then
           m_report_url := l_conf.conf_protocol || '://'||l_conf.conf_server||':'||l_conf.conf_port||'/'||l_conf.conf_context_path||'/report';
           xlog(p_module => m_module, p_msg => 'Override report url from defaults: '|| m_report_url, p_type=> 'DEBUG');
         end if;
-        
+
         -- set wallet path and pwd
         -- will ALWAYS override the settings, will ignore previous calls to set_wallet
         -- at least we check whether the config table has an entry for the wallet or not. 
@@ -72,7 +73,7 @@ AS
             utl_http.set_wallet(l_conf.conf_wallet_path, l_conf.conf_wallet_pwd);
             xlog(p_module => m_module, p_msg => 'Override wallet location/pwd from defaults', p_type=> 'DEBUG');
         end if;
-        
+
         -- override http transfer timeout it not defined
         utl_http.get_transfer_timeout( timeout => l_timeout );
         --xlog(p_module => m_module, p_msg => 'Current setting of transfer_timeout: '||l_timeout, p_type=> 'DEBUG');
@@ -80,7 +81,7 @@ AS
             utl_http.set_transfer_timeout(l_conf.conf_http_transfer_timeout);
             xlog(p_module => m_module, p_msg => 'Override http transfer timeout ('||l_timeout||'s) from defaults: '|| l_conf.conf_http_transfer_timeout ||'s', p_type=> 'DEBUG');
         end if;
-        
+
     end;
 
    PROCEDURE dump_all_cookies
@@ -129,10 +130,10 @@ AS
    BEGIN
       m_images_uri := p_images_uri;
    END;
-   
+
    /* use the images from the application server when both /ords and /jri are 
       installed on the same application server 
-      
+
       the p_server_uri parameter is rarely used, only when they are not run on the same application server
       and the uri differs. But that comes with a lot of CORS and other cookie issues. 
     */
@@ -141,12 +142,12 @@ AS
    begin
      m_use_images_no_tunnel := true;
      m_cookie_path_no_tunnel := p_cookie_path;
-     
+
      -- the placeholders #J2EE_CONTEXT_PATH# and #IMAGE_NAME# will be replaced 
      -- inside the J2EE application with the current values of the deployment
      set_images_uri( p_images_uri => p_server_uri || '#J2EE_CONTEXT_PATH#/report_image?image=#IMAGE_NAME#');
    end;
-   
+
    function get_use_images_no_tunnel return boolean
    is
    begin
@@ -197,7 +198,9 @@ AS
    ----------------------------------------------------------------------------
    -- displays an image for html reports
    ----------------------------------------------------------------------------
-   PROCEDURE show_image (p_image_name IN VARCHAR2)
+   PROCEDURE show_image (
+      p_image_name IN VARCHAR2, 
+      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1)
    IS
       l_proc               VARCHAR2 (100) := m_module || '.show_image';
       l_url                VARCHAR2 (32767);
@@ -232,7 +235,7 @@ AS
    BEGIN
       xlog (l_proc, 'start: ### SHOW IMAGE: ' || p_image_name);
       dump_all_cookies;
-      
+
       -- pick up defaults from table xlib_jasperreports_conf
       setup_configuration_defaults();
 
@@ -263,7 +266,12 @@ AS
       -- call J2EE server
       -------------------------------------------------------
       xlib_http.
-       display_url_raw (p_url => l_url, p_header_name_arr => l_header_name_arr, p_header_value_arr => l_header_value_arr);
+       display_url_raw (
+          p_url => l_url, 
+          p_header_name_arr => l_header_name_arr, 
+          p_header_value_arr => l_header_value_arr,
+          p_http_version => p_http_version
+          );
    END;
 
 
@@ -289,21 +297,22 @@ AS
                           p_save_is_enabled      IN BOOLEAN DEFAULT FALSE,
                           p_save_filename        IN VARCHAR2 DEFAULT NULL,
                           p_rep_time_zone        IN VARCHAR2 DEFAULT NULL,
-                          p_print_job_name       IN VARCHAR2 DEFAULT NULL)
+                          p_print_job_name       IN VARCHAR2 DEFAULT NULL,
+                          p_http_version         IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1)
    IS
       l_proc   VARCHAR2 (100) := m_module || '.SHOW_REPORT';
       l_url    VARCHAR2 (32767);
    BEGIN
       -- pick up defaults from table xlib_jasperreports_conf
       setup_configuration_defaults();
-   
+
       -------------------------------------------------------
       -- assert valid values for the input variables
       -------------------------------------------------------
       IF m_report_url IS NULL
       THEN
          xlog(p_module => m_module, p_msg => 'The report url is empty', p_type=> 'ERROR');
-         
+
          RAISE report_url_not_defined;
       END IF;
 
@@ -342,7 +351,7 @@ AS
       l_url := l_url || '&_saveIsEnabled=' || bool2string (p_save_is_enabled);
       l_url := l_url || '&_saveFileName=' || p_save_filename;
 
-      
+
 /*
       Each additional parameter needs to be escaped using utl_url.escape()
        utl_url.escape(
@@ -362,11 +371,13 @@ AS
                                                    url_charset            => 'UTF-8'
         );
       END IF;
-      
+
       -------------------------------------------------------
       -- call J2EE server
       -------------------------------------------------------
-      xlib_http.display_url_raw (p_url => l_url);
+      xlib_http.display_url_raw (
+        p_url => l_url,
+        p_http_version => p_http_version);
    END;
 
    ----------------------------------------------------------------------------
@@ -389,14 +400,15 @@ AS
                          p_rep_time_zone        IN     VARCHAR2 DEFAULT NULL,
                          p_out_blob             IN OUT BLOB,
                          p_out_mime_type        IN OUT VARCHAR2,
-                         p_print_job_name       IN     VARCHAR2 DEFAULT NULL)
+                         p_print_job_name       IN     VARCHAR2 DEFAULT NULL,
+                         p_http_version         IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1)
    IS
       l_proc   VARCHAR2 (100) := m_module || '.GET_REPORT';
       l_url    VARCHAR2 (32767);
    BEGIN
       -- pick up defaults from table xlib_jasperreports_conf
       setup_configuration_defaults();
-      
+
       -------------------------------------------------------
       -- assert valid values for the input variables
       -------------------------------------------------------
@@ -453,7 +465,11 @@ AS
       -------------------------------------------------------
       -- call Tomcat
       -------------------------------------------------------
-      xlib_http.retrieve_blob_from_url (p_url => l_url, o_blob => p_out_blob, o_mime_type => p_out_mime_type);
+      xlib_http.retrieve_blob_from_url (
+         p_url => l_url, 
+         o_blob => p_out_blob, 
+         o_mime_type => p_out_mime_type,
+         p_http_version=> p_http_version);
    END;
 
    ----------------------------------------------------------------------------
@@ -470,7 +486,7 @@ AS
        WHERE conf_id = 'MAIN';
 
       RETURN l_conf;
-   END;
+   END; 
 
    ----------------------------------------------------------------------------
    -- set default configuration

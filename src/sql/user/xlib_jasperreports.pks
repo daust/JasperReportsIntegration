@@ -28,11 +28,12 @@ AS
   2.5.0.1  30.09.2018  D. Aust     fix bool2string issue
   2.6.1    01.10.2020  D. Aust   add get_default_configuration() and set_default_configuration()
   2.6.2    13.10.2020  D. Aust   #54 - Timeout value from default table not working
-
+  2.8.0    08.02.2022  D. Aust   #79: XLIB_HTTP http_version
+                                   - added optional parameter for http version
 =========================================================================*/
 
   -- version of this package
-  version_c constant varchar2(20 char) := '2.6.2';   
+  version_c constant varchar2(20 char) := '2.8.0';   
 
    -- constants
    -- supported formats
@@ -105,6 +106,7 @@ AS
                           Etc/Greenwich, Europe/London
  * @param p_save_filename filename for the file to be saved on the server 
  * @param p_print_job_name name of the print job name, by default it uses: JasperReports - <report name>
+ * @param p_http_version http protocol used. Default is utl_http.http_version_1_1, you can downgrade to utl_http.http_version_1_0
  * 
  */
    PROCEDURE show_report (
@@ -124,11 +126,14 @@ AS
       p_save_is_enabled     in   boolean default false,
       p_save_filename       in   varchar2 default null,
       p_rep_time_zone       in   varchar2 default null,
-      p_print_job_name      in   varchar2 default null
+      p_print_job_name      in   varchar2 default null,
+      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
    );
 
    /* tunnels images for html reports */
-   procedure show_image(p_image_name IN   VARCHAR2);
+   procedure show_image(
+      p_image_name IN   VARCHAR2,
+      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1);
 
 
 /**  run the report and return the result as a blob
@@ -156,6 +161,7 @@ AS
  * @param p_out_blob      the blob will be returned here
  * @param p_out_mime_type the proper mime type of the generated file 
  * @param p_print_job_name name of the print job name, by default it uses: JasperReports - <report name> 
+ * @param p_http_version http protocol used. Default is utl_http.http_version_1_1, you can downgrade to utl_http.http_version_1_0
  *
  */
    PROCEDURE get_report (
@@ -176,15 +182,16 @@ AS
       p_rep_time_zone       in   varchar2 default null,
       p_out_blob            IN OUT   BLOB,
       p_out_mime_type       IN OUT   VARCHAR2,
-      p_print_job_name      in   varchar2 default null
+      p_print_job_name      in   varchar2 default null,
+      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
    );
-   
+
 ----------------------------------------------------------------------------
 -- get default configuration
 ----------------------------------------------------------------------------
    FUNCTION get_default_configuration
       return xlib_jasperreports_conf%rowtype;
-      
+
 ----------------------------------------------------------------------------
 -- set default configuration
 ----------------------------------------------------------------------------

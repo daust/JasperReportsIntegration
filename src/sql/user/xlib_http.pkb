@@ -3,11 +3,11 @@ AS
 /*=========================================================================
 
   Purpose  : Make http callouts
-  
+
   License  : Copyright (c) 2010 Dietmar Aust (opal-consulting.de)
              Licensed under a BSD style license (license.txt)
              https://github.com/daust/JasperReportsIntegration
-               
+
  Version Date        Author           Comment
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          19.02.2007  D. Aust          initial creation
@@ -66,19 +66,19 @@ AS
 
       -- Initialize the BLOB.
       DBMS_LOB.createtemporary (l_blob, FALSE);
-      
+
       l_http_request := UTL_HTTP.begin_request (url          => p_url,
                                                 method       => 'GET',
                                                 http_version => p_http_version);
-      
+
       utl_http.set_header (l_http_request, 'Connection', 'Keep-Alive');
-      
+
       -- pass additional headers to the target service
       for i in 1..p_header_name_arr.count loop
         xlog(l_proc, 'pass additional headers to target service: '|| p_header_name_arr(i) ||': '||p_header_value_arr(i));
         utl_http.set_header(l_http_request, p_header_name_arr(i), p_header_value_arr(i));
       end loop;
-      
+
       -- get response from target service
       l_http_response := UTL_HTTP.get_response (l_http_request);
 
@@ -138,7 +138,7 @@ AS
               --extract path
               l_jsession := regexp_substr(l_header_value_arr (i), 'JSESSIONID=(.*);[ ]*Path',1, 1,'i',1);
               l_path := regexp_substr(l_header_value_arr (i), ';[ ]*Path=(.*)',1, 1,'i',1);
-              
+
               xlog(l_proc, 'xx:full:'||l_header_value_arr (i)|| '; xx:session:'||l_jsession || '; xx:path:'||l_path);             
             else
               l_header_value := l_header_value_arr (i);
@@ -152,7 +152,7 @@ AS
             HTP.p (l_header_name_arr (i) || ': ' || l_header_value);
          END IF;
       END LOOP;
-      
+
       -- JSESSION Cookies ausgeben
       -- if using tunnel, then the cookie is JRI_JSESSIONID
       -- if not using tunnel, then cookie is JSESSIONID directly
@@ -213,7 +213,7 @@ AS
       l_http_request := utl_http.begin_request (url          => p_url,
                                                 method       => 'GET',
                                                 http_version => p_http_version);
-                                                
+
       l_http_response := UTL_HTTP.get_response (l_http_request);
 
       FOR i IN 1 .. UTL_HTTP.get_header_count (l_http_response)
@@ -306,7 +306,7 @@ AS
       THEN
          RETURN c_fail;
    END;
-   
+
    FUNCTION check_acl (p_url VARCHAR2)
       RETURN CHAR
    IS
