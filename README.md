@@ -156,17 +156,21 @@ You can find the instructions [here](src/doc/github/integration-usage.md).
 ## <a name="configuration.jasperreports_properties"></a> jasperreports.properties file
 ```
 #====================================================================
-# 2.3.0.0	D. Aust		08.04.2015	New config parameter: 
-#									- application.infoPageIsEnabled
-# 2.6.1     D. Aust     15.09.2020  New config parameter: 
+# 2.3.0.0   D. Aust   08.04.2015  New config parameter: 
+#                                   - application.infoPageIsEnabled
+# 2.6.1     D. Aust   15.09.2020  New config parameter: 
 #                                   - application.ipAddressesAllowed
+# 2.8.0     D. Aust   08.02.2022  #84: Variable for report path
+#                                   - application.reportsPath
+#                                   "name" in jdbc connection definition
+#                                     no longer required
 #====================================================================
 
 #====================================================================
 # Application properties (global)
 #====================================================================
 [application]
-configFileVersion=2.6.1
+configFileVersion=2.8.0
 
 # set the jndiPrefix, this is different for different
 # containers, e.g. 
@@ -180,9 +184,18 @@ infoPageIsEnabled=true
 
 # this parameter is limiting access to the integration for the 
 # specified list of ip addresses, e.g.: 
-# ipAddressListAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# ipAddressesAllowed=127.0.0.1,10.10.10.10,192.168.178.31
 # if the list is empty, ALL addresses are allowed
 # ipAddressesAllowed=0:0:0:0:0:0:0:1
+
+# report definition files will be looked up in the following order as
+#   specified by the reportsPath, e.g.: 
+#     Linux/macOS: reportsPath=../reports,/path/to/reports1:/path/to/reports2:/path/to/reports3
+#     Windows: reportsPath=..\\reports;c:\\path\\to\\reports1;c:\\path\\to\\reports2;c:\\path\\to\\reports3
+#   If the reportsPath is left empty or not defined, then the default is "../reports" (*nix) or
+#      "..\\reports" (windows) respectively, will start from the location of the application.properties (this)
+#      file
+reportsPath=
 
 #====================================================================
 # JDBC datasource configuration
@@ -191,7 +204,6 @@ infoPageIsEnabled=true
 #====================================================================
 [datasource:default]
 type=jdbc
-name=default
 url=jdbc:oracle:thin:@127.0.0.1:1521:XE
 username=my_oracle_user
 password=my_oracle_user_pwd
@@ -210,7 +222,7 @@ password=my_oracle_user_pwd
 # additional jdbc configurations, please uncomment
 #====================================================================
 #[datasource:test]
-#name=test
+#type=jdbc
 #url=jdbc:oracle:thin:@127.0.0.1:1521:XE
 #username=my_oracle_user
 #password=my_oracle_user_pwd
@@ -234,6 +246,7 @@ displayPrintDialog=false
 isEnabled=false
 
 # allow only certain directories on the server to write to
+# Use "," to separate between path entries
 #directoryWhitelist=/Users/daust/oc-jasper/tmp,/Users/daust/oc-jasper
 
 #====================================================================

@@ -68,6 +68,11 @@ public class AppConfig {
 	public boolean saveFileIsEnabled = false;
 	private String[] _directoryWhitelist = null;
 
+	// path for looking up reports, will process that in
+	// the order specified
+	// Default: configHomeDir + File.separator + "reports";
+	private String[] reportsPath = null;
+
 	// ----------------------------------------------------
 	// private
 	// ----------------------------------------------------
@@ -175,6 +180,19 @@ public class AppConfig {
 
 		LoggerContext.getContext(false).reconfigure();
 
+		// ----------------------------------------------------
+		// Read config file
+		// ----------------------------------------------------
+		_applicationProperties = loadApplicationProperties(_applicationPropertiesFileName);
+
+		// dump properties to logfile
+		logApplicationProperties(_applicationPropertiesFileName);
+
+		// ----------------------------------------------------
+		// Process config file
+		// ----------------------------------------------------
+		processConfigFile(_applicationProperties);
+		
 		logger.info("*****************************************************");
 		logger.info("*** Initialize JasperReportsIntegration (jri) - START");
 		logger.info("*****************************************************");
@@ -193,32 +211,17 @@ public class AppConfig {
 				+ log4jPropertiesFilePath);
 		logger.debug("set system property " + OC_JASPER_LOG_DIR + "=" + logDir);
 		logger.debug("");
-		
+
 		logger.info("The current configuration is loaded from: {}", getConfigHomeDir());
 		logger.info("  Config-Directory: {}", getConfigDir());
 		logger.info("  Config-File: {}", getApplicationPropertiesFileName());
-		logger.info("  Reports-Directory: {}", getReportsDir());
+		logger.info("  Reports-Path: {}", de.oc.utils.StringUtils.convertStringArrayToString(getReportsPath(), ","));
 		logger.info("  Temp-Directory: {}", getTmpDir());
 		logger.info("  Logs-Directory: {}", getLogsDir());
 		logger.info("  Java-Runtime-Version: {}", System.getProperty("java.version"));
 		logger.info("  JasperReports-Version: {}", JasperCompileManager.class.getPackage().getImplementationVersion());
-		logger.info("  Classpath: {}",
-				StringUtils.join(
-						StringUtils.split((String) System.getProperties().get("java.class.path"), File.pathSeparator),
-						", "));
-
-		// ----------------------------------------------------
-		// Read config file
-		// ----------------------------------------------------
-		_applicationProperties = loadApplicationProperties(_applicationPropertiesFileName);
-
-		// dump properties to logfile
-		logApplicationProperties(_applicationPropertiesFileName);
-
-		// ----------------------------------------------------
-		// Process config file
-		// ----------------------------------------------------
-		processConfigFile(_applicationProperties);
+		logger.info("  Classpath: {}", StringUtils.join(
+				StringUtils.split((String) System.getProperties().get("java.class.path"), File.pathSeparator), ", "));
 
 		// initialize connection pool
 		_connectionUtility = ConnectionUtility.getInstance(_jndiPrefix);
@@ -315,6 +318,12 @@ public class AppConfig {
 		this.saveFileIsEnabled = Boolean.parseBoolean(props.getString("saveFileOnServer.isEnabled"));
 
 		this._directoryWhitelist = props.getStringArray("saveFileOnServer.directoryWhitelist");
+		
+		// get list of report paths
+		this.reportsPath = props.getStringArray("application.reportsPath");
+		if (reportsPath == null || reportsPath.length == 0 || props.getString("application.reportsPath").isEmpty())
+			reportsPath = new String[] { ".." + File.separator + "reports" };
+		
 
 		// loop over datasource-sections
 		Iterator<String> it = props.getSections().iterator();
@@ -351,8 +360,12 @@ public class AppConfig {
 		return _configHomeDir + File.separator + "conf";
 	}
 
-	public String getReportsDir() {
+/*	public String getReportsDir() {
 		return _configHomeDir + File.separator + "reports";
+	}
+*/
+	public String[] getReportsPath() {
+		return reportsPath;
 	}
 
 	public String getLogsDir() {
@@ -509,7 +522,7 @@ public class AppConfig {
 		if (this.ipAddressesAllowed.length == 0) {
 			return true;
 		}
-		
+
 		logger.debug("check ip address: " + ipAddress);
 		for (int i = 0; i < this.ipAddressesAllowed.length; i++) {
 			if (this.ipAddressesAllowed[i].toLowerCase().equals(ipAddress.toLowerCase()))

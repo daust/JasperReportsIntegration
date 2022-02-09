@@ -49,8 +49,8 @@
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getConfigDir() %></span></li>
 		<li>Config-File: <span
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getApplicationPropertiesFileName() %></span></li>
-		<li>Reports-Directory: <span
-			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getReportsDir() %></span></li>
+		<li>Reports-Path: <span
+			style="font-family: Consolas, Arial; font-weight: bold;"><%= de.oc.utils.StringUtils.convertStringArrayToString(appConfig.getReportsPath(), ",") %></span></li>
 		<li>Temp-Directory: <span
 			style="font-family: Consolas, Arial; font-weight: bold;"><%= appConfig.getTmpDir() %></span></li>
 		<li>Logs-Directory: <span

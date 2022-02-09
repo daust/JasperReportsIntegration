@@ -65,20 +65,30 @@ public class ReportUtilities {
 	public static ReportDefinitionFile getReportDefinitionFile(String pRepName) {
 
 		String errMsg = "";
-		String reportsDir = _appConfig.getReportsDir();
-		String reportFileNameBase = reportsDir + File.separator + pRepName;
+		String[] reportsPath = _appConfig.getReportsPath();
+		ReportDefinitionFile reportFile = null;
+		File jasperFile = null;
+		String reportsDir = null;
 
-		File jasperFile = new File(reportFileNameBase + ".jasper");
+		// look for the file in all entries of the reports path
+		for (int i = 0; i < reportsPath.length; i++) {
+			reportsDir = reportsPath[i];
+			String reportFileNameBase = reportsDir + File.separator + pRepName;
 
+			jasperFile = new File(reportFileNameBase + ".jasper");
+			if (jasperFile.exists())
+				break;
+
+		}
 		// does the report definition file exist?
 		if (!jasperFile.exists()) {
-			errMsg = "File " + reportFileNameBase + ".jasper not found.";
+			errMsg = "File " + pRepName + ".jasper not found on the report path.";
 
 			throw new RuntimeException(errMsg);
 		}
 
 		String reportFileDir = jasperFile.getParentFile().getAbsolutePath();
-		ReportDefinitionFile reportFile = new ReportDefinitionFile(jasperFile, reportFileDir, reportsDir);
+		reportFile = new ReportDefinitionFile(jasperFile, reportFileDir, reportsDir);
 
 		return reportFile;
 	}
@@ -93,30 +103,41 @@ public class ReportUtilities {
 	public static void compileJRXMLIfNecessary(String pRepName) {
 
 		String errMsg = "";
-		String reportsDir = _appConfig.getReportsDir();
-		String reportFileNameBase = reportsDir + File.separator + pRepName;
+		String[] reportsPath = _appConfig.getReportsPath();
 
-		File jasperFile = new File(reportFileNameBase + ".jasper");
-		File jrxmlFile = new File(reportFileNameBase + ".jrxml");
+		// look for the file in all entries of the reports path
+		for (int i = 0; i < reportsPath.length; i++) {
+			String reportsDir = reportsPath[i];
+			String reportFileNameBase = reportsDir + File.separator + pRepName;
 
-		// compilation is only required if jrxml file actually exists
-		if (jrxmlFile.exists()) {
-			// compile if no .jasper exists or timestamp is older than that of the .jrxml
-			// file
-			if (!jasperFile.exists() || (jasperFile.lastModified() < jrxmlFile.lastModified())) {
-				try {
-					logger.info("compiling file " + reportFileNameBase + ".jrxml on-the-fly");
+			File jasperFile = new File(reportFileNameBase + ".jasper");
+			File jrxmlFile = new File(reportFileNameBase + ".jrxml");
 
-					JasperCompileManager.compileReportToFile(reportFileNameBase + ".jrxml",
-							reportFileNameBase + ".jasper");
-				} catch (JRException e) {
-					e.printStackTrace();
-					errMsg = "Error compiling " + reportFileNameBase + ".jrxml: " + e.getMessage();
+			// compilation is only required if jrxml file actually exists
+			if (jrxmlFile.exists()) {
+				// compile if no .jasper exists or timestamp is older than that of the .jrxml
+				// file
+				if (!jasperFile.exists() || (jasperFile.lastModified() < jrxmlFile.lastModified())) {
+					try {
+						logger.info("compiling file " + reportFileNameBase + ".jrxml on-the-fly");
 
-					throw new RuntimeException(errMsg);
+						JasperCompileManager.compileReportToFile(reportFileNameBase + ".jrxml",
+								reportFileNameBase + ".jasper");
+					} catch (JRException e) {
+						e.printStackTrace();
+						errMsg = "Error compiling " + reportFileNameBase + ".jrxml: " + e.getMessage();
+
+						throw new RuntimeException(errMsg);
+					}
 				}
 			}
+			
+			// stop looping through directories once the first file is found
+			if (jasperFile.exists() || jrxmlFile.exists())
+				break;
+
 		}
+
 	}
 
 }
