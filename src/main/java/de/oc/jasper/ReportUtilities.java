@@ -29,7 +29,7 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 
 public class ReportUtilities {
 
-	private static final Logger logger = LogManager.getLogger(ServletUtilities.class);
+	private static final Logger logger = LogManager.getLogger();
 
 	private static AppConfig _appConfig = AppConfig.getInstance();
 
@@ -71,11 +71,14 @@ public class ReportUtilities {
 		String reportsDir = null;
 
 		// look for the file in all entries of the reports path
+		logger.debug("search for report " + pRepName + " in reportsPath: "
+				+ de.oc.utils.StringUtils.convertStringArrayToString(reportsPath, ","));
 		for (int i = 0; i < reportsPath.length; i++) {
 			reportsDir = reportsPath[i];
 			String reportFileNameBase = reportsDir + File.separator + pRepName;
 
 			jasperFile = new File(reportFileNameBase + ".jasper");
+			logger.trace("  test for report: " + reportFileNameBase + ".jasper");
 			if (jasperFile.exists())
 				break;
 
@@ -106,6 +109,8 @@ public class ReportUtilities {
 		String[] reportsPath = _appConfig.getReportsPath();
 
 		// look for the file in all entries of the reports path
+		logger.debug("search for report " + pRepName + " in reportsPath: "
+				+ de.oc.utils.StringUtils.convertStringArrayToString(reportsPath, ","));
 		for (int i = 0; i < reportsPath.length; i++) {
 			String reportsDir = reportsPath[i];
 			String reportFileNameBase = reportsDir + File.separator + pRepName;
@@ -113,10 +118,15 @@ public class ReportUtilities {
 			File jasperFile = new File(reportFileNameBase + ".jasper");
 			File jrxmlFile = new File(reportFileNameBase + ".jrxml");
 
+			logger.trace("  test for report: " + reportFileNameBase + ".jrxml" + " => " + jrxmlFile.exists());
+			logger.trace("  test for report: " + reportFileNameBase + ".jasper" + " => " + jasperFile.exists());
+			
+			
 			// compilation is only required if jrxml file actually exists
 			if (jrxmlFile.exists()) {
 				// compile if no .jasper exists or timestamp is older than that of the .jrxml
 				// file
+				
 				if (!jasperFile.exists() || (jasperFile.lastModified() < jrxmlFile.lastModified())) {
 					try {
 						logger.info("compiling file " + reportFileNameBase + ".jrxml on-the-fly");
@@ -131,7 +141,7 @@ public class ReportUtilities {
 					}
 				}
 			}
-			
+
 			// stop looping through directories once the first file is found
 			if (jasperFile.exists() || jrxmlFile.exists())
 				break;

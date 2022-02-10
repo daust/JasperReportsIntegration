@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -192,7 +194,7 @@ public class AppConfig {
 		// Process config file
 		// ----------------------------------------------------
 		processConfigFile(_applicationProperties);
-		
+
 		logger.info("*****************************************************");
 		logger.info("*** Initialize JasperReportsIntegration (jri) - START");
 		logger.info("*****************************************************");
@@ -318,12 +320,29 @@ public class AppConfig {
 		this.saveFileIsEnabled = Boolean.parseBoolean(props.getString("saveFileOnServer.isEnabled"));
 
 		this._directoryWhitelist = props.getStringArray("saveFileOnServer.directoryWhitelist");
-		
-		// get list of report paths
+
+		// get list of report paths and resolve relative paths to absolute paths
 		this.reportsPath = props.getStringArray("application.reportsPath");
-		if (reportsPath == null || reportsPath.length == 0 || props.getString("application.reportsPath").isEmpty())
+		logger.trace("reportsPath from application.properties: "
+				+ de.oc.utils.StringUtils.convertStringArrayToString(getReportsPath(), ","));
+		if (reportsPath == null || reportsPath.length == 0 || props.getString("application.reportsPath").isEmpty()) {
 			reportsPath = new String[] { ".." + File.separator + "reports" };
-		
+			logger.trace("set default for reportsPath: "
+					+ de.oc.utils.StringUtils.convertStringArrayToString(getReportsPath(), ","));
+		}
+		// replace relative paths
+		for (int i = 0; i < reportsPath.length; i++) {
+			Path path = Paths.get(reportsPath[i]);
+			
+			if (!path.isAbsolute()) {
+				// path is relative, try to resolve as relative path
+				
+				reportsPath[i] = Paths.get(this.getConfigDir()).resolve(reportsPath[i]).toFile().getAbsolutePath(); 
+						//path.resolve(this.getConfigDir()).toFile().getAbsolutePath();
+			}
+		}
+		logger.trace("reportsPath after replacing relative paths: "
+				+ de.oc.utils.StringUtils.convertStringArrayToString(getReportsPath(), ","));
 
 		// loop over datasource-sections
 		Iterator<String> it = props.getSections().iterator();
@@ -360,10 +379,10 @@ public class AppConfig {
 		return _configHomeDir + File.separator + "conf";
 	}
 
-/*	public String getReportsDir() {
-		return _configHomeDir + File.separator + "reports";
-	}
-*/
+	/*
+	 * public String getReportsDir() { return _configHomeDir + File.separator +
+	 * "reports"; }
+	 */
 	public String[] getReportsPath() {
 		return reportsPath;
 	}

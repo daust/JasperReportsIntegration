@@ -1,6 +1,29 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.8.1 (release: 10.02.2022)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/10?closed=1). 
+ 
+## New features
+  * *none*
+
+## Bug fixes
+  * #98 reportsPath: default value and relative paths (../reports or ..\\reports) don't work
+
+## Changed behaviour
+  * *none*
+
+## Deprecated features (still available but will go away eventually)
+  * *none*
+
+## Obsoleted features (no longer available)
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+  * For running the application on Tomcat10, you have to use ``jri-2.8.1-jasper-6.18.1-tomcat10.war`` instead of ``jri.war``.
+
 # Version 2.8.0 (release: 09.02.2022)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/8?closed=1). 
@@ -23,7 +46,7 @@ You can see the full list of issues with details in the [milestones page](https:
 
 
 ## Changed behaviour
-  * #79 By default, all http requests are now done using ``XLIB_HTTP.http_version_1_1``. If this causes issues in your application, you can downgrade to 1.0. It is a new optional parameter in ``xlib_jasperreports.
+  * #79 By default, all http requests are now done using ``XLIB_HTTP.http_version_1_1``. If this causes issues in your application, you can downgrade to 1.0. It is a new optional parameter in ``xlib_jasperreports.show_report`` and ``xlib_jasperreports.get_report``
 
 ## Deprecated features (still available but will go away eventually)
   * *none*
@@ -33,6 +56,7 @@ You can see the full list of issues with details in the [milestones page](https:
 
 ## Known issues
   * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+  * For running the application on Tomcat10, you have to use ``jri-2.8.0-jasper-6.18.1-tomcat10.war`` instead of ``jri.war``.
 
 # Version 2.7.1 (release: 14.12.2021)
 
