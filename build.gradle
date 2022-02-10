@@ -48,7 +48,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.8.0'
+  project.version           = '2.8.1'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -468,13 +468,13 @@ task buildWarTomcat10{
 }
 
 /* build and deploy a version to the local Tomcat10 installation for testing */
-task buildWarTomcat10DeployLocal{
+task deployTomcat10{
   description = "build a new war file that will work on Tomcat10"
 
-  dependsOn build
+  //dependsOn buildWarTomcat10
 
   def tomcatHome="/Users/daust/Downloads/KEEP/tomcat/apache-tomcat-10.0.16"
-  def cmd="$project.projectDir/src/build-support/jakartaee-migration-1.0.0/bin/migrate.sh $project.projectDir/build/libs/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.war $tomcatHome/webapps/jri.war -zipInMemory -exclude=\"*.jar\" -exclude=\"*jetty*.war\""
+  def cmd="cp $project.projectDir/build/distributions/${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}-tomcat10.war $tomcatHome/webapps/jri.war"
   
   doLast{
 
