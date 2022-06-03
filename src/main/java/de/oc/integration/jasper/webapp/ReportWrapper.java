@@ -390,19 +390,26 @@ public class ReportWrapper extends HttpServlet {
 					logger.debug("   repFormat: " + urlCallInterface.repFormat);
 					try {
 
+						
+						// and export again with the original exporter ...
+						logger.debug("   export "+urlCallInterface.repFormat+" to file: " + urlCallInterface.saveFileName);
+
 						// special handling for html exports
 						// 30.09.2018 D. Aust
 						// conversion exception
+						// special handling for csv => https://gitq.com/daust/JasperReportsIntegration/topics/35/unable-to-generate-csv-file-pdf-and-xlsx-work-fine/3
 						if (urlCallInterface.repFormat.equals("html") || urlCallInterface.repFormat.equals("html2")) {
-							logger.debug("   export HTML to file: " + urlCallInterface.saveFileName);
 							JasperExportManager.exportReportToHtmlFile(jasperPrint, urlCallInterface.saveFileName);
+						}else if (urlCallInterface.repFormat.equals("csv")){
+							exporter.setExporterOutput(new SimpleWriterExporterOutput(file));
+							exporter.exportReport();								
 						} else {
 							SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
 									file);
 							exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
 							exporter.setExporterOutput(exporterOutput);
 							exporter.exportReport();
-						}
+						}						
 					} catch (JRException e) {
 						Utils.throwRuntimeException(e.getMessage());
 					}
