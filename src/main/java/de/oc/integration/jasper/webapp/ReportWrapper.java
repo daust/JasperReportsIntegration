@@ -48,7 +48,10 @@ package de.oc.integration.jasper.webapp;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -64,6 +67,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -71,6 +76,7 @@ import de.oc.db.DBUtils;
 import de.oc.jasper.ReportDefinitionFile;
 import de.oc.jasper.ReportUtilities;
 import de.oc.print.PrinterUtilities;
+import de.oc.utils.FileIO;
 import de.oc.utils.Utils;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -151,278 +157,325 @@ public class ReportWrapper extends HttpServlet {
 	// ----------------------------------------------------
 	@SuppressWarnings("unchecked")
 	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		logger.traceEntry();
 		logger.info("*** servlet /report START");
 
 		String contentType = "";
-
-		AppConfig appConfig = AppConfig.getInstance();
-		// validate configuration, has the config file been changed since last
-		// time?
-		appConfig.validateConfiguration(getServletContext());
-
-		// #37 Security: Whitelisting of ip addresses to access the
-		// /JasperReportsIntegration service
-		if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access the application.");
-		}
-
 		JasperPrint jasperPrint = null;
 		OutputStream out = response.getOutputStream();
 		Connection conn = null;
 		@SuppressWarnings("rawtypes")
 		Exporter exporter = null;
+		URLCallInterface urlCallInterface = null;
+		AppConfig appConfig = null;
 
-		// extract all relevant url parameters from the url
-		URLCallInterface urlCallInterface = new URLCallInterface(request);
-
-		// ----------------------------------------------------
-		// compile .jrxml file into .jasper on the fly
-		// ----------------------------------------------------
-		ReportUtilities.compileJRXMLIfNecessary(urlCallInterface.repName);
-
-		// ----------------------------------------------------
-		// get the jasper file from the report search path
-		// look it up in order of the preferences of the search path
-		// ----------------------------------------------------
-		ReportDefinitionFile reportFile = ReportUtilities.getReportDefinitionFile(urlCallInterface.repName);
-		logger.info("using report file: " + reportFile.reportFile.getPath());
-
-		// ----------------------------------------------------
-		// All parameters are passed to the report,
-		// excluding the _* parameters
-		// ----------------------------------------------------
-		// the parameters are passed down to the report
-		Map<String, Object> reportParams = new HashMap<String, Object>();
-		reportParams = filterInternalParameters(request.getParameterMap());
-
-		// add parameters to the reportParameters
-		reportParams.put("BaseDir", reportFile.reportFileDir);
-		logger.debug("set parameter BaseDir:" + reportFile.reportFileDir);
-		reportParams.put("SUBREPORT_DIR", reportFile.reportFileDir + File.separator);
-		logger.debug("set parameter SUBREPORT_DIR:" + reportFile.reportFileDir + File.separator);
 		try {
-			reportParams.put("REPORT_LOCALE",
-					new Locale(urlCallInterface.repLocale.substring(0, 2), urlCallInterface.repLocale.substring(3, 5)));
-			logger.debug("set parameter REPORT_LOCALE:" + new Locale(urlCallInterface.repLocale.substring(0, 2),
-					urlCallInterface.repLocale.substring(3, 5)));
-		} catch (Exception e) {
-			Utils.throwRuntimeException("Report locale invalid: " + urlCallInterface.repLocale);
-		}
 
-		// set report timezone
-		logger.debug("set report timezone:" + urlCallInterface.repTimeZone);
-		reportParams.put("REPORT_TIME_ZONE", java.util.TimeZone.getTimeZone(urlCallInterface.repTimeZone));
+			appConfig = AppConfig.getInstance();
+			// validate configuration, has the config file been changed since last
+			// time?
+			appConfig.validateConfiguration(getServletContext());
 
-		// set file resolver
-		// #676 - Resolve local files with relative file paths, i.e. images in
-		// the same directory as the report itself
+			// #37 Security: Whitelisting of ip addresses to access the
+			// /JasperReportsIntegration service
+			if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())) {
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access the application.");
+			}
 
-		/*
-		 * LocalJasperReportsContext ctx = new LocalJasperReportsContext(
-		 * DefaultJasperReportsContext.getInstance());
-		 * ctx.setClassLoader(getClass().getClassLoader()); ctx.setFileResolver(new
-		 * SimpleFileResolver(new File( reportFile.reportFileDir)));
-		 */
-		// upgraded deprecated API functions
-		SimpleJasperReportsContext ctx = new SimpleJasperReportsContext();
-		FileRepositoryService fileRepository = new FileRepositoryService(ctx, reportFile.reportFileDir, false);
+			// extract all relevant url parameters from the url
+			urlCallInterface = new URLCallInterface(request);
 
-		ctx.setExtensions(RepositoryService.class, Collections.singletonList(fileRepository));
-		ctx.setExtensions(PersistenceServiceFactory.class,
-				Collections.singletonList(FileRepositoryPersistenceServiceFactory.getInstance()));
+			// ----------------------------------------------------
+			// compile .jrxml file into .jasper on the fly
+			// ----------------------------------------------------
+			ReportUtilities.compileJRXMLIfNecessary(urlCallInterface.repName);
 
-		// ----------------------------------------------------
-		// Fill report using the datasource
-		// ----------------------------------------------------
-		try {
-			conn = appConfig.getConnection(urlCallInterface.dataSource);
+			// ----------------------------------------------------
+			// get the jasper file from the report search path
+			// look it up in order of the preferences of the search path
+			// ----------------------------------------------------
+			ReportDefinitionFile reportFile = ReportUtilities.getReportDefinitionFile(urlCallInterface.repName);
+			logger.info("using report file: " + reportFile.reportFile.getPath());
 
-			logger.debug("fill report");
+			// ----------------------------------------------------
+			// All parameters are passed to the report,
+			// excluding the _* parameters
+			// ----------------------------------------------------
+			// the parameters are passed down to the report
+			Map<String, Object> reportParams = new HashMap<String, Object>();
+			reportParams = filterInternalParameters(request.getParameterMap());
 
-			JasperFillManager fillmanager = JasperFillManager.getInstance(ctx);
+			// add parameters to the reportParameters
+			reportParams.put("BaseDir", reportFile.reportFileDir);
+			logger.debug("set parameter BaseDir:" + reportFile.reportFileDir);
+			reportParams.put("SUBREPORT_DIR", reportFile.reportFileDir + File.separator);
+			logger.debug("set parameter SUBREPORT_DIR:" + reportFile.reportFileDir + File.separator);
+			try {
+				reportParams.put("REPORT_LOCALE", new Locale(urlCallInterface.repLocale.substring(0, 2),
+						urlCallInterface.repLocale.substring(3, 5)));
+				logger.debug("set parameter REPORT_LOCALE:" + new Locale(urlCallInterface.repLocale.substring(0, 2),
+						urlCallInterface.repLocale.substring(3, 5)));
+			} catch (Exception e) {
+				Utils.throwRuntimeException("Report locale invalid: " + urlCallInterface.repLocale);
+			}
 
-			jasperPrint = fillmanager.fill(reportFile.reportFile.getPath(), reportParams, conn);
-			logger.debug(
-					"net.sf.jasperreports.jdbc.fetch.size=" + ctx.getProperty("net.sf.jasperreports.jdbc.fetch.size"));
-			// logger.info("net.sf.jasperreports.jdbc.concurrency="+ctx.getProperty("net.sf.jasperreports.jdbc.concurrency"));
-			// logger.info("net.sf.jasperreports.jdbc.holdability="+ctx.getProperty("net.sf.jasperreports.jdbc.holdability"));
-			// logger.info("net.sf.jasperreports.jdbc.result.set.type="+ctx.getProperty("net.sf.jasperreports.jdbc.result.set.type"));
+			// set report timezone
+			logger.debug("set report timezone:" + urlCallInterface.repTimeZone);
+			reportParams.put("REPORT_TIME_ZONE", java.util.TimeZone.getTimeZone(urlCallInterface.repTimeZone));
 
-			conn.close();
-		} catch (SQLException e) {
-			Utils.throwRuntimeException(e.getMessage());
-		} catch (JRException e) {
-			Utils.throwRuntimeException(e.getCause() + e.getMessage());
-		} finally {
-			DBUtils.closeQuietly(conn);
-		}
+			// set file resolver
+			// #676 - Resolve local files with relative file paths, i.e. images in
+			// the same directory as the report itself
 
-		// ----------------------------------------------------------------------
-		// set format specific parameters
-		// http://jasperforge.org/uploads/publish/jasperreportswebsite/trunk/config.reference.html
-		// Mime-Types:
-		// http://technet.microsoft.com/en-us/library/ee309278%28office.12%29.aspx
-		// ----------------------------------------------------------------------
-		if (urlCallInterface.repFormat.equals("pdf")) {
-			contentType = "application/pdf";
-			exporter = new JRPdfExporter();
-			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-		}
-		if (urlCallInterface.repFormat.equals("docx")) {
-			contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-			exporter = new JRDocxExporter();
-			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-		}
-		if (urlCallInterface.repFormat.equals("pptx")) {
-			contentType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-			exporter = new JRPptxExporter();
-			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-		}
-		if (urlCallInterface.repFormat.equals("xlsx")) {
-			contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-			exporter = new JRXlsxExporter();
-			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-		}
-		if (urlCallInterface.repFormat.equals("rtf")) {
-			contentType = "application/rtf";
-			exporter = new JRRtfExporter();
-			exporter.setExporterOutput(new SimpleWriterExporterOutput(out));
-		}
-		if (urlCallInterface.repFormat.equals("html") || urlCallInterface.repFormat.equals("html2")) {
-			// use the new HTMLExporter
-			contentType = "text/html";
-			exporter = new HtmlExporter();
-			SimpleHtmlExporterOutput exporterOutput = new SimpleHtmlExporterOutput(out);
-			exporter.setExporterOutput(exporterOutput);
-			SimpleHtmlReportConfiguration configuration = new SimpleHtmlReportConfiguration();
+			/*
+			 * LocalJasperReportsContext ctx = new LocalJasperReportsContext(
+			 * DefaultJasperReportsContext.getInstance());
+			 * ctx.setClassLoader(getClass().getClassLoader()); ctx.setFileResolver(new
+			 * SimpleFileResolver(new File( reportFile.reportFileDir)));
+			 */
+			// upgraded deprecated API functions
+			SimpleJasperReportsContext ctx = new SimpleJasperReportsContext();
+			FileRepositoryService fileRepository = new FileRepositoryService(ctx, reportFile.reportFileDir, false);
 
-			// exporterOutput.setImageHandler(new
-			// WebHtmlResourceHandler("report_image?image={0}"));
-			// exporterOutput.setImageHandler(new WebHtmlResourceHandler(
-			// "report_image?" + ImageServlet.IMAGE_NAME_REQUEST_PARAMETER +
-			// "={0}" + "&uuid=" + UUID.randomUUID().toString()));
-			String uri = urlCallInterface.imagesURI.replace("#IMAGE_NAME#", "{0}") + "&uuid="
-					+ UUID.randomUUID().toString();
-			uri = uri.replace("#J2EE_CONTEXT_PATH#", request.getContextPath());
-			exporterOutput.setImageHandler(new WebHtmlResourceHandler(uri));
-			logger.debug(" IMAGES_URI=" + uri);
+			ctx.setExtensions(RepositoryService.class, Collections.singletonList(fileRepository));
+			ctx.setExtensions(PersistenceServiceFactory.class,
+					Collections.singletonList(FileRepositoryPersistenceServiceFactory.getInstance()));
 
-			exporter.setConfiguration(configuration);
+			// ----------------------------------------------------
+			// Fill report using the datasource
+			// ----------------------------------------------------
+			try {
+				conn = appConfig.getConnection(urlCallInterface.dataSource);
 
-			request.getSession().setAttribute(ImageServlet.DEFAULT_JASPER_PRINT_SESSION_ATTRIBUTE, jasperPrint);
-		}
-		if (urlCallInterface.repFormat.equals("xls")) {
-			contentType = "application/vnd.ms-excel";
-			exporter = new JRXlsExporter();
-			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-		}
-		if (urlCallInterface.repFormat.equals("csv")) {
-			contentType = "application/vnd.ms-excel";
-			exporter = new JRCsvExporter();
-			exporter.setExporterOutput(new SimpleWriterExporterOutput(out));
-		}
+				logger.debug("fill report");
 
-		logger.debug("set contentType=" + contentType);
+				JasperFillManager fillmanager = JasperFillManager.getInstance(ctx);
 
-		// set content type
-		response.setContentType(contentType + "; charset=" + urlCallInterface.repEncoding);
-		response.setLocale(new Locale(urlCallInterface.repLocale));
+				jasperPrint = fillmanager.fill(reportFile.reportFile.getPath(), reportParams, conn);
+				logger.debug("net.sf.jasperreports.jdbc.fetch.size="
+						+ ctx.getProperty("net.sf.jasperreports.jdbc.fetch.size"));
+				// logger.info("net.sf.jasperreports.jdbc.concurrency="+ctx.getProperty("net.sf.jasperreports.jdbc.concurrency"));
+				// logger.info("net.sf.jasperreports.jdbc.holdability="+ctx.getProperty("net.sf.jasperreports.jdbc.holdability"));
+				// logger.info("net.sf.jasperreports.jdbc.result.set.type="+ctx.getProperty("net.sf.jasperreports.jdbc.result.set.type"));
 
-		// found this to be mandatory with IE 6.0
-		response.setHeader("content-type", contentType + "; charset=" + urlCallInterface.repEncoding);
+				conn.close();
+			} catch (SQLException e) {
+				Utils.throwRuntimeException(e.getMessage());
+			} catch (JRException e) {
+				Utils.throwRuntimeException(e.getCause() + e.getMessage());
+			} finally {
+				DBUtils.closeQuietly(conn);
+			}
 
-		// set a specific filename for download, if given
-		if (urlCallInterface.outFilename != null && !"".equals(urlCallInterface.outFilename)) {
-			response.setHeader("Content-Disposition", "attachment; filename=" + urlCallInterface.outFilename);
-		}
+			// ----------------------------------------------------------------------
+			// set format specific parameters
+			// http://jasperforge.org/uploads/publish/jasperreportswebsite/trunk/config.reference.html
+			// Mime-Types:
+			// http://technet.microsoft.com/en-us/library/ee309278%28office.12%29.aspx
+			// ----------------------------------------------------------------------
+			if (urlCallInterface.repFormat.equals("pdf")) {
+				contentType = "application/pdf";
+				exporter = new JRPdfExporter();
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+			}
+			if (urlCallInterface.repFormat.equals("docx")) {
+				contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+				exporter = new JRDocxExporter();
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+			}
+			if (urlCallInterface.repFormat.equals("pptx")) {
+				contentType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+				exporter = new JRPptxExporter();
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+			}
+			if (urlCallInterface.repFormat.equals("xlsx")) {
+				contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+				exporter = new JRXlsxExporter();
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+			}
+			if (urlCallInterface.repFormat.equals("rtf")) {
+				contentType = "application/rtf";
+				exporter = new JRRtfExporter();
+				exporter.setExporterOutput(new SimpleWriterExporterOutput(out));
+			}
+			if (urlCallInterface.repFormat.equals("html") || urlCallInterface.repFormat.equals("html2")) {
+				// use the new HTMLExporter
+				contentType = "text/html";
+				exporter = new HtmlExporter();
+				SimpleHtmlExporterOutput exporterOutput = new SimpleHtmlExporterOutput(out);
+				exporter.setExporterOutput(exporterOutput);
+				SimpleHtmlReportConfiguration configuration = new SimpleHtmlReportConfiguration();
 
-		// ----------------------------------------------------
-		// generate the report and return file to the client browser
-		// ----------------------------------------------------
-		logger.debug("export report");
-		try {
-			exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-			exporter.exportReport();
-		} catch (JRException e) {
-			Utils.throwRuntimeException(e.getMessage());
-		}
+				// exporterOutput.setImageHandler(new
+				// WebHtmlResourceHandler("report_image?image={0}"));
+				// exporterOutput.setImageHandler(new WebHtmlResourceHandler(
+				// "report_image?" + ImageServlet.IMAGE_NAME_REQUEST_PARAMETER +
+				// "={0}" + "&uuid=" + UUID.randomUUID().toString()));
+				String uri = urlCallInterface.imagesURI.replace("#IMAGE_NAME#", "{0}") + "&uuid="
+						+ UUID.randomUUID().toString();
+				uri = uri.replace("#J2EE_CONTEXT_PATH#", request.getContextPath());
+				exporterOutput.setImageHandler(new WebHtmlResourceHandler(uri));
+				logger.debug(" IMAGES_URI=" + uri);
 
-		// ----------------------------------------------------
-		// save the report in the filesystem
-		// ----------------------------------------------------
-		if (urlCallInterface.saveIsEnabled.booleanValue()) {
-			logger.debug("user wants to save file to " + urlCallInterface.saveFileName);
+				exporter.setConfiguration(configuration);
 
-			if (appConfig.saveFileIsEnabled) {
-				logger.debug("saveFile is enabled in the configuration file");
+				request.getSession().setAttribute(ImageServlet.DEFAULT_JASPER_PRINT_SESSION_ATTRIBUTE, jasperPrint);
+			}
+			if (urlCallInterface.repFormat.equals("xls")) {
+				contentType = "application/vnd.ms-excel";
+				exporter = new JRXlsExporter();
+				exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+			}
+			if (urlCallInterface.repFormat.equals("csv")) {
+				contentType = "application/vnd.ms-excel";
+				exporter = new JRCsvExporter();
+				exporter.setExporterOutput(new SimpleWriterExporterOutput(out));
+			}
 
-				File file = new File(urlCallInterface.saveFileName);
-				String filename = file.getName();
-				String dirName = file.getParent();
+			logger.debug("set contentType=" + contentType);
 
-				logger.debug("saveFile to server:");
-				logger.debug("   dirName: " + dirName);
-				logger.debug("   filename: " + filename);
+			// set content type
+			response.setContentType(contentType + "; charset=" + urlCallInterface.repEncoding);
+			response.setLocale(new Locale(urlCallInterface.repLocale));
 
-				// is this a whitelist directory?
-				if (!appConfig.isWhitelistDirectory(dirName)) {
-					Utils.throwRuntimeException("Directory " + dirName
-							+ " is not specified as a whitelist target directory in application.properties.");
-				}
+			// found this to be mandatory with IE 6.0
+			response.setHeader("content-type", contentType + "; charset=" + urlCallInterface.repEncoding);
 
-				if (!file.getParentFile().exists()) {
-					Utils.throwRuntimeException("Directory " + dirName + " does not exist.");
-				}
+			// set a specific filename for download, if given
+			if (urlCallInterface.outFilename != null && !"".equals(urlCallInterface.outFilename)) {
+				response.setHeader("Content-Disposition", "attachment; filename=" + urlCallInterface.outFilename);
+			}
 
-				// export report to file
-				logger.info("   export report to file: " + urlCallInterface.saveFileName);
-				logger.debug("   repFormat: " + urlCallInterface.repFormat);
-				try {
+			// ----------------------------------------------------
+			// generate the report and return file to the client browser
+			// ----------------------------------------------------
+			logger.debug("export report");
+			try {
+				exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+				exporter.exportReport();
+			} catch (JRException e) {
+				Utils.throwRuntimeException(e.getMessage());
+			}
 
-					// special handling for html exports
-					// 30.09.2018 D. Aust
-					// conversion exception
-					if (urlCallInterface.repFormat.equals("html") || urlCallInterface.repFormat.equals("html2")) {
-						logger.debug("   export HTML to file: " + urlCallInterface.saveFileName);
-						JasperExportManager.exportReportToHtmlFile(jasperPrint, urlCallInterface.saveFileName);
-					} else {
-						SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(file);
-						exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-						exporter.setExporterOutput(exporterOutput);
-						exporter.exportReport();
+			// ----------------------------------------------------
+			// save the report in the filesystem
+			// ----------------------------------------------------
+			if (urlCallInterface.saveIsEnabled.booleanValue()) {
+				logger.debug("user wants to save file to " + urlCallInterface.saveFileName);
+
+				if (appConfig.saveFileIsEnabled) {
+					logger.debug("saveFile is enabled in the configuration file");
+
+					File file = new File(urlCallInterface.saveFileName);
+					String filename = file.getName();
+					String dirName = file.getParent();
+
+					logger.debug("saveFile to server:");
+					logger.debug("   dirName: " + dirName);
+					logger.debug("   filename: " + filename);
+
+					// is this a whitelist directory?
+					if (!appConfig.isWhitelistDirectory(dirName)) {
+						Utils.throwRuntimeException("Directory " + dirName
+								+ " is not specified as a whitelist target directory in application.properties.");
 					}
-				} catch (JRException e) {
-					Utils.throwRuntimeException(e.getMessage());
+
+					if (!file.getParentFile().exists()) {
+						Utils.throwRuntimeException("Directory " + dirName + " does not exist.");
+					}
+
+					// export report to file
+					logger.info("   export report to file: " + urlCallInterface.saveFileName);
+					logger.debug("   repFormat: " + urlCallInterface.repFormat);
+					try {
+
+						// special handling for html exports
+						// 30.09.2018 D. Aust
+						// conversion exception
+						if (urlCallInterface.repFormat.equals("html") || urlCallInterface.repFormat.equals("html2")) {
+							logger.debug("   export HTML to file: " + urlCallInterface.saveFileName);
+							JasperExportManager.exportReportToHtmlFile(jasperPrint, urlCallInterface.saveFileName);
+						} else {
+							SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+									file);
+							exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+							exporter.setExporterOutput(exporterOutput);
+							exporter.exportReport();
+						}
+					} catch (JRException e) {
+						Utils.throwRuntimeException(e.getMessage());
+					}
+				} else {
+					Utils.throwRuntimeException("saveFile is not enabled in application.properties.");
 				}
+			}
+
+			// ----------------------------------------------------
+			// send the report to the printer
+			// ----------------------------------------------------
+			if (urlCallInterface.printIsEnabled.booleanValue()) {
+				logger.debug("user wants to use printer directly ...  ");
+
+				if (appConfig.printIsEnabled) {
+					logger.trace("printing is enabled in the configuration file");
+
+					PrinterUtilities printerUtilities = new PrinterUtilities();
+
+					printerUtilities.print(jasperPrint, urlCallInterface.printPrinterName,
+							urlCallInterface.printPrinterTray, urlCallInterface.printCopies.intValue(),
+							urlCallInterface.printDuplex.booleanValue(), urlCallInterface.printCollate.booleanValue(),
+							urlCallInterface.printJobName, new Locale(urlCallInterface.repLocale));
+				} else {
+					Utils.throwRuntimeException("direct printing is not enabled in application.properties.");
+				}
+			}
+
+			out.close();
+
+			logger.info("*** servlet /report END");
+			logger.traceExit();
+
+			// Catch all exceptions during report processing
+		} catch (Exception e) {
+			// output not yet closed, can still write to it
+			if (out != null) {
+				// output html file
+				// set content type
+				response.setContentType(contentType + "; charset=" + urlCallInterface.repEncoding);
+				response.setLocale(new Locale(urlCallInterface.repLocale));
+				// found this to be mandatory with IE 6.0
+				response.setHeader("content-type", "text/html" + "; charset=" + urlCallInterface.repEncoding);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+				String errorHTMLFilename = "/private/tmp/jri/conf/error.html"; // will be parameterized later ...
+				String errorHTMLFileContent = "";
+
+				if (new File(errorHTMLFilename).exists()) {
+					errorHTMLFileContent = FileIO.fileToString(errorHTMLFilename);
+				} else {
+					// errorHTMLFileContent=this.getResourceAsStream("error.html");
+					try (InputStream inputStream = this.getClass().getResourceAsStream("error.html")) {
+						StringWriter writer = new StringWriter();
+						IOUtils.copy(inputStream, writer);
+						errorHTMLFileContent = writer.toString();
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
+				}
+
+				// printDebugToScreen? or suppress error message
+				if (appConfig != null && appConfig.printDebugToScreen == true)
+					errorHTMLFileContent = errorHTMLFileContent.replace("#ERROR_MSG#", ExceptionUtils.getStackTrace(e));
+				else
+					errorHTMLFileContent = errorHTMLFileContent.replace("#ERROR_MSG#", "");
+
+				out.write(errorHTMLFileContent.getBytes());
 			} else {
-				Utils.throwRuntimeException("saveFile is not enabled in application.properties.");
+				// cannot output to output stream ... re-throw exception
+				throw (e);
 			}
 		}
 
-		// ----------------------------------------------------
-		// send the report to the printer
-		// ----------------------------------------------------
-		if (urlCallInterface.printIsEnabled.booleanValue()) {
-			logger.debug("user wants to use printer directly ...  ");
-
-			if (appConfig.printIsEnabled) {
-				logger.trace("printing is enabled in the configuration file");
-
-				PrinterUtilities printerUtilities = new PrinterUtilities();
-
-				printerUtilities.print(jasperPrint, urlCallInterface.printPrinterName,
-						urlCallInterface.printPrinterTray, urlCallInterface.printCopies.intValue(),
-						urlCallInterface.printDuplex.booleanValue(), urlCallInterface.printCollate.booleanValue(),
-						urlCallInterface.printJobName, new Locale(urlCallInterface.repLocale));
-			} else {
-				Utils.throwRuntimeException("direct printing is not enabled in application.properties.");
-			}
-		}
-
-		out.close();
-
-		logger.info("*** servlet /report END");
-		logger.traceExit();
 	}
 }

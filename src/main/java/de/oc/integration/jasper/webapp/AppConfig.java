@@ -57,8 +57,8 @@ public class AppConfig {
 
 	private HashMap<String, DataSourceDefinition> _dataSourceDefinitions = new HashMap<String, DataSourceDefinition>();
 
-	// infoPageIsEnabled
 	public boolean infoPageIsEnabled = false;
+	public boolean printDebugToScreen = false;
 
 	// application.ipAddressesAllowed
 	public String[] ipAddressesAllowed = null;
@@ -309,6 +309,9 @@ public class AppConfig {
 		this.infoPageIsEnabled = Boolean.parseBoolean(props.getString("application.infoPageIsEnabled", "true"));
 
 		this.ipAddressesAllowed = props.getStringArray("application.ipAddressesAllowed");
+		// #94 Suppressing debug information on the webpage 
+		//		by default it will be more secure
+		this.printDebugToScreen = Boolean.parseBoolean(props.getString("application.printDebugToScreen", "false"));
 
 		// -----------------------------------------------------------
 		// direct printing
