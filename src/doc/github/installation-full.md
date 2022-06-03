@@ -288,6 +288,22 @@ After you restart the J2EE application the homepage will be protected:
 
 <img src="image/screenshot_protected_homepage.png" style="border: 1px solid black"></img>
 
+### 2.9 Displaying Error Messages
+
+For security reasons, we don't display any error messages. This is a secure setting for production systems. 
+
+For development systems you typically want to display the error messages in the browser to quickly troubleshoot the situation. 
+Therefore you can edit the file ``conf/application.properties`` and set the config parameter ``printDebugToScreen=true``.
+
+<pre>
+#====================================================================
+# Application properties (global)
+#====================================================================
+[application]
+<b>printDebugToScreen=true</b>
+</pre>
+
+
 ### <a name="install.installation.installDB"></a>3. Installation of database objects
 
 Now that we have the J2EE application working, we can install the PL/SQL API in the database. The database objects required for the integration will be installed into each application schema that you want to use with the integration. 

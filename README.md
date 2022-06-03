@@ -164,13 +164,15 @@ You can find the instructions [here](src/doc/github/integration-usage.md).
 #                                   - application.reportsPath
 #                                   "name" in jdbc connection definition
 #                                     no longer required
+# 2.9.0     D. Aust   03.06.2022  #94 Suppressing debug information on the webpage
+#                                   - application.printDebugToScreen                   
 #====================================================================
 
 #====================================================================
 # Application properties (global)
 #====================================================================
 [application]
-configFileVersion=2.8.0
+configFileVersion=2.9.0
 
 # set the jndiPrefix, this is different for different
 # containers, e.g. 
@@ -196,6 +198,14 @@ infoPageIsEnabled=true
 #      "..\\reports" (windows) respectively, will start from the location of the application.properties (this)
 #      file
 reportsPath=
+
+# To enable detailed request error messages, set printDebugToScreen=true
+# When this setting enabled, any request that produces an error response includes a detailed message, 
+# including a stack trace. 
+# This setting must not be enabled on productions systems due to the risk of sensitive information being 
+# revealed to an attacker.
+# The default value is false
+#printDebugToScreen=true
 
 #====================================================================
 # JDBC datasource configuration
@@ -270,6 +280,7 @@ Currently, you can use the following features for improved security:
 * Restrict access based on IP address: You typically want to restrict access to the JasperReportsIntegration J2EE application. Only the database server should be allowed to call it. You can can restrict access to certain ip addresses by specifying the parameter ``ipAddressesAllowed=...`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
 * You should encrypt the passwords in the configuration file ``application.properties``. You can do this using the command line script ``bin\encryptPasswords.cmd`` or ``bin/encryptPasswords.sh`` respectively. 
 * You should delete the directory ``reports/demo`` because it contains sample reports, particulary one that works on the user objects installed in the schema. 
+* Since 2.9.0, all error messages will be suppressed. For development systems you need to enable the error messages by specifying the parameter ``printDebugToScree=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
 
 ## Accessing JasperReportsIntegration through SSL
 
