@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,7 +84,7 @@ public class Test extends HttpServlet {
 		out.println("<link rel=StyleSheet href=\"JasperReportsIntegration.css\" type=\"text/css\">");
 		out.println("<head><title>test</title></head>");
 		out.println("<body>");
-		out.println("<h1>Basic connectivity test for dataSource=" + urlCallInterface.dataSource + "</h1>");
+		out.println("<h1>Basic connectivity test for dataSource=" + StringEscapeUtils.escapeHtml(urlCallInterface.dataSource) + "</h1>");
 
 		try {
 			conn = appConfig.getConnection(urlCallInterface.dataSource);
@@ -104,9 +105,9 @@ public class Test extends HttpServlet {
 
 				out.write("<tr>");
 
-				out.write("<td>" + rs.getString("SESSION_USER") + "</td>" + "<td>" + rs.getString("PARSING_USER")
-						+ "</td>" + "<td>" + rs.getString("INSTANCE_NAME") + "</td>" + "<td>" + rs.getString("DB_NAME")
-						+ "</td>" + "<td>" + rs.getString("SERVER_HOST") + "</td>" + "<td>" + rs.getString("CURR_TIME")
+				out.write("<td>" + StringEscapeUtils.escapeHtml(rs.getString("SESSION_USER")) + "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("PARSING_USER"))
+						+ "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("INSTANCE_NAME")) + "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("DB_NAME"))
+						+ "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("SERVER_HOST")) + "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("CURR_TIME"))
 						+ "</td>");
 
 				out.write("</tr>");
