@@ -8,7 +8,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 public class LoggingTest {
 
-	private static Logger logger = LogManager.getLogger();
+	private static Logger logger = LogManager.getLogger(LoggingTest.class);
 
 	public static void main(String[] args) {
 		// ----------------------------------------------------
