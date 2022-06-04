@@ -5,7 +5,7 @@ public class StringUtils {
 		StringBuilder sb = new StringBuilder();
 		for (String str : strArr)
 			sb.append(str).append(delimiter);
-		return sb.substring(0, sb.length() - 1);
+		return sb.substring(0, sb.length() - delimiter.length());
 	}
 
 }

@@ -17,6 +17,8 @@ package de.oc.db;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.oc.utils.SecurityUtils;
+
 /**
  * Defines a data source, holds all information for a jdbc database connection.
  * <br>
@@ -31,15 +33,18 @@ public class DataSourceDefinition {
 	public String url;
 	public String username;
 	public String password;
+	// application.ipAddressesAllowed
+	public String[] ipAddressesAllowed = null;
 
 	private static final Logger logger = LogManager.getLogger(DataSourceDefinition.class);
 
-	public DataSourceDefinition(String type, String name, String url, String username, String password) {
+	public DataSourceDefinition(String type, String name, String url, String username, String password, String[] ipAddressesAllowed) {
 		this.type = type;
 		this.name = name;
 		this.url = url;
 		this.username = username;
 		this.password = password;
+		this.ipAddressesAllowed=ipAddressesAllowed;
 	}
 
 	public void dump() {
@@ -48,6 +53,18 @@ public class DataSourceDefinition {
 		logger.debug("	name:" + this.name);
 		logger.debug("	url:" + this.url);
 		logger.debug("	username:" + this.username);
+		logger.debug("	ipAddressesAllowed:" + this.ipAddressesAllowed.toString());
 		logger.debug("	password:*******");
 	}
+	
+	/**
+	 * Checks the list of allowed ip addresses.
+	 * 
+	 * @param ipAddress
+	 * @return yes/no based on the configured list of allowed ip addresses for this data source
+	 */
+	public boolean isIpAddressAllowed(String ipAddress) {
+		return SecurityUtils.isIpAddressAllowed(ipAddressesAllowed, ipAddress);
+	}
+
 }

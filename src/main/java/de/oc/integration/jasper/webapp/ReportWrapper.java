@@ -73,6 +73,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.oc.db.DBUtils;
+import de.oc.db.DataSourceDefinition;
 import de.oc.jasper.ReportDefinitionFile;
 import de.oc.jasper.ReportUtilities;
 import de.oc.print.PrinterUtilities;
@@ -182,9 +183,15 @@ public class ReportWrapper extends HttpServlet {
 
 			// #37 Security: Whitelisting of ip addresses to access the
 			// /JasperReportsIntegration service
-			if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())) {
-				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access the application.");
-				Utils.throwRuntimeException("You are not allowed to access the application, access forbidden through application.properties. ");
+			// #109 also check data source restriction
+			DataSourceDefinition dataSourceDef = AppConfig.getInstance()
+					.getDataSourceDefinition(urlCallInterface.dataSource);
+			if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())
+					|| !dataSourceDef.isIpAddressAllowed(request.getRemoteAddr())) {
+				// response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to
+				// access the application.");
+				Utils.throwRuntimeException(
+						"You are not allowed to access the application, access forbidden through application.properties. ");
 			}
 
 			// ----------------------------------------------------
@@ -309,7 +316,8 @@ public class ReportWrapper extends HttpServlet {
 						// https://gitq.com/daust/JasperReportsIntegration/topics/35/unable-to-generate-csv-file-pdf-and-xlsx-work-fine/3
 						if (urlCallInterface.repFormat.equals("html") || urlCallInterface.repFormat.equals("html2")) {
 							JasperExportManager.exportReportToHtmlFile(jasperPrint, urlCallInterface.saveFileName);
-						} else if (urlCallInterface.repFormat.equals("csv") || urlCallInterface.repFormat.equals("rtf")) {
+						} else if (urlCallInterface.repFormat.equals("csv")
+								|| urlCallInterface.repFormat.equals("rtf")) {
 							exporter.setExporterOutput(new SimpleWriterExporterOutput(file));
 							exporter.exportReport();
 						} else {
@@ -346,7 +354,7 @@ public class ReportWrapper extends HttpServlet {
 					Utils.throwRuntimeException("direct printing is not enabled in application.properties.");
 				}
 			}
-			
+
 			// ----------------------------------------------------------------------
 			// set format specific parameters
 			// http://jasperforge.org/uploads/publish/jasperreportswebsite/trunk/config.reference.html
@@ -436,7 +444,7 @@ public class ReportWrapper extends HttpServlet {
 			} catch (JRException e) {
 				Utils.throwRuntimeException(e.getMessage());
 			}
-			
+
 			out.close();
 
 			logger.info("*** servlet /report END");
@@ -444,10 +452,10 @@ public class ReportWrapper extends HttpServlet {
 
 			// Catch all exceptions during report processing
 		} catch (Exception e) {
-			
+
 			// for more advanced error handling (encompassing all servlets, see:
 			// https://www.journaldev.com/1973/servlet-exception-and-error-handling-example-tutorial
-		
+
 			// output not yet closed, can still write to it
 			if (out != null) {
 				// output html file
@@ -457,7 +465,7 @@ public class ReportWrapper extends HttpServlet {
 				// found this to be mandatory with IE 6.0
 				response.setHeader("content-type", "text/html" + "; charset=" + urlCallInterface.repEncoding);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				//response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				// response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 				String errorHTMLFilename = "/private/tmp/jri/conf/error.html"; // will be parameterized later ...
 				String errorHTMLFileContent = "";

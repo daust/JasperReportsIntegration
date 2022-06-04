@@ -164,8 +164,11 @@ You can find the instructions [here](src/doc/github/integration-usage.md).
 #                                   - application.reportsPath
 #                                   "name" in jdbc connection definition
 #                                     no longer required
-# 2.9.0     D. Aust   03.06.2022  #94 Suppressing debug information on the webpage
-#                                   - application.printDebugToScreen                   
+# 2.9.0     D. Aust   03.06.2022  #94 Suppressing debug information 
+#                                   - application.printDebugToScreen          
+#                                 #109 Ip Addresses Allowed
+#                                   - ipAddressesAllowed available for 
+#                                       each data source                  
 #====================================================================
 
 #====================================================================
@@ -217,6 +220,10 @@ type=jdbc
 url=jdbc:oracle:thin:@127.0.0.1:1521:XE
 username=my_oracle_user
 password=my_oracle_user_pwd
+# this parameter is limiting access to the integration for the 
+# specified list of ip addresses, e.g.: 
+# ipAddressesAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# if the list is empty, ALL addresses are allowed
 
 #====================================================================
 # Native JNDI datasource, to be configured in the application server
@@ -225,6 +232,10 @@ password=my_oracle_user_pwd
 #[datasource:jndi_test]
 #type=jndi
 #name=jndi_test
+# this parameter is limiting access to the integration for the 
+# specified list of ip addresses, e.g.: 
+# ipAddressesAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# if the list is empty, ALL addresses are allowed
 
 #====================================================================
 # JDBC datasource configuration
@@ -236,6 +247,10 @@ password=my_oracle_user_pwd
 #url=jdbc:oracle:thin:@127.0.0.1:1521:XE
 #username=my_oracle_user
 #password=my_oracle_user_pwd
+# this parameter is limiting access to the integration for the 
+# specified list of ip addresses, e.g.: 
+# ipAddressesAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# if the list is empty, ALL addresses are allowed
 
 #====================================================================
 # Direct printing
@@ -278,6 +293,7 @@ Thus, over time some security features were implemented and more will follow in 
 Currently, you can use the following features for improved security: 
 * The info page of the J2EE application shows lots of important information like version information and current configuration values. For production environments this can quickly become a security issue. You can turn off the info page by specifying the parameter ``infoPageIsEnabled=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
 * Restrict access based on IP address: You typically want to restrict access to the JasperReportsIntegration J2EE application. Only the database server should be allowed to call it. You can can restrict access to certain ip addresses by specifying the parameter ``ipAddressesAllowed=...`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
+* The parameter ``ipAddressesAllowed`` is also available for each data source (since 2.9.0).
 * You should encrypt the passwords in the configuration file ``application.properties``. You can do this using the command line script ``bin\encryptPasswords.cmd`` or ``bin/encryptPasswords.sh`` respectively. 
 * You should delete the directory ``reports/demo`` because it contains sample reports, particulary one that works on the user objects installed in the schema. 
 * Since 2.9.0, all error messages will be suppressed. For development systems you need to enable the error messages by specifying the parameter ``printDebugToScree=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).

@@ -22,6 +22,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import de.oc.db.ConnectionUtility;
 import de.oc.db.DataSourceDefinition;
 import de.oc.utils.Encryptor;
+import de.oc.utils.SecurityUtils;
 import net.sf.jasperreports.engine.JRRuntimeException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 
@@ -224,6 +225,7 @@ public class AppConfig {
 		logger.info("  JasperReports-Version: {}", JasperCompileManager.class.getPackage().getImplementationVersion());
 		logger.info("  Classpath: {}", StringUtils.join(
 				StringUtils.split((String) System.getProperties().get("java.class.path"), File.pathSeparator), ", "));
+		logger.info("  ipAddressesAllowed: {}", StringUtils.join(ipAddressesAllowed, ", "));
 
 		// initialize connection pool
 		_connectionUtility = ConnectionUtility.getInstance(_jndiPrefix);
@@ -309,8 +311,8 @@ public class AppConfig {
 		this.infoPageIsEnabled = Boolean.parseBoolean(props.getString("application.infoPageIsEnabled", "true"));
 
 		this.ipAddressesAllowed = props.getStringArray("application.ipAddressesAllowed");
-		// #94 Suppressing debug information on the webpage 
-		//		by default it will be more secure
+		// #94 Suppressing debug information on the webpage
+		// by default it will be more secure
 		this.printDebugToScreen = Boolean.parseBoolean(props.getString("application.printDebugToScreen", "false"));
 
 		// -----------------------------------------------------------
@@ -336,12 +338,12 @@ public class AppConfig {
 		// replace relative paths
 		for (int i = 0; i < reportsPath.length; i++) {
 			Path path = Paths.get(reportsPath[i]);
-			
+
 			if (!path.isAbsolute()) {
 				// path is relative, try to resolve as relative path
-				
-				reportsPath[i] = Paths.get(this.getConfigDir()).resolve(reportsPath[i]).toFile().getAbsolutePath(); 
-						//path.resolve(this.getConfigDir()).toFile().getAbsolutePath();
+
+				reportsPath[i] = Paths.get(this.getConfigDir()).resolve(reportsPath[i]).toFile().getAbsolutePath();
+				// path.resolve(this.getConfigDir()).toFile().getAbsolutePath();
 			}
 		}
 		logger.trace("reportsPath after replacing relative paths: "
@@ -358,7 +360,8 @@ public class AppConfig {
 				String dsName = sectionName.split(":")[1];
 				DataSourceDefinition ds = new DataSourceDefinition(props.getString(sectionName + ".type"), dsName,
 						props.getString(sectionName + ".url"), props.getString(sectionName + ".username"),
-						decryptPWD(props.getString(sectionName + ".password")));
+						decryptPWD(props.getString(sectionName + ".password")),
+						props.getStringArray(sectionName + ".ipAddressesAllowed"));
 
 				_dataSourceDefinitions.put(dsName, ds);
 				// write datasource to logfile
@@ -540,17 +543,6 @@ public class AppConfig {
 	 *         application.ipAddressesAllowed
 	 */
 	public boolean isIpAddressAllowed(String ipAddress) {
-		// if parameter has not been configured in the file => ALLOW ACCESS
-		if (this.ipAddressesAllowed.length == 0) {
-			return true;
-		}
-
-		logger.debug("check ip address: " + ipAddress);
-		for (int i = 0; i < this.ipAddressesAllowed.length; i++) {
-			if (this.ipAddressesAllowed[i].toLowerCase().equals(ipAddress.toLowerCase()))
-				return true;
-		}
-		logger.debug("ip address rejected: " + ipAddress);
-		return false;
+		return SecurityUtils.isIpAddressAllowed(ipAddressesAllowed, ipAddress);
 	}
 }

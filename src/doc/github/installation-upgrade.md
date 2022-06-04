@@ -71,3 +71,8 @@ The test application will allow for basic testing of the integration with all re
 You can just replace the existing one.
 
 Please always pick the highest APEX version, e.g. when running APEX 19.1 and above (19.2, 20.1, ...), please install ``apex\APEX 19.1\f201_JasperReportsIntegration-Test_2.6.1.sql``.
+
+5. Check New Configuration Parameters
+
+Make sure to check the available parameters in the in the configuration file ``application.properties``. With each release we potentially add new parameters. Many of them are introduced to increase the overall security. 
+
