@@ -50,8 +50,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -67,7 +65,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -474,10 +471,8 @@ public class ReportWrapper extends HttpServlet {
 					errorHTMLFileContent = FileIO.fileToString(errorHTMLFilename);
 				} else {
 					// errorHTMLFileContent=this.getResourceAsStream("error.html");
-					try (InputStream inputStream = this.getClass().getResourceAsStream("error.html")) {
-						StringWriter writer = new StringWriter();
-						IOUtils.copy(inputStream, writer);
-						errorHTMLFileContent = writer.toString();
+					try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("de/oc/integration/jasper/webapp/error.html")) {
+						errorHTMLFileContent = FileIO.inputStreamToString(inputStream);
 					} catch (IOException e2) {
 						e2.printStackTrace();
 					}
