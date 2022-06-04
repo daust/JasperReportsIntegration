@@ -14,7 +14,7 @@
 --delete from xlib_jasperreports_demos;
 
 
--- select /*insert*/ * from XLIB_JASPERREPORTS_DEMOS;
+-- select /*insert*/ * from XLIB_JASPERREPORTS_DEMOS where demo_code='encrypt-pdf'
 
 REM INSERTING into XLIB_JASPERREPORTS_DEMOS
 SET DEFINE OFF;
@@ -26,6 +26,14 @@ Insert into XLIB_JASPERREPORTS_DEMOS (DEMO_CODE,DEMO_TITLE,DEMO_REPORT_NAME,DEMO
 Insert into XLIB_JASPERREPORTS_DEMOS (DEMO_CODE,DEMO_TITLE,DEMO_REPORT_NAME,DEMO_DESCRIPTION,DEMO_REPORT_FORMAT,DEMO_DATA_SOURCE,DEMO_REPORT_LOCALE,DEMO_REPORT_ENCODING,DEMO_OUT_FILENAME,DEMO_PARAM1_LABEL,DEMO_PARAM1_VALUE,DEMO_PARAM2_LABEL,DEMO_PARAM2_VALUE,DEMO_PARAM3_LABEL,DEMO_PARAM3_VALUE,DEMO_REPORT_TIME_ZONE) values ('TEST_1','Test (DOCx / English)','test','Simple test report, passing one parameter and using the American locale, changes the NLS settings for numbers and currencies.','docx','default','en_US',null,'test.docx','parameter1','my parameter value','parameter2','p2','parameter3','p3',null);
 Insert into XLIB_JASPERREPORTS_DEMOS (DEMO_CODE,DEMO_TITLE,DEMO_REPORT_NAME,DEMO_DESCRIPTION,DEMO_REPORT_FORMAT,DEMO_DATA_SOURCE,DEMO_REPORT_LOCALE,DEMO_REPORT_ENCODING,DEMO_OUT_FILENAME,DEMO_PARAM1_LABEL,DEMO_PARAM1_VALUE,DEMO_PARAM2_LABEL,DEMO_PARAM2_VALUE,DEMO_PARAM3_LABEL,DEMO_PARAM3_VALUE,DEMO_REPORT_TIME_ZONE) values ('TEST_3','Test (PDF / Italy)','test','Simple test report, passing one parameter and using the Italian locale, changes the NLS settings for numbers and currencies.','pdf','default','it_IT',null,null,null,null,null,null,null,null,null);
 Insert into XLIB_JASPERREPORTS_DEMOS (DEMO_CODE,DEMO_TITLE,DEMO_REPORT_NAME,DEMO_DESCRIPTION,DEMO_REPORT_FORMAT,DEMO_DATA_SOURCE,DEMO_REPORT_LOCALE,DEMO_REPORT_ENCODING,DEMO_OUT_FILENAME,DEMO_PARAM1_LABEL,DEMO_PARAM1_VALUE,DEMO_PARAM2_LABEL,DEMO_PARAM2_VALUE,DEMO_PARAM3_LABEL,DEMO_PARAM3_VALUE,DEMO_REPORT_TIME_ZONE) values ('TEST_IMAGES','Test with images','demo/test_images','Test report to include images from the filesystem.','pdf','default','en_US',null,null,null,null,null,null,null,null,null);
+
+-- issue-WITH-query
 Insert into XLIB_JASPERREPORTS_DEMOS (DEMO_CODE,DEMO_TITLE,DEMO_REPORT_NAME,DEMO_DESCRIPTION,DEMO_REPORT_FORMAT,DEMO_DATA_SOURCE,DEMO_REPORT_LOCALE,DEMO_REPORT_ENCODING,DEMO_OUT_FILENAME,DEMO_PARAM1_LABEL,DEMO_PARAM1_VALUE,DEMO_PARAM2_LABEL,DEMO_PARAM2_VALUE,DEMO_PARAM3_LABEL,DEMO_PARAM3_VALUE,DEMO_REPORT_TIME_ZONE) values ('issue-with-query','Issue-With Query','demo/issue-with-query','Support for WITH clause queries','pdf','default',null,null,null,null,null,null,null,null,null,null);
+
+-- encrypt-pdf
+Insert into XLIB_JASPERREPORTS_DEMOS (DEMO_CODE,DEMO_TITLE,DEMO_REPORT_NAME,DEMO_DESCRIPTION,DEMO_REPORT_FORMAT,DEMO_DATA_SOURCE,DEMO_REPORT_LOCALE,DEMO_REPORT_ENCODING,DEMO_OUT_FILENAME,DEMO_PARAM1_LABEL,DEMO_PARAM1_VALUE,DEMO_PARAM2_LABEL,DEMO_PARAM2_VALUE,DEMO_PARAM3_LABEL,DEMO_PARAM3_VALUE,DEMO_REPORT_TIME_ZONE) values ('encrypt-pdf','Encrypt PDF','demo/encrypt-pdf','Encrypt and password-protect a generated PDF file. In the sample, both passwords are "123456" (without the quotes). 
+See for details:
+- http://jasperreports.sourceforge.net/sample.reference/pdfencrypt/index.html
+- https://community.jaspersoft.com/wiki/how-configure-pdf-encryption-jasperreports-server-561','pdf','default',null,null,null,null,null,null,null,null,null,null);
 
 commit;

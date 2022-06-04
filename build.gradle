@@ -115,6 +115,10 @@ dependencies {
     //implementation("com.oracle.database.ha:ons")
     implementation("com.oracle.database.ha:simplefan")
 
+    // encrypting PDF files: https://github.com/daust/JasperReportsIntegration/issues/101
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
+    
     // https://mvnrepository.com/artifact/xalan/serializer
     // see bug: #55 - Barcodes produce classnotfounderror
     compile group: 'xalan', name: 'serializer', version: '2.7.1'
@@ -133,6 +137,8 @@ dependencies {
     compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
     // dependencies from oracle jdbc
     compile fileTree(dir: "lib/additional-war-libraries", include: ['*'])
+
+
 }
 
 gretty {
