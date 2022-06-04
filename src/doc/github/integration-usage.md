@@ -211,7 +211,7 @@ Individual report settings will always override global settings.
 
 You can encrypt and password-protect generated PDF files. 
 
-See (here)[http://jasperreports.sourceforge.net/sample.reference/pdfencrypt/index.html] for details. 
+See [here](http://jasperreports.sourceforge.net/sample.reference/pdfencrypt/index.html) for details. 
 
 When you configure the following properties, you can use it in your report: 
 ```
