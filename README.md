@@ -456,6 +456,10 @@ In order to use direct printing, two things have to happen:
 
 If you specify it in the request for the report but it is *not* enabled in the configuration file on the server, an exception will be raised. 
 
+## Encrypting and Password-Protecting PDF Files
+
+Starting 2.9.0 you can encrypt and password-protect your generated pdf files, for details see [the section on integration and usage](src/doc/github/integration-usage.md).
+
 ## Known Issues
 
 * When using "headless" Linux servers (https://www.howtogeek.com/660841/what-is-a-headless-server/, ), you might encounter error messages regarding awt like the following: ``"java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11GraphicsEnvironment"``.  
