@@ -255,9 +255,6 @@ public class ReportWrapper extends HttpServlet {
 				jasperPrint = fillmanager.fill(reportFile.reportFile.getPath(), reportParams, conn);
 				logger.debug("net.sf.jasperreports.jdbc.fetch.size="
 						+ ctx.getProperty("net.sf.jasperreports.jdbc.fetch.size"));
-				// logger.info("net.sf.jasperreports.jdbc.concurrency="+ctx.getProperty("net.sf.jasperreports.jdbc.concurrency"));
-				// logger.info("net.sf.jasperreports.jdbc.holdability="+ctx.getProperty("net.sf.jasperreports.jdbc.holdability"));
-				// logger.info("net.sf.jasperreports.jdbc.result.set.type="+ctx.getProperty("net.sf.jasperreports.jdbc.result.set.type"));
 
 				conn.close();
 			} catch (SQLException e) {
@@ -268,6 +265,87 @@ public class ReportWrapper extends HttpServlet {
 				DBUtils.closeQuietly(conn);
 			}
 
+			// ----------------------------------------------------
+			// save the report in the filesystem
+			// ----------------------------------------------------
+			if (urlCallInterface.saveIsEnabled.booleanValue()) {
+				logger.debug("user wants to save file to " + urlCallInterface.saveFileName);
+
+				if (appConfig.saveFileIsEnabled) {
+					logger.debug("saveFile is enabled in the configuration file");
+
+					File file = new File(urlCallInterface.saveFileName);
+					String filename = file.getName();
+					String dirName = file.getParent();
+
+					logger.debug("saveFile to server:");
+					logger.debug("   dirName: " + dirName);
+					logger.debug("   filename: " + filename);
+
+					// is this a whitelist directory?
+					if (!appConfig.isWhitelistDirectory(dirName)) {
+						Utils.throwRuntimeException("Directory " + dirName
+								+ " is not specified as a whitelist target directory in application.properties.");
+					}
+
+					if (!file.getParentFile().exists()) {
+						Utils.throwRuntimeException("Directory " + dirName + " does not exist.");
+					}
+
+					// export report to file
+					logger.info("   export report to file: " + urlCallInterface.saveFileName);
+					logger.debug("   repFormat: " + urlCallInterface.repFormat);
+					try {
+
+						// and export again with the original exporter ...
+						logger.debug("   export " + urlCallInterface.repFormat + " to file: "
+								+ urlCallInterface.saveFileName);
+
+						// special handling for html exports
+						// 30.09.2018 D. Aust
+						// conversion exception
+						// special handling for csv =>
+						// https://gitq.com/daust/JasperReportsIntegration/topics/35/unable-to-generate-csv-file-pdf-and-xlsx-work-fine/3
+						if (urlCallInterface.repFormat.equals("html") || urlCallInterface.repFormat.equals("html2")) {
+							JasperExportManager.exportReportToHtmlFile(jasperPrint, urlCallInterface.saveFileName);
+						} else if (urlCallInterface.repFormat.equals("csv") || urlCallInterface.repFormat.equals("rtf")) {
+							exporter.setExporterOutput(new SimpleWriterExporterOutput(file));
+							exporter.exportReport();
+						} else {
+							SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+									file);
+							exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+							exporter.setExporterOutput(exporterOutput);
+							exporter.exportReport();
+						}
+					} catch (JRException e) {
+						Utils.throwRuntimeException(e.getMessage());
+					}
+				} else {
+					Utils.throwRuntimeException("saveFile is not enabled in application.properties.");
+				}
+			}
+
+			// ----------------------------------------------------
+			// send the report to the printer
+			// ----------------------------------------------------
+			if (urlCallInterface.printIsEnabled.booleanValue()) {
+				logger.debug("user wants to use printer directly ...  ");
+
+				if (appConfig.printIsEnabled) {
+					logger.trace("printing is enabled in the configuration file");
+
+					PrinterUtilities printerUtilities = new PrinterUtilities();
+
+					printerUtilities.print(jasperPrint, urlCallInterface.printPrinterName,
+							urlCallInterface.printPrinterTray, urlCallInterface.printCopies.intValue(),
+							urlCallInterface.printDuplex.booleanValue(), urlCallInterface.printCollate.booleanValue(),
+							urlCallInterface.printJobName, new Locale(urlCallInterface.repLocale));
+				} else {
+					Utils.throwRuntimeException("direct printing is not enabled in application.properties.");
+				}
+			}
+			
 			// ----------------------------------------------------------------------
 			// set format specific parameters
 			// http://jasperforge.org/uploads/publish/jasperreportswebsite/trunk/config.reference.html
@@ -357,88 +435,7 @@ public class ReportWrapper extends HttpServlet {
 			} catch (JRException e) {
 				Utils.throwRuntimeException(e.getMessage());
 			}
-
-			// ----------------------------------------------------
-			// save the report in the filesystem
-			// ----------------------------------------------------
-			if (urlCallInterface.saveIsEnabled.booleanValue()) {
-				logger.debug("user wants to save file to " + urlCallInterface.saveFileName);
-
-				if (appConfig.saveFileIsEnabled) {
-					logger.debug("saveFile is enabled in the configuration file");
-
-					File file = new File(urlCallInterface.saveFileName);
-					String filename = file.getName();
-					String dirName = file.getParent();
-
-					logger.debug("saveFile to server:");
-					logger.debug("   dirName: " + dirName);
-					logger.debug("   filename: " + filename);
-
-					// is this a whitelist directory?
-					if (!appConfig.isWhitelistDirectory(dirName)) {
-						Utils.throwRuntimeException("Directory " + dirName
-								+ " is not specified as a whitelist target directory in application.properties.");
-					}
-
-					if (!file.getParentFile().exists()) {
-						Utils.throwRuntimeException("Directory " + dirName + " does not exist.");
-					}
-
-					// export report to file
-					logger.info("   export report to file: " + urlCallInterface.saveFileName);
-					logger.debug("   repFormat: " + urlCallInterface.repFormat);
-					try {
-
-						// and export again with the original exporter ...
-						logger.debug("   export " + urlCallInterface.repFormat + " to file: "
-								+ urlCallInterface.saveFileName);
-
-						// special handling for html exports
-						// 30.09.2018 D. Aust
-						// conversion exception
-						// special handling for csv =>
-						// https://gitq.com/daust/JasperReportsIntegration/topics/35/unable-to-generate-csv-file-pdf-and-xlsx-work-fine/3
-						if (urlCallInterface.repFormat.equals("html") || urlCallInterface.repFormat.equals("html2")) {
-							JasperExportManager.exportReportToHtmlFile(jasperPrint, urlCallInterface.saveFileName);
-						} else if (urlCallInterface.repFormat.equals("csv") || urlCallInterface.repFormat.equals("rtf")) {
-							exporter.setExporterOutput(new SimpleWriterExporterOutput(file));
-							exporter.exportReport();
-						} else {
-							SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
-									file);
-							exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-							exporter.setExporterOutput(exporterOutput);
-							exporter.exportReport();
-						}
-					} catch (JRException e) {
-						Utils.throwRuntimeException(e.getMessage());
-					}
-				} else {
-					Utils.throwRuntimeException("saveFile is not enabled in application.properties.");
-				}
-			}
-
-			// ----------------------------------------------------
-			// send the report to the printer
-			// ----------------------------------------------------
-			if (urlCallInterface.printIsEnabled.booleanValue()) {
-				logger.debug("user wants to use printer directly ...  ");
-
-				if (appConfig.printIsEnabled) {
-					logger.trace("printing is enabled in the configuration file");
-
-					PrinterUtilities printerUtilities = new PrinterUtilities();
-
-					printerUtilities.print(jasperPrint, urlCallInterface.printPrinterName,
-							urlCallInterface.printPrinterTray, urlCallInterface.printCopies.intValue(),
-							urlCallInterface.printDuplex.booleanValue(), urlCallInterface.printCollate.booleanValue(),
-							urlCallInterface.printJobName, new Locale(urlCallInterface.repLocale));
-				} else {
-					Utils.throwRuntimeException("direct printing is not enabled in application.properties.");
-				}
-			}
-
+			
 			out.close();
 
 			logger.info("*** servlet /report END");
@@ -446,6 +443,10 @@ public class ReportWrapper extends HttpServlet {
 
 			// Catch all exceptions during report processing
 		} catch (Exception e) {
+			
+			// for more advanced error handling (encompassing all servlets, see:
+			// https://www.journaldev.com/1973/servlet-exception-and-error-handling-example-tutorial
+		
 			// output not yet closed, can still write to it
 			if (out != null) {
 				// output html file
@@ -455,6 +456,7 @@ public class ReportWrapper extends HttpServlet {
 				// found this to be mandatory with IE 6.0
 				response.setHeader("content-type", "text/html" + "; charset=" + urlCallInterface.repEncoding);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				//response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 				String errorHTMLFilename = "/private/tmp/jri/conf/error.html"; // will be parameterized later ...
 				String errorHTMLFileContent = "";
