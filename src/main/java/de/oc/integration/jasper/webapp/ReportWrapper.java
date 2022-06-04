@@ -177,14 +177,15 @@ public class ReportWrapper extends HttpServlet {
 			// time?
 			appConfig.validateConfiguration(getServletContext());
 
+			// extract all relevant url parameters from the url
+			urlCallInterface = new URLCallInterface(request);
+
 			// #37 Security: Whitelisting of ip addresses to access the
 			// /JasperReportsIntegration service
 			if (!appConfig.isIpAddressAllowed(request.getRemoteAddr())) {
-				response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access the application.");
+				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "You are not allowed to access the application.");
+				Utils.throwRuntimeException("You are not allowed to access the application, access forbidden through application.properties. ");
 			}
-
-			// extract all relevant url parameters from the url
-			urlCallInterface = new URLCallInterface(request);
 
 			// ----------------------------------------------------
 			// compile .jrxml file into .jasper on the fly
