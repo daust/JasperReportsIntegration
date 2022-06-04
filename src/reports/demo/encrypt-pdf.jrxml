@@ -46,7 +46,7 @@
 		<band height="88" splitType="Stretch">
 			<image>
 				<reportElement x="446" y="10" width="109" height="50" uuid="9f8d59c6-5cbe-48df-850b-0286e7bf1203"/>
-				<imageExpression><![CDATA["/Users/daust/LOCAL-FILES/50-Projects/JasperReportsIntegration/src/reports/demo/opal_logo_50px_hoch.jpg"]]></imageExpression>
+				<imageExpression><![CDATA["opal_logo_50px_hoch.jpg"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="0" y="26" width="419" height="35" uuid="dd8b76bf-f4a9-4c9d-b85c-e4000815bbcb"/>
