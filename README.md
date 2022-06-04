@@ -427,7 +427,19 @@ The configuration file for logging is ``conf/log4j2.xml``.
     <pre>&lt;Logger name="de.oc" level="<b>debug</b>" additivity="false" \&gt;</pre>
 * You can restart the application server, but you don't have it. It should pick up the change after 30 seconds automatically without restarting. 
 * Then you can find the log entries in the file ``logs/JasperReportsIntegration.log``.
-    
+
+## Error Messages in the Browser
+
+Since 2.9.0, all error messages will be suppressed. For development systems you need to enable the error messages by specifying the parameter ``printDebugToScree=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
+
+## Direct Printing
+
+In order to use direct printing, two things have to happen: 
+- You need to specify the parameter ``isEnabled=true`` in the section ``[directPrinting]`` of the configuration file ``application.properties``, see details [here](#configuration.jasperreports_properties).
+- You need to pass the parameter ``p_print_is_enabled`` in the request for the report.
+
+If you specify it in the request for the report but it is *not* enabled in the configuration file on the server, an exception will be raised. 
+
 ## Known Issues
 
 * When using "headless" Linux servers (https://www.howtogeek.com/660841/what-is-a-headless-server/, ), you might encounter error messages regarding awt like the following: ``"java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11GraphicsEnvironment"``.  
