@@ -5,15 +5,15 @@
 *) Development
 
 - APEX:
-	- http://vm1/ords
-	- Workspace: JRI_TEST, User: Dietmar.Aust
+	- http://win11/ords
+	- Workspace: DEMO, User: dietmar.aust
 	- APEX Application: Jasper Reports Integration Test (v2.6.2)
 	
 - Datenbank-Schema: 
-	- Server: vm1
+	- Server: win11
 	- Port: 1521
-	- SID: XE
-	- User: JRI_TEST	
+	- SID: orclpdb
+	- User: DEMO
 
 - Patch/<versionsnummer>/_install.sql
 	- Hier jeden Installationsschritt für ein Upgrade dokumentieren
@@ -46,6 +46,10 @@ cp /usr/local/Cellar/groovy/2.4.7/libexec/lib/ivy-2.4.0.jar /usr/local/Cellar/an
 	- https://www.oracle.com/java/technologies/java-se-support-roadmap.html
 
 	- => thus at this time (3.09.2020) this would be Java 8 with a Premier Support Until date until March 2022.
+
+*) New Direction 24.08.2022
+- Supporting the official LTS releases: https://www.oracle.com/java/technologies/java-se-support-roadmap.html
+- => Primarily JDK 17
 
 *) Which Oracle JDBC libraries should we use?
 
