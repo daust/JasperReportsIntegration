@@ -164,13 +164,18 @@ You can find the instructions [here](src/doc/github/integration-usage.md).
 #                                   - application.reportsPath
 #                                   "name" in jdbc connection definition
 #                                     no longer required
+# 2.9.0     D. Aust   03.06.2022  #94 Suppressing debug information 
+#                                   - application.printDebugToScreen          
+#                                 #109 Ip Addresses Allowed
+#                                   - ipAddressesAllowed available for 
+#                                       each data source                  
 #====================================================================
 
 #====================================================================
 # Application properties (global)
 #====================================================================
 [application]
-configFileVersion=2.8.0
+configFileVersion=2.9.0
 
 # set the jndiPrefix, this is different for different
 # containers, e.g. 
@@ -197,6 +202,14 @@ infoPageIsEnabled=true
 #      file
 reportsPath=
 
+# To enable detailed request error messages, set printDebugToScreen=true
+# When this setting enabled, any request that produces an error response includes a detailed message, 
+# including a stack trace. 
+# This setting must not be enabled on productions systems due to the risk of sensitive information being 
+# revealed to an attacker.
+# The default value is false
+#printDebugToScreen=true
+
 #====================================================================
 # JDBC datasource configuration
 # http://www.orafaq.com/wiki/JDBC#Thin_driver
@@ -207,6 +220,10 @@ type=jdbc
 url=jdbc:oracle:thin:@127.0.0.1:1521:XE
 username=my_oracle_user
 password=my_oracle_user_pwd
+# this parameter is limiting access to the integration for the 
+# specified list of ip addresses, e.g.: 
+# ipAddressesAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# if the list is empty, ALL addresses are allowed
 
 #====================================================================
 # Native JNDI datasource, to be configured in the application server
@@ -215,6 +232,10 @@ password=my_oracle_user_pwd
 #[datasource:jndi_test]
 #type=jndi
 #name=jndi_test
+# this parameter is limiting access to the integration for the 
+# specified list of ip addresses, e.g.: 
+# ipAddressesAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# if the list is empty, ALL addresses are allowed
 
 #====================================================================
 # JDBC datasource configuration
@@ -226,6 +247,10 @@ password=my_oracle_user_pwd
 #url=jdbc:oracle:thin:@127.0.0.1:1521:XE
 #username=my_oracle_user
 #password=my_oracle_user_pwd
+# this parameter is limiting access to the integration for the 
+# specified list of ip addresses, e.g.: 
+# ipAddressesAllowed=127.0.0.1,10.10.10.10,192.168.178.31
+# if the list is empty, ALL addresses are allowed
 
 #====================================================================
 # Direct printing
@@ -268,8 +293,10 @@ Thus, over time some security features were implemented and more will follow in 
 Currently, you can use the following features for improved security: 
 * The info page of the J2EE application shows lots of important information like version information and current configuration values. For production environments this can quickly become a security issue. You can turn off the info page by specifying the parameter ``infoPageIsEnabled=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
 * Restrict access based on IP address: You typically want to restrict access to the JasperReportsIntegration J2EE application. Only the database server should be allowed to call it. You can can restrict access to certain ip addresses by specifying the parameter ``ipAddressesAllowed=...`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
+* The parameter ``ipAddressesAllowed`` is also available for each data source (since 2.9.0).
 * You should encrypt the passwords in the configuration file ``application.properties``. You can do this using the command line script ``bin\encryptPasswords.cmd`` or ``bin/encryptPasswords.sh`` respectively. 
 * You should delete the directory ``reports/demo`` because it contains sample reports, particulary one that works on the user objects installed in the schema. 
+* Since 2.9.0, all error messages will be suppressed. For development systems you need to enable the error messages by specifying the parameter ``printDebugToScree=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
 
 ## Accessing JasperReportsIntegration through SSL
 
@@ -416,7 +443,23 @@ The configuration file for logging is ``conf/log4j2.xml``.
     <pre>&lt;Logger name="de.oc" level="<b>debug</b>" additivity="false" \&gt;</pre>
 * You can restart the application server, but you don't have it. It should pick up the change after 30 seconds automatically without restarting. 
 * Then you can find the log entries in the file ``logs/JasperReportsIntegration.log``.
-    
+
+## Error Messages in the Browser
+
+Since 2.9.0, all error messages will be suppressed. For development systems you need to enable the error messages by specifying the parameter ``printDebugToScree=true`` in the ``application.properties`` file, see details [here](#configuration.jasperreports_properties).
+
+## Direct Printing
+
+In order to use direct printing, two things have to happen: 
+- You need to specify the parameter ``isEnabled=true`` in the section ``[directPrinting]`` of the configuration file ``application.properties``, see details [here](#configuration.jasperreports_properties).
+- You need to pass the parameter ``p_print_is_enabled`` in the request for the report.
+
+If you specify it in the request for the report but it is *not* enabled in the configuration file on the server, an exception will be raised. 
+
+## Encrypting and Password-Protecting PDF Files
+
+Starting 2.9.0 you can encrypt and password-protect your generated pdf files, for details see [the section on integration and usage](src/doc/github/integration-usage.md).
+
 ## Known Issues
 
 * When using "headless" Linux servers (https://www.howtogeek.com/660841/what-is-a-headless-server/, ), you might encounter error messages regarding awt like the following: ``"java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11GraphicsEnvironment"``.  

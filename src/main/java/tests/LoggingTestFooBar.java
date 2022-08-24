@@ -1,17 +1,16 @@
 package tests;
 
+import org.apache.logging.log4j.LogManager;
 //Import log4j classes.
 import org.apache.logging.log4j.Logger;
 
 import tests.com.foo.Bar;
 
-import org.apache.logging.log4j.LogManager;
-
 public class LoggingTestFooBar {
 
 	// Define a static logger variable so that it references the
 	// Logger instance named "MyApp".
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LogManager.getLogger(LoggingTestFooBar.class);
 
 	public static void main(final String... args) {
 

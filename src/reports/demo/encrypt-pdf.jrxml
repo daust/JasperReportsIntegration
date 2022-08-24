@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="encrypt-pdf" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ffbd0782-7407-4fb0-891e-b64e1ed011bd">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="docker-demo"/>
+	<property name="net.sf.jasperreports.export.pdf.encrypted" value="true"/>
+	<property name="net.sf.jasperreports.export.pdf.128.bit.key" value="true"/>
+	<property name="net.sf.jasperreports.export.pdf.owner.password" value="123456"/>
+	<property name="net.sf.jasperreports.export.pdf.user.password" value="123456"/>
+	<queryString language="SQL">
+		<![CDATA[select sys_context('userenv', 'session_user') session_user, 
+       sys_context('userenv', 'current_user') parsing_user,
+       sys_context('userenv', 'instance_name') instance_name,
+       sys_context('userenv', 'db_name') db_name,
+       sys_context('userenv', 'server_host') server_host,
+       to_char(sysdate, 'dd.mm.yyyy hh24:mi:ss') curr_time   from dual]]>
+	</queryString>
+	<field name="SESSION_USER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SESSION_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="SESSION_USER"/>
+	</field>
+	<field name="PARSING_USER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PARSING_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="PARSING_USER"/>
+	</field>
+	<field name="INSTANCE_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="INSTANCE_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="INSTANCE_NAME"/>
+	</field>
+	<field name="DB_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DB_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="DB_NAME"/>
+	</field>
+	<field name="SERVER_HOST" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SERVER_HOST"/>
+		<property name="com.jaspersoft.studio.field.label" value="SERVER_HOST"/>
+	</field>
+	<field name="CURR_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CURR_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="CURR_TIME"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="88" splitType="Stretch">
+			<image>
+				<reportElement x="446" y="10" width="109" height="50" uuid="9f8d59c6-5cbe-48df-850b-0286e7bf1203"/>
+				<imageExpression><![CDATA["opal_logo_50px_hoch.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="0" y="26" width="419" height="35" uuid="dd8b76bf-f4a9-4c9d-b85c-e4000815bbcb"/>
+				<textElement>
+					<font size="25"/>
+				</textElement>
+				<text><![CDATA[Sample To Encrypt PDF]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="19" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="95" height="19" uuid="f5d6f8cf-046d-4cfd-a67f-d93cb29aaa84">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="369dd117-fe1f-4382-a947-7e5a1fd115c6"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SESSION_USER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="0" width="92" height="19" uuid="a22b7e6a-2412-4849-a239-7bcdbd6ce5e7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="573f0a24-e324-4b34-aed3-96f45b9af366"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PARSING_USER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="0" width="92" height="19" uuid="7f539ae9-fd6b-4dfb-80d7-0ba0da5dddb5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="995513b2-33d3-41df-98a7-924787f8c7fc"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[INSTANCE_NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="0" width="92" height="19" uuid="32dcffe2-50cd-4e8e-a4ab-33fe6a14e9a4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b50c69ad-61b1-40bc-beaa-43fca155e319"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DB_NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="0" width="92" height="19" uuid="9f4ca90d-7efa-4edd-b383-af6d6bf40bf1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="859d2482-cada-4340-8034-787e4259e6fd"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SERVER_HOST]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="0" width="92" height="19" uuid="ad180026-ca24-436c-9c27-f9426498bd0a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5b6a47f8-cbaf-4400-a6ce-e25f4f69bc9a"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CURR_TIME]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="95" height="19" uuid="a9a4f971-3b03-43f5-85b0-9301de6f82e3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="369dd117-fe1f-4382-a947-7e5a1fd115c6"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{SESSION_USER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="95" y="0" width="92" height="19" uuid="d8d2b6ff-656b-42ba-8961-7cc2c8095489">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="573f0a24-e324-4b34-aed3-96f45b9af366"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{PARSING_USER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="187" y="0" width="92" height="19" uuid="38bd6124-3a4f-4cac-93c5-e5833c315ffb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="995513b2-33d3-41df-98a7-924787f8c7fc"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{INSTANCE_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="0" width="92" height="19" uuid="8283f4cb-1ce6-4885-b587-cf08ce610bd4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b50c69ad-61b1-40bc-beaa-43fca155e319"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{DB_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="371" y="0" width="92" height="19" uuid="375fb83c-d392-4cc3-b036-157de2b0b29f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="859d2482-cada-4340-8034-787e4259e6fd"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{SERVER_HOST}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="463" y="0" width="92" height="19" uuid="866da529-d9f8-4770-b547-6f44d8cd4342">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5b6a47f8-cbaf-4400-a6ce-e25f4f69bc9a"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{CURR_TIME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

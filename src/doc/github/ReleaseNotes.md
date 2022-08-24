@@ -1,6 +1,34 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.9.0 (release: 24.08.2022)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/9?closed=1). 
+ 
+## New features
+  * #101 PDF encryption (with password), see [the section on integration and usage](https://github.com/daust/JasperReportsIntegration/blob/main/src/doc/github/integration-usage.md) for details.
+  * #109 ``ipAddressesAllowed`` is now available for each data source, not only globally.
+  * #94 Suppressing debug information on the webpage. By default, the application is more secure. All error messages will be suppressed on the webpage. You can still see them in the server logs. And you can activate it in the ``application.properties`` file. The setting is ``printDebugToScreen`` in the section ``[application]``. 
+  * #102 Upgrade to jasperreports-libraries 6.19.1
+
+## Bug fixes
+  * #111 Unable to generate .csv file. PDF and xlsx work fine bug. Saving (csv and rtf) files on the server did not work.
+  * #108 Error deploying on Wildfly application server
+  * #107 Java 11 compatibility => Error de.oc.jasper.ReportUtilities.(ReportUtilities.java:32). The application has been tested with Java 11. 
+
+## Changed behaviour
+  * By default, all error messages will be suppressed. You can activate the setting for development environments through the ``application.properties`` file. The setting is ``printDebugToScreen`` in the section ``[application]``. 
+
+## Deprecated features (still available but will go away eventually)
+  * *none*
+
+## Obsoleted features (no longer available)
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+  * For running the application on Tomcat10, you have to use ``jri-2.9.0-jasper-6.19.1-tomcat10.war`` instead of ``jri.war``.
+
 # Version 2.8.1 (release: 10.02.2022)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/10?closed=1). 

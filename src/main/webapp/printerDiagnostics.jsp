@@ -1,5 +1,6 @@
 <%@page import="de.oc.print.PrinterUtilities"%>
 <%@page import="de.oc.integration.jasper.webapp.AppConfig"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1" import="java.io.File"
@@ -51,7 +52,7 @@
 		</thead>
 		<%
 			for (int i = 0; i < printers.size(); i++) {
-				String printerName = ((PrintService) printers.get(i)).getName();
+				String printerName = StringEscapeUtils.escapeHtml(((PrintService) printers.get(i)).getName());
 		%>
 		<tr>
 			<td><a href="#<%=printerName%>"><%=printerName%></a></td>
@@ -69,7 +70,7 @@
 	<%
 		for (int i = 0; i < printers.size(); i++) {
 			PrintService printService = (PrintService) printers.get(i);
-			String printerName = printService.getName();
+			String printerName = StringEscapeUtils.escapeHtml(printService.getName());
 	%>
 	<h3>
 		<a name="<%=printerName%>"></a><jsp:expression>printerName</jsp:expression></h3>
@@ -91,7 +92,7 @@
 				for (int k = 0; k < attributes.length; k++) {
 		%>
 		<tr>
-			<td><%=attributes[k].getName()%></td>
+			<td><%=StringEscapeUtils.escapeHtml(attributes[k].getName())%></td>
 			<td><jsp:expression>attributes[k]</jsp:expression></td>
 		</tr>
 		<%
@@ -119,7 +120,7 @@
 				for (int k = 0; k < attributeCategories.length; k++) {
 		%>
 		<tr>
-			<td><%=attributeCategories[k].getName()%></td>
+			<td><%=StringEscapeUtils.escapeHtml(attributeCategories[k].getName())%></td>
 			<td>
 				<%
 					@SuppressWarnings("unchecked")
@@ -142,12 +143,12 @@
 										Object[] values = (Object[]) valueObject;
 										for (int j = 0; j < values.length; j++) {
 											if (values[j] != null) {
-												out.println(values[j].toString());
+												out.println(StringEscapeUtils.escapeHtml(values[j].toString()));
 												out.println("<br>");
 											}
 										}
 									} else {
-										out.println(valueObject.toString());
+										out.println(StringEscapeUtils.escapeHtml(valueObject.toString()));
 										out.println("<br>");
 									}
 

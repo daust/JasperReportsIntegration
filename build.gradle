@@ -22,6 +22,7 @@
   31.01.2022  D. Aust   #93: Upgrading log4j 1.x to log4j 2.x (2.17.1)
   01.02.2022  D. Aust   #70: Upgrade Oracle JDBC libraries 
   08.02.2022  D. Aust   #82: Unable to start JRI with tomcat 10 - buildWarTomcat10 task created
+  02.06.2022  D. Aust   #102: Upgrade libraries to JasperReports 6.19.1
 
  */
 
@@ -48,7 +49,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.8.1'
+  project.version           = '2.9.0'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -56,7 +57,7 @@ import org.gradle.internal.os.OperatingSystem
   archivesBaseName          = "jri"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.18.1'  
+  def jasperreportsVersion  ='6.19.1'  
 
   // Download Oracle JDBC drivers, must be the full version:
   // https://www.oracle.com/database/technologies/appdev/jdbc-ucp-19c-downloads.html
@@ -114,6 +115,10 @@ dependencies {
     //implementation("com.oracle.database.ha:ons")
     implementation("com.oracle.database.ha:simplefan")
 
+    // encrypting PDF files: https://github.com/daust/JasperReportsIntegration/issues/101
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
+    
     // https://mvnrepository.com/artifact/xalan/serializer
     // see bug: #55 - Barcodes produce classnotfounderror
     compile group: 'xalan', name: 'serializer', version: '2.7.1'
@@ -132,6 +137,8 @@ dependencies {
     compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
     // dependencies from oracle jdbc
     compile fileTree(dir: "lib/additional-war-libraries", include: ['*'])
+
+
 }
 
 gretty {
@@ -452,6 +459,7 @@ task jriDownloadJasperLibraries{
     }
   }
 }   
+
 
 /* build a new war file that will work on Tomcat10 */
 task buildWarTomcat10{
