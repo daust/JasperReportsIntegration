@@ -1,7 +1,7 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
-# Version 2.9.0 (release: 05.06.2022)
+# Version 2.9.0 (release: 24.08.2022)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/9?closed=1). 
  
