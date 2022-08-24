@@ -23,6 +23,7 @@
   01.02.2022  D. Aust   #70: Upgrade Oracle JDBC libraries 
   08.02.2022  D. Aust   #82: Unable to start JRI with tomcat 10 - buildWarTomcat10 task created
   02.06.2022  D. Aust   #102: Upgrade libraries to JasperReports 6.19.1
+  24.08.2022  D. Aust   #115: Upgrade libraries to JasperReports 6.20.0
 
  */
 
@@ -49,7 +50,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.9.0'
+  project.version           = '2.10.0'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -57,7 +58,7 @@ import org.gradle.internal.os.OperatingSystem
   archivesBaseName          = "jri"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.19.1'  
+  def jasperreportsVersion  ='6.20.0'  
 
   // Download Oracle JDBC drivers, must be the full version:
   // https://www.oracle.com/database/technologies/appdev/jdbc-ucp-19c-downloads.html
