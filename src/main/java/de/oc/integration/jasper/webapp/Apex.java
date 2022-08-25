@@ -12,14 +12,12 @@
 
 package de.oc.integration.jasper.webapp;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -30,14 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.w3c.dom.Document;
 
 import de.oc.utils.Utils;
 import net.sf.jasperreports.engine.JRAbstractExporter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.export.HtmlExporter;
@@ -45,8 +41,6 @@ import net.sf.jasperreports.engine.export.JRExporterContext;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.query.JRXPathQueryExecuterFactory;
-import net.sf.jasperreports.engine.util.JRXmlUtils;
 import net.sf.jasperreports.export.ExporterConfiguration;
 import net.sf.jasperreports.export.ExporterOutput;
 import net.sf.jasperreports.export.ReportExportConfiguration;
@@ -217,21 +211,21 @@ public class Apex extends HttpServlet {
 		// ----------------------------------------------------
 		// Fill report using the xml datasource
 		// ----------------------------------------------------
-		try {
-
-			ByteArrayInputStream str = new ByteArrayInputStream(_xml.getBytes("UTF-8"));
-			Document document = JRXmlUtils.parse(str);
-			reportParams.put(JRXPathQueryExecuterFactory.PARAMETER_XML_DATA_DOCUMENT, document);
-			reportParams.put(JRXPathQueryExecuterFactory.XML_DATE_PATTERN, "yyyy-MM-dd");
-			reportParams.put(JRXPathQueryExecuterFactory.XML_NUMBER_PATTERN, "#,##0.##");
-			reportParams.put(JRXPathQueryExecuterFactory.XML_LOCALE, Locale.ENGLISH);
-			reportParams.put(JRParameter.REPORT_LOCALE, Locale.US);
-
-			jasperPrint = JasperFillManager.fillReport(jasperReport, reportParams);
-
-		} catch (JRException e) {
-			e.printStackTrace(new PrintWriter(_out));
-		}
+//		try {
+//
+//			ByteArrayInputStream str = new ByteArrayInputStream(_xml.getBytes("UTF-8"));
+//			Document document = JRXmlUtils.parse(str);
+//			reportParams.put(JRXPathQueryExecuterFactory.PARAMETER_XML_DATA_DOCUMENT, document);
+//			reportParams.put(JRXPathQueryExecuterFactory.XML_DATE_PATTERN, "yyyy-MM-dd");
+//			reportParams.put(JRXPathQueryExecuterFactory.XML_NUMBER_PATTERN, "#,##0.##");
+//			reportParams.put(JRXPathQueryExecuterFactory.XML_LOCALE, Locale.ENGLISH);
+//			reportParams.put(JRParameter.REPORT_LOCALE, Locale.US);
+//
+//			jasperPrint = JasperFillManager.fillReport(jasperReport, reportParams);
+//
+//		} catch (JRException e) {
+//			e.printStackTrace(new PrintWriter(_out));
+//		}
 
 		// ----------------------------------------------------
 		// generate the report

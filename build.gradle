@@ -24,6 +24,7 @@
   08.02.2022  D. Aust   #82: Unable to start JRI with tomcat 10 - buildWarTomcat10 task created
   02.06.2022  D. Aust   #102: Upgrade libraries to JasperReports 6.19.1
   24.08.2022  D. Aust   #115: Upgrade libraries to JasperReports 6.20.0
+  25.08.2022  D. Aust   #116: JDK17 support, replace Groovy library with 3.0.12 (3.0.+)
 
  */
 
@@ -52,8 +53,8 @@ import org.gradle.internal.os.OperatingSystem
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
   project.version           = '2.10.0'
   
-  sourceCompatibility       = 1.8
-  targetCompatibility       = 1.8
+  sourceCompatibility       = 11
+  targetCompatibility       = 11
 
   archivesBaseName          = "jri"
 
@@ -139,7 +140,8 @@ dependencies {
     // dependencies from oracle jdbc
     compile fileTree(dir: "lib/additional-war-libraries", include: ['*'])
 
-
+    // https://mvnrepository.com/artifact/org.codehaus.groovy/groovy
+    implementation 'org.codehaus.groovy:groovy:3.0.+'
 }
 
 gretty {
@@ -457,6 +459,7 @@ task jriDownloadJasperLibraries{
 
             // ignore/remove older log4j2 libraries included in jasperreports-libraries
             exclude "log4j-*-2.14*"
+            exclude "groovy-3.0.*"
     }
   }
 }   
