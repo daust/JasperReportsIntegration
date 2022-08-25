@@ -380,6 +380,7 @@ In a jasper report (.jrxml file) you can use several fonts for displaying labels
 Some fonts are bundled with jasperreports itself into a jar and make them work irrespective of underlying platform. Those are the DejaVuSans fonts. They are always available on all platforms because they are included in the file ``jasperreports-fonts-<version>.jar``. 
 
 More information can be found here: 
+* https://community.jaspersoft.com/wiki/custom-font-font-extension (this is the easiest one), then add it to the classpath
 * https://stackoverflow.com/questions/27184408/what-is-the-jasperrepots-fonts-jar-for-and-how-to-use-it
 * http://jasperreports.sourceforge.net/sample.reference/fonts/index.html#fontextensions
 
