@@ -203,8 +203,13 @@ ConfigDir: /tmp/jri
 
 After that, do the same thing on Windows. 
 
-```
+*) More use cases:
+- Export file to CSV
+- Export file to xlsx
+- run environment with https and wallet
+- compile report test.jrxml on-the-fly
 
+```
 
 ## Checklist for a new release
 

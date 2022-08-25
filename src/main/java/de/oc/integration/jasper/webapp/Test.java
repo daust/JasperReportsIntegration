@@ -79,12 +79,15 @@ public class Test extends HttpServlet {
 
 		response.setContentType(CONTENT_TYPE);
 
+		/*
+		 
+		 				response.setHeader("content-type", "text/html" + "; charset=" + urlCallInterface.repEncoding);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+		 */
+		
+		
 		PrintWriter out = response.getWriter();
-		out.println("<html>");
-		out.println("<link rel=StyleSheet href=\"JasperReportsIntegration.css\" type=\"text/css\">");
-		out.println("<head><title>test</title></head>");
-		out.println("<body>");
-		out.println("<h1>Basic connectivity test for dataSource=" + StringEscapeUtils.escapeHtml(urlCallInterface.dataSource) + "</h1>");
 
 		try {
 			conn = appConfig.getConnection(urlCallInterface.dataSource);
@@ -96,22 +99,24 @@ public class Test extends HttpServlet {
 					+ "       sys_context('userenv', 'server_host') server_host,"
 					+ "       to_char(sysdate, 'dd.mm.yyyy hh24:mi:ss') curr_time" + "  from dual");
 
+			out.println("<html>");
+			out.println("<link rel=StyleSheet href=\"JasperReportsIntegration.css\" type=\"text/css\">");
+			out.println("<head><title>test</title></head>");
+			out.println("<body>");
+			out.println("<h1>Basic connectivity test for dataSource=" + StringEscapeUtils.escapeHtml(urlCallInterface.dataSource) + "</h1>");
+
 			out.write("<h3>Session Info</h3><BR />");
 			out.write("<table class=\"newspaper-b\">");
 			out.write("<tr><th>Session User</th>" + "<th>Parsing User</th>" + "<th>Instance Name</th>"
 					+ "<th>DB Name</th>" + "<th>Server Host</th>" + "<th>Current Time</th>" + "</tr>");
 
 			while (rs.next()) {
-
 				out.write("<tr>");
-
 				out.write("<td>" + StringEscapeUtils.escapeHtml(rs.getString("SESSION_USER")) + "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("PARSING_USER"))
 						+ "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("INSTANCE_NAME")) + "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("DB_NAME"))
 						+ "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("SERVER_HOST")) + "</td>" + "<td>" + StringEscapeUtils.escapeHtml(rs.getString("CURR_TIME"))
 						+ "</td>");
-
 				out.write("</tr>");
-
 			}
 			out.write("</table>");
 
@@ -121,11 +126,16 @@ public class Test extends HttpServlet {
 			conn.close();
 
 		} catch (SQLException e) {
-			Utils.throwRuntimeException("Error while selecting user objects: " + e.getMessage());
-		} finally {
 			DBUtils.closeQuietly(conn, stmt, rs);
-		}
 
+			Utils.throwRuntimeException("Error while selecting user objects: " + e.getMessage());
+			throw new RuntimeException(e.getMessage());
+		} catch (Exception e) {
+			DBUtils.closeQuietly(conn, stmt, rs);
+
+			Utils.throwRuntimeException("Other Error: " + e.getMessage());
+			throw(e);
+		}
 		out.println("</body></html>");
 		out.close();
 

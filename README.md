@@ -195,8 +195,8 @@ infoPageIsEnabled=true
 
 # report definition files will be looked up in the following order as
 #   specified by the reportsPath, e.g.: 
-#     Linux/macOS: reportsPath=../reports,/path/to/reports1:/path/to/reports2:/path/to/reports3
-#     Windows: reportsPath=..\\reports;c:\\path\\to\\reports1;c:\\path\\to\\reports2;c:\\path\\to\\reports3
+#     Linux/macOS: reportsPath=../reports,/path/to/reports1:/path/to/reports2,/path/to/reports3
+#     Windows: reportsPath=..\\reports,c:\\path\\to\\reports1,c:\\path\\to\\reports2,c:\\path\\to\\reports3
 #   If the reportsPath is left empty or not defined, then the default is "../reports" (*nix) or
 #      "..\\reports" (windows) respectively, will start from the location of the application.properties (this)
 #      file
@@ -380,6 +380,7 @@ In a jasper report (.jrxml file) you can use several fonts for displaying labels
 Some fonts are bundled with jasperreports itself into a jar and make them work irrespective of underlying platform. Those are the DejaVuSans fonts. They are always available on all platforms because they are included in the file ``jasperreports-fonts-<version>.jar``. 
 
 More information can be found here: 
+* https://community.jaspersoft.com/wiki/custom-font-font-extension (this is the easiest one), then add it to the classpath
 * https://stackoverflow.com/questions/27184408/what-is-the-jasperrepots-fonts-jar-for-and-how-to-use-it
 * http://jasperreports.sourceforge.net/sample.reference/fonts/index.html#fontextensions
 
