@@ -195,8 +195,8 @@ infoPageIsEnabled=true
 
 # report definition files will be looked up in the following order as
 #   specified by the reportsPath, e.g.: 
-#     Linux/macOS: reportsPath=../reports,/path/to/reports1:/path/to/reports2:/path/to/reports3
-#     Windows: reportsPath=..\\reports;c:\\path\\to\\reports1;c:\\path\\to\\reports2;c:\\path\\to\\reports3
+#     Linux/macOS: reportsPath=../reports,/path/to/reports1:/path/to/reports2,/path/to/reports3
+#     Windows: reportsPath=..\\reports,c:\\path\\to\\reports1,c:\\path\\to\\reports2,c:\\path\\to\\reports3
 #   If the reportsPath is left empty or not defined, then the default is "../reports" (*nix) or
 #      "..\\reports" (windows) respectively, will start from the location of the application.properties (this)
 #      file
