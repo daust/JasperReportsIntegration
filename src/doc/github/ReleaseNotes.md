@@ -1,6 +1,31 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.10.0 (release: 25.08.2022)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/11?closed=1). 
+ 
+## New features
+  * #116 JDK 17 LTS Support
+  * #102 Upgrade to jasperreports-libraries 6.20.0
+
+## Bug fixes
+  * #113 Problem verifying application over HTTPS 
+
+## Changed behaviour
+  * *none*
+
+## Deprecated features (still available but will go away eventually)
+  * *none*
+
+## Obsoleted features (no longer available)
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+  * For running the application on Tomcat10, you have to use ``jri-2.10.0-jasper-6.20.0-tomcat10.war`` instead of ``jri.war``.
+  
+
 # Version 2.9.0 (release: 24.08.2022)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/9?closed=1). 
