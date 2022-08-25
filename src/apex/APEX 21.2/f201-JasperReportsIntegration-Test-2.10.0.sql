@@ -28,24 +28,24 @@ prompt APPLICATION 201 - Jasper Reports Integration Test (v2.10.0)
 -- Application Export:
 --   Application:     201
 --   Name:            Jasper Reports Integration Test (v2.10.0)
---   Date and Time:   21:23 Wednesday August 24, 2022
+--   Date and Time:   18:00 Thursday August 25, 2022
 --   Exported By:     DIETMAR.AUST
 --   Flashback:       0
 --   Export Type:     Application Export
---     Pages:                      9
+--     Pages:                     10
 --       Items:                   50
---       Processes:               15
---       Regions:                 33
---       Buttons:                 14
+--       Processes:               19
+--       Regions:                 35
+--       Buttons:                 18
 --       Dynamic Actions:          5
 --     Shared Components:
 --       Logic:
 --         Processes:              2
---         Build Options:          1
+--         Build Options:          2
 --       Navigation:
 --         Lists:                  3
 --         Breadcrumbs:            1
---           Entries:              6
+--           Entries:              7
 --       Security:
 --         Authentication:         1
 --         Authorization:          1
@@ -121,7 +121,7 @@ wwv_flow_api.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Jasper Reports Integration Test (v#APP_VERSION#)'
 ,p_last_updated_by=>'DIETMAR.AUST'
-,p_last_upd_yyyymmddhh24miss=>'20220824211445'
+,p_last_upd_yyyymmddhh24miss=>'20220825174709'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
 ,p_ui_type_name => null
@@ -177,6 +177,15 @@ wwv_flow_api.create_list_item(
 ,p_list_item_icon=>'fa-desktop'
 ,p_required_patch=>wwv_flow_api.id(34462478815607620)
 ,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_api.create_list_item(
+ p_id=>wwv_flow_api.id(4649024500799709)
+,p_list_item_display_sequence=>70
+,p_list_item_link_text=>'Release Checklist'
+,p_list_item_link_target=>'f?p=&APP_ID.:8:&SESSION.::&DEBUG.::::'
+,p_required_patch=>wwv_flow_api.id(4648790056795617)
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'8'
 );
 wwv_flow_api.create_list_item(
  p_id=>wwv_flow_api.id(34294138782208895)
@@ -592,6 +601,12 @@ begin
 wwv_flow_api.create_menu(
  p_id=>wwv_flow_api.id(34150620583208783)
 ,p_name=>'Breadcrumb'
+);
+wwv_flow_api.create_menu_option(
+ p_id=>wwv_flow_api.id(4655966385814432)
+,p_short_name=>'Release Checklist'
+,p_link=>'f?p=&APP_ID.:8:&SESSION.::&DEBUG.:::'
+,p_page_id=>8
 );
 wwv_flow_api.create_menu_option(
  p_id=>wwv_flow_api.id(34150825447208783)
@@ -12931,6 +12946,13 @@ end;
 prompt --application/shared_components/logic/build_options
 begin
 wwv_flow_api.create_build_option(
+ p_id=>wwv_flow_api.id(4648790056795617)
+,p_build_option_name=>'DEVELOPMENT'
+,p_build_option_status=>'EXCLUDE'
+,p_default_on_export=>'EXCLUDE'
+,p_build_option_comment=>'Additional tests during development, checklists, debugging, etc.'
+);
+wwv_flow_api.create_build_option(
  p_id=>wwv_flow_api.id(34462478815607620)
 ,p_build_option_name=>'DISABLED'
 ,p_build_option_status=>'EXCLUDE'
@@ -15377,6 +15399,215 @@ wwv_flow_api.create_page_plug(
 ,p_menu_id=>wwv_flow_api.id(34150620583208783)
 ,p_plug_source_type=>'NATIVE_BREADCRUMB'
 ,p_menu_template_id=>wwv_flow_api.id(34258399284208859)
+);
+end;
+/
+prompt --application/pages/page_00008
+begin
+wwv_flow_api.create_page(
+ p_id=>8
+,p_user_interface_id=>wwv_flow_api.id(34279544278208872)
+,p_name=>'Release Checklist'
+,p_alias=>'RELEASE-CHECKLIST'
+,p_step_title=>'Release Checklist'
+,p_reload_on_submit=>'A'
+,p_autocomplete_on_off=>'OFF'
+,p_page_template_options=>'#DEFAULT#'
+,p_required_patch=>wwv_flow_api.id(4648790056795617)
+,p_protection_level=>'C'
+,p_last_updated_by=>'DIETMAR.AUST'
+,p_last_upd_yyyymmddhh24miss=>'20220825174622'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(4649708520802302)
+,p_plug_name=>'Tests'
+,p_region_template_options=>'#DEFAULT#:t-Region--scrollBody'
+,p_plug_template=>wwv_flow_api.id(34200899112208814)
+,p_plug_display_sequence=>10
+,p_include_in_reg_disp_sel_yn=>'Y'
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_attribute_01=>'N'
+,p_attribute_02=>'HTML'
+);
+wwv_flow_api.create_page_plug(
+ p_id=>wwv_flow_api.id(38950147016017191)
+,p_plug_name=>'Breadcrumb'
+,p_region_template_options=>'#DEFAULT#:t-BreadcrumbRegion--useBreadcrumbTitle'
+,p_component_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_api.id(34210334358208820)
+,p_plug_display_sequence=>20
+,p_plug_display_point=>'REGION_POSITION_01'
+,p_menu_id=>wwv_flow_api.id(34150620583208783)
+,p_plug_source_type=>'NATIVE_BREADCRUMB'
+,p_menu_template_id=>wwv_flow_api.id(34258399284208859)
+,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(4649883019802303)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_api.id(4649708520802302)
+,p_button_name=>'DIRECT_PRINT'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#:t-Button--iconRight'
+,p_button_template_id=>wwv_flow_api.id(34257077186208858)
+,p_button_image_alt=>'Direct Print'
+,p_icon_css_classes=>'fa-print'
+,p_grid_new_row=>'Y'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(4650081934802305)
+,p_button_sequence=>20
+,p_button_plug_id=>wwv_flow_api.id(4649708520802302)
+,p_button_name=>'SAVE_ON_SERVER_PDF'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_api.id(34257009568208858)
+,p_button_image_alt=>'Save File On Server (test.pdf)'
+,p_grid_new_row=>'N'
+,p_grid_new_column=>'N'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(4650465601802309)
+,p_button_sequence=>30
+,p_button_plug_id=>wwv_flow_api.id(4649708520802302)
+,p_button_name=>'SAVE_AND_SHOW_PDF'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_api.id(34257009568208858)
+,p_button_image_alt=>'Save File On Server and Show (test.pdf)'
+,p_grid_new_row=>'N'
+,p_grid_new_column=>'N'
+);
+wwv_flow_api.create_page_button(
+ p_id=>wwv_flow_api.id(4650211322802307)
+,p_button_sequence=>40
+,p_button_plug_id=>wwv_flow_api.id(4649708520802302)
+,p_button_name=>'SAVE_ON_SERVER_CSV'
+,p_button_action=>'SUBMIT'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_api.id(34257009568208858)
+,p_button_image_alt=>'Save File On Server (test.csv)'
+,p_grid_new_row=>'N'
+,p_grid_new_column=>'N'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(4649969933802304)
+,p_process_sequence=>10
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'Direct Print'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'   l_blob        BLOB;',
+'   l_mime_type   VARCHAR2 (100);',
+'BEGIN  ',
+'   xlib_jasperreports.get_report (p_rep_name => apex_util.url_encode(''test''),',
+'          p_rep_format          => apex_util.url_encode(''pdf''),',
+'          p_data_source         => apex_util.url_encode(''default''),',
+'          --p_out_filename        => apex_util.url_encode(l_demo.demo_out_filename),                        ',
+'          p_additional_params   => ''&''  || apex_util.url_encode(''parameter1'')',
+'                                   ||''=''|| apex_util.url_encode(''parameter value 1''),',
+'          p_print_is_enabled    => true,',
+'          p_print_printer_name  => apex_util.url_encode(''Samsung M267x 287x Series (SEC30CDA7283BAB)''),',
+'          p_out_blob            => l_blob,',
+'          p_out_mime_type       => l_mime_type                                   ',
+'          );',
+'   DBMS_LOB.freetemporary (l_blob);',
+'END;'))
+,p_process_clob_language=>'PLSQL'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when_button_id=>wwv_flow_api.id(4649883019802303)
+,p_process_success_message=>'Report executed'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(4650111608802306)
+,p_process_sequence=>20
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'SaveFileOnServer(pdf)'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'   l_blob        BLOB;',
+'   l_mime_type   VARCHAR2 (100);',
+'BEGIN  ',
+'   xlib_jasperreports.get_report (p_rep_name => apex_util.url_encode(''test''),',
+'          p_rep_format          => apex_util.url_encode(''pdf''),',
+'          p_data_source         => apex_util.url_encode(''default''),',
+'          p_additional_params   => ''&''  || apex_util.url_encode(''parameter1'')',
+'                                   ||''=''|| apex_util.url_encode(''parameter value 1''),',
+'          p_save_is_enabled     => true,',
+'          p_save_filename       => apex_util.url_encode(''/tmp/jri/test.pdf''),',
+'          p_out_blob            => l_blob,',
+'          p_out_mime_type       => l_mime_type                                   ',
+'          );',
+'   DBMS_LOB.freetemporary (l_blob);',
+'END;'))
+,p_process_clob_language=>'PLSQL'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when_button_id=>wwv_flow_api.id(4650081934802305)
+,p_process_success_message=>'File saved on MacBook: /tmp/jri/test.pdf'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(4650544868802310)
+,p_process_sequence=>30
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'SaveFileOnServerAndShow(pdf)'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'   l_blob        BLOB;',
+'   l_mime_type   VARCHAR2 (100);',
+'BEGIN  ',
+'   xlib_jasperreports.show_report (p_rep_name => apex_util.url_encode(''test''),',
+'          p_rep_format          => apex_util.url_encode(''pdf''),',
+'          p_data_source         => apex_util.url_encode(''default''),',
+'          p_additional_params   => ''&''  || apex_util.url_encode(''parameter1'')',
+'                                   ||''=''|| apex_util.url_encode(''parameter value 1''),',
+'          p_save_is_enabled     => true,',
+'          p_save_filename       => apex_util.url_encode(''/tmp/jri/testAndShow.pdf'')     ',
+'          );',
+'  apex_application.stop_apex_engine();',
+'',
+'exception',
+'  when apex_application.e_stop_apex_engine then',
+'    null; -- ok, stop engine raises exception, we can ignore that',
+'  when others then ',
+'    xlog(''checklist'', substr(dbms_utility.format_error_backtrace,1,3500), ''ERROR'');',
+'    raise;',
+'',
+'END;'))
+,p_process_clob_language=>'PLSQL'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when_button_id=>wwv_flow_api.id(4650465601802309)
+,p_process_success_message=>'File saved on MacBook: /tmp/jri/test.pdf'
+);
+wwv_flow_api.create_page_process(
+ p_id=>wwv_flow_api.id(4650351195802308)
+,p_process_sequence=>40
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'SaveFileOnServer(csv)'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'   l_blob        BLOB;',
+'   l_mime_type   VARCHAR2 (100);',
+'BEGIN  ',
+'   xlib_jasperreports.get_report (p_rep_name => apex_util.url_encode(''test''),',
+'          p_rep_format          => apex_util.url_encode(''csv''),',
+'          p_data_source         => apex_util.url_encode(''default''),',
+'          p_additional_params   => ''&''  || apex_util.url_encode(''parameter1'')',
+'                                   ||''=''|| apex_util.url_encode(''parameter value 1''),',
+'          p_save_is_enabled     => true,',
+'          p_save_filename       => apex_util.url_encode(''/tmp/jri/test.csv''),',
+'          p_out_blob            => l_blob,',
+'          p_out_mime_type       => l_mime_type                                   ',
+'          );',
+'   DBMS_LOB.freetemporary (l_blob);',
+'END;'))
+,p_process_clob_language=>'PLSQL'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when_button_id=>wwv_flow_api.id(4650211322802307)
+,p_process_success_message=>'File saved on MacBook: /tmp/jri/test.csv'
 );
 end;
 /
