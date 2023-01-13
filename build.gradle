@@ -458,7 +458,7 @@ task jriDownloadJasperLibraries{
             exclude "spring-beans-*"
 
             // ignore/remove older log4j2 libraries included in jasperreports-libraries
-            exclude "log4j-*-2.14*"
+            exclude "log4j-*"
             exclude "groovy-3.0.*"
     }
   }
