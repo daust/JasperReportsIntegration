@@ -30,10 +30,11 @@ AS
   2.6.2    13.10.2020  D. Aust   #54 - Timeout value from default table not working
   2.8.0    08.02.2022  D. Aust   #79: XLIB_HTTP http_version
                                    - added optional parameter for http version
+ 2.10.1  16.01.2023  D. Aust          #123: Backport constant for Oracle 11
 =========================================================================*/
 
   -- version of this package
-  version_c constant varchar2(20 char) := '2.8.0';   
+  version_c constant varchar2(20 char) := '2.10.1';   
 
    -- constants
    -- supported formats
@@ -127,13 +128,13 @@ AS
       p_save_filename       in   varchar2 default null,
       p_rep_time_zone       in   varchar2 default null,
       p_print_job_name      in   varchar2 default null,
-      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
+      p_http_version        IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1
    );
 
    /* tunnels images for html reports */
    procedure show_image(
       p_image_name IN   VARCHAR2,
-      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1);
+      p_http_version        IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1);
 
 
 /**  run the report and return the result as a blob
@@ -183,7 +184,7 @@ AS
       p_out_blob            IN OUT   BLOB,
       p_out_mime_type       IN OUT   VARCHAR2,
       p_print_job_name      in   varchar2 default null,
-      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
+      p_http_version        IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1
    );
 
 ----------------------------------------------------------------------------
