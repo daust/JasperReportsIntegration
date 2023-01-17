@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app id="WebApp_ID" version="2.4"
-	xmlns="https://java.sun.com/xml/ns/j2ee"
-	xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="https://java.sun.com/xml/ns/j2ee https://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	      version="2.4">
 	<display-name>JasperReportsIntegration</display-name>
 	<!--======================= -->
 	<!-- CONTEXT PARAMS -->
@@ -12,7 +13,8 @@
 	<context-param>
 		<param-name>oc.jasper.config.home</param-name>
 		<param-value></param-value>
-		<!-- <param-value>/Users/daust/oc-jasper</param-value> <param-value>D:\\JasperReportsIntegration</param-value> -->
+		<!-- <param-value>/u01/app/jri</param-value> 
+		     <param-value>D:\app\jri</param-value> -->
 	</context-param>
 	<context-param>
 		<!-- the log4j default properties file is located within the web application -->

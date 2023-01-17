@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.4.final using JasperReports Library version 6.0.4  -->
-<!-- 2017-03-05T14:53:53 -->
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="order" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b3a3acc7-30bc-406b-b624-b59570f68f26">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="test@vm1"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="dataadapters/win11-orclpdb-demo.jrdax"/>
 	<style name="shared.reportTitle" mode="Transparent" fontName="Arial" fontSize="30" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Bold"/>
 	<style name="shared.reportSubTitle" mode="Transparent" forecolor="#736343" fontName="Arial" fontSize="18">
 		<box>
@@ -141,7 +140,7 @@
 		<band height="207" splitType="Stretch">
 			<image scaleImage="RealSize">
 				<reportElement x="1" y="0" width="184" height="80" uuid="d96bde33-b3cc-4f2c-8a4f-e02235527732"/>
-				<imageExpression><![CDATA[$P{SUBREPORT_DIR} + "opal_logo_80px_hoch.jpg"]]></imageExpression>
+				<imageExpression><![CDATA[$P{SUBREPORT_DIR} + "opal_logo_50px_hoch.jpg"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement style="shared.H1" x="10" y="109" width="140" height="25" uuid="66d2539d-a8c0-449f-9cbe-858694aeab79">

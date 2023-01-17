@@ -1,6 +1,27 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.10.1 (release: 17.01.2023)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/13?closed=1). 
+
+It is mainly a maintenance / bugfix release, specifically to support Oracle Weblogic. 
+ 
+## New features
+  * *none*
+
+## Bug fixes
+  * #123 Constant utl_http.http_version_1_1 causes compiler issues on older Oracle versions
+  * #126 2 versions of Log4j dependences
+  * #118 Deploying jri.war file on Oracle Weblogic Server
+
+## Changed behaviour
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+  * For running the application on Tomcat10, you have to use ``jri-2.10.1-jasper-6.20.0-tomcat10.war`` instead of ``jri.war``.
+  
 # Version 2.10.0 (release: 25.08.2022)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/11?closed=1). 

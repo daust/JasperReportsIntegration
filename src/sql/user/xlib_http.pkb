@@ -27,6 +27,7 @@ AS
  2.6.2   13.10.2020  D. Aust          - added function check_acl()
  2.8.0   08.02.2022  D. Aust          #79: XLIB_HTTP http_version
                                         - added optional parameter for http version
+ 2.10.1  16.01.2023  D. Aust          #123: Backport constant for Oracle 11
 
 =========================================================================*/
 
@@ -38,7 +39,7 @@ AS
       p_charset              IN   VARCHAR2 DEFAULT NULL,
       p_header_name_arr      IN   vc_arr_t default g_empty_vc_arr,
       p_header_value_arr     IN   vc_arr_t default g_empty_vc_arr,
-      p_http_version         IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
+      p_http_version         IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1
    )
    IS
       l_http_request       UTL_HTTP.req;
@@ -195,7 +196,7 @@ AS
       p_url             IN   VARCHAR2,
       o_blob            OUT  BLOB,
       o_mime_type       OUT  VARCHAR2,
-      p_http_version    IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1
+      p_http_version    IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1
    )
    IS
       l_http_request    UTL_HTTP.req;
