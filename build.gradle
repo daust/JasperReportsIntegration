@@ -51,7 +51,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.11.0'
+  project.version           = '2.10.1'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8

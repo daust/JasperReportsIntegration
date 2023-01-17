@@ -30,6 +30,7 @@ AS
   2.6.2    13.10.2020  D. Aust   #54 - Timeout value from default table not working
   2.8.0    08.02.2022  D. Aust   #79: XLIB_HTTP http_version
                                    - added optional parameter for http version
+ 2.10.1  16.01.2023  D. Aust          #123: Backport constant for Oracle 11
 =========================================================================*/
 
 
@@ -200,7 +201,7 @@ AS
    ----------------------------------------------------------------------------
    PROCEDURE show_image (
       p_image_name IN VARCHAR2, 
-      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1)
+      p_http_version        IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1)
    IS
       l_proc               VARCHAR2 (100) := m_module || '.show_image';
       l_url                VARCHAR2 (32767);
@@ -298,7 +299,7 @@ AS
                           p_save_filename        IN VARCHAR2 DEFAULT NULL,
                           p_rep_time_zone        IN VARCHAR2 DEFAULT NULL,
                           p_print_job_name       IN VARCHAR2 DEFAULT NULL,
-                          p_http_version         IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1)
+                          p_http_version         IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1)
    IS
       l_proc   VARCHAR2 (100) := m_module || '.SHOW_REPORT';
       l_url    VARCHAR2 (32767);
@@ -401,7 +402,7 @@ AS
                          p_out_blob             IN OUT BLOB,
                          p_out_mime_type        IN OUT VARCHAR2,
                          p_print_job_name       IN     VARCHAR2 DEFAULT NULL,
-                         p_http_version         IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1)
+                         p_http_version         IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1)
    IS
       l_proc   VARCHAR2 (100) := m_module || '.GET_REPORT';
       l_url    VARCHAR2 (32767);

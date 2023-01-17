@@ -3,6 +3,7 @@ create or replace package body xlib_jasperreports_img as
 
  2.8.0   08.02.2022  D. Aust          #79: XLIB_HTTP http_version
                                         - added optional parameter for http version
+ 2.10.1  16.01.2023  D. Aust          #123: Backport constant for Oracle 11
 */
    m_module       constant varchar2 (100) := $$plsql_unit;
 
@@ -13,7 +14,7 @@ create or replace package body xlib_jasperreports_img as
    procedure get_image (
       p_url in varchar2, 
       p_image in varchar2,
-      p_http_version        IN   utl_http.http_version_1_1%type default utl_http.http_version_1_1)
+      p_http_version        IN   xlib_http.http_version_1_1%type default xlib_http.http_version_1_1)
    is
       l_url         varchar2 (32767); 
       l_proc   VARCHAR2 (100)   := m_module || '.GET_IMAGE';
