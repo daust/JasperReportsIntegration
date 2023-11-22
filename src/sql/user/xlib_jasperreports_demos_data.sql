@@ -36,4 +36,9 @@ See for details:
 - http://jasperreports.sourceforge.net/sample.reference/pdfencrypt/index.html
 - https://community.jaspersoft.com/wiki/how-configure-pdf-encryption-jasperreports-server-561','pdf','default',null,null,null,null,null,null,null,null,null,null);
 
+-- Charts exporting images
+Insert into XLIB_JASPERREPORTS_DEMOS (DEMO_CODE,DEMO_TITLE,DEMO_REPORT_NAME,DEMO_DESCRIPTION,DEMO_REPORT_FORMAT,DEMO_DATA_SOURCE,DEMO_REPORT_LOCALE,DEMO_REPORT_ENCODING,DEMO_OUT_FILENAME,DEMO_PARAM1_LABEL,DEMO_PARAM1_VALUE,DEMO_PARAM2_LABEL,DEMO_PARAM2_VALUE,DEMO_PARAM3_LABEL,DEMO_PARAM3_VALUE,DEMO_REPORT_TIME_ZONE) values ('TEST_CHART','Test with Chart','demo/charts','Test report to include charts as images','pdf','default','en_US',null,null,null,null,null,null,null,null,null);
+Insert into XLIB_JASPERREPORTS_DEMOS (DEMO_CODE,DEMO_TITLE,DEMO_REPORT_NAME,DEMO_DESCRIPTION,DEMO_REPORT_FORMAT,DEMO_DATA_SOURCE,DEMO_REPORT_LOCALE,DEMO_REPORT_ENCODING,DEMO_OUT_FILENAME,DEMO_PARAM1_LABEL,DEMO_PARAM1_VALUE,DEMO_PARAM2_LABEL,DEMO_PARAM2_VALUE,DEMO_PARAM3_LABEL,DEMO_PARAM3_VALUE,DEMO_REPORT_TIME_ZONE) values ('TEST_CHART_HTML','Test with Chart','demo/charts','Test report to include charts as images','html2','default','en_US',null,null,null,null,null,null,null,null,null);
+
+
 commit;

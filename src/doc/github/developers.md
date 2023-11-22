@@ -163,8 +163,8 @@ Modify default data source:
 [datasource:default]
 type=jdbc
 name=default
-url=jdbc:oracle:thin:@vm1:1521:XE
-username=schema1
+url=jdbc:oracle:thin:@win11:1521/orclpdb
+username=demo
 password=oracle1
 
 *) encryptPasswords
@@ -184,6 +184,11 @@ open http://localhost:8090/jri/
 *) compilation of .jrxml => .jasper on-the-fly
 
 open http://localhost:8090/jri/report?_repName=test&_repFormat=pdf&_dataSource=default&_outFilename=&_repLocale=&_repEncoding=&_repTimeZone=&_printIsEnabled=&_printPrinterName=&_printJobName=&_printPrinterTray=&_printCopies=&_printDuplex=&_printCollate=&_saveIsEnabled=&_saveFileName=
+
+*) create config directory
+
+./createConfigDir.sh /tmp/jri ..
+tree /tmp/jri
 
 *) get config directory - should be empty
 

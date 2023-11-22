@@ -5,7 +5,7 @@
 *) Development
 
 - APEX:
-	- http://win11/ords
+	- http://win11:8090/ords
 	- Workspace: DEMO, User: dietmar.aust
 	- APEX Application: Jasper Reports Integration Test (v2.6.2)
 	

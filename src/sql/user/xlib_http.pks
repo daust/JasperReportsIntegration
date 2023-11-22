@@ -28,6 +28,7 @@ AS
  2.8.0   08.02.2022  D. Aust          #79: XLIB_HTTP http_version
                                         - added optional parameter for http version
  2.10.1  16.01.2023  D. Aust          #123: Backport constant for Oracle 11
+ 2.11.0  25.01.2023  D. Aust          - Tested and fixed on Oracle11g - %Type works on variables-not constants
 
 =========================================================================*/
 
@@ -36,7 +37,7 @@ AS
 
   -- version of this package
   version_c constant varchar2(20 char) := '2.10.1';   
-  HTTP_VERSION_1_1  CONSTANT VARCHAR2(64) := 'HTTP/1.1'; -- #123
+  HTTP_VERSION_1_1 VARCHAR2(64) := 'HTTP/1.1'; -- #123
 
   TYPE vc_arr_t IS TABLE OF VARCHAR2 (32767) INDEX BY BINARY_INTEGER;
   g_empty_vc_arr vc_arr_t;
