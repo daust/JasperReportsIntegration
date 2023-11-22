@@ -321,7 +321,7 @@ war {
                       "Main-Class": "main.CommandLine",
                       //"Class-Path": "*.jar"
                       //"Class-Path": configurations.runtimeClasspath.collect { it.getName() }.join(' ') + " " + jar.outputs.files.collect { it.getName() }.join(' ')
-                      "Class-Path": war.classpath.collect { it.getName() }.join(' ') + " " + jar.outputs.files.collect { it.getName() }.join(' ')
+                      //"Class-Path": war.classpath.collect { it.getName() }.join(' ') + " " + jar.outputs.files.collect { it.getName() }.join(' ')
                     )
       }
     }

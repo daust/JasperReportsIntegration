@@ -272,6 +272,10 @@ isEnabled=false
 
 # allow only certain directories on the server to write to
 # Use "," to separate between path entries
+# On Windows, use the regular path denomination, no escaping necessary, 
+#  e.g.: C:\app\jri-downloads
+# All directories have to be named explicitly, not recursive file 
+#  paths are possible
 #directoryWhitelist=/Users/daust/oc-jasper/tmp,/Users/daust/oc-jasper
 
 #====================================================================
