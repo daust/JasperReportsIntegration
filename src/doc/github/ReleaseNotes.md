@@ -1,6 +1,23 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 2.11.0 (release: 23.11.2023)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/12?closed=1).  
+ 
+## New features
+  * #136 Upgrade libraries to JasperReports 6.20.6
+
+## Bug fixes
+  * *none*
+
+## Changed behaviour
+  * *none*
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+  * For running the application on Tomcat10, you have to use ``jri-2.11.0-jasper-6.20.6-tomcat10.war`` instead of ``jri.war``.
+
 # Version 2.10.1 (release: 17.01.2023)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/13?closed=1). 
@@ -21,7 +38,7 @@ It is mainly a maintenance / bugfix release, specifically to support Oracle Webl
 ## Known issues
   * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
   * For running the application on Tomcat10, you have to use ``jri-2.10.1-jasper-6.20.0-tomcat10.war`` instead of ``jri.war``.
-  
+
 # Version 2.10.0 (release: 25.08.2022)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/11?closed=1). 

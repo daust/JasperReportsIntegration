@@ -25,6 +25,7 @@
   02.06.2022  D. Aust   #102: Upgrade libraries to JasperReports 6.19.1
   24.08.2022  D. Aust   #115: Upgrade libraries to JasperReports 6.20.0
   25.08.2022  D. Aust   #116: JDK17 support, replace Groovy library with 3.0.12 (3.0.+)
+  22.11.2023  D. Aust   #136: Upgrade libraries to JasperReports 6.20.6
 
  */
 
@@ -51,7 +52,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.10.1'
+  project.version           = '2.11.0'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -59,7 +60,7 @@ import org.gradle.internal.os.OperatingSystem
   archivesBaseName          = "jri"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.20.0'  
+  def jasperreportsVersion  ='6.20.6'  
 
   // Download Oracle JDBC drivers, must be the full version:
   // https://www.oracle.com/database/technologies/appdev/jdbc-ucp-19c-downloads.html
