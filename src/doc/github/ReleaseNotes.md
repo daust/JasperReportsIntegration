@@ -4,6 +4,12 @@
 # Version 3.0.0 (release: 17.10.2024)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/14?closed=1).  
+
+This release has been tested with multiple versions of application servers
+- Tomcat9, Tomcat10, Weblogic 14, Weblogic 12, Wildfly 26.1, Glassfish 4.1
+
+and Java versions
+- JDK 8, JDK 11, JDK 17, JDK 18
  
 ## New features
   * #146 Upgrade libraries to JasperReports 7.0.1
