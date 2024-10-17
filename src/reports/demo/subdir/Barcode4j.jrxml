@@ -1,0 +1,48 @@
+<jasperReport name="Barcode4j" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a9a92cca-1036-45b1-9317-f3a9e323cc79">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="dataadapters/win11-orclpdb-demo.jrdax"/>
+	<query language="sql"><![CDATA[SELECT sysdate d,
+	'123' symbol
+FROM dual]]></query>
+	<field name="D" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="D"/>
+		<property name="com.jaspersoft.studio.field.label" value="D"/>
+	</field>
+	<field name="SYMBOL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SYMBOL"/>
+		<property name="com.jaspersoft.studio.field.label" value="SYMBOL"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="79" splitType="Stretch"/>
+	<pageHeader height="35" splitType="Stretch"/>
+	<columnHeader height="30" splitType="Stretch">
+		<element kind="staticText" uuid="f11fb39a-0990-49a4-87db-c554541756d5" x="0" y="0" width="120" height="30">
+			<text><![CDATA[D]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b7994069-5229-4bb9-855f-d9ab43878c18"/>
+		</element>
+		<element kind="staticText" uuid="33a2caf6-729a-47c2-9f01-cd76fa0211c5" x="120" y="0" width="277" height="30">
+			<text><![CDATA[SYMBOL]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c25cc5ed-3452-4204-b668-e6bba4250aa9"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="135" splitType="Stretch">
+			<element kind="textField" uuid="2ed46301-27cd-4c82-967f-70714d62392a" x="0" y="0" width="120" height="30">
+				<expression><![CDATA[$F{D}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b7994069-5229-4bb9-855f-d9ab43878c18"/>
+			</element>
+			<element kind="textField" uuid="2f22d7d0-d16d-439a-ad6e-c825ac32c68a" x="120" y="0" width="90" height="30">
+				<expression><![CDATA[$F{SYMBOL}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c25cc5ed-3452-4204-b668-e6bba4250aa9"/>
+			</element>
+			<element kind="component" uuid="2baed5b7-9255-48fe-8a80-424221389d6b" x="210" y="0" width="150" height="30">
+				<component kind="barcode4j:Codabar">
+					<codeExpression><![CDATA[$F{SYMBOL}]]></codeExpression>
+				</component>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

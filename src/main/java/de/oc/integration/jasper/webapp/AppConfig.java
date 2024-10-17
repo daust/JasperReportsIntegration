@@ -3,7 +3,6 @@ package de.oc.integration.jasper.webapp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -14,17 +13,17 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import de.oc.db.ConnectionUtility;
 import de.oc.db.DataSourceDefinition;
-import de.oc.utils.Encryptor;
 import de.oc.utils.SecurityUtils;
 import net.sf.jasperreports.engine.JRRuntimeException;
 import net.sf.jasperreports.engine.JasperCompileManager;
+
 
 /**
  * Application Configuration
@@ -45,8 +44,6 @@ public class AppConfig {
 	public static final String OC_JASPER_LOG_DIR = "oc.jasper.log.dir";
 	public static final java.lang.String APPLICATION_PROPERTIES_FILE = "application.properties";
 
-	// public static final String key1 = "Bar12345Bar12345"; // 128 bit key
-	public static final String key2 = "ThisIsASecretKet";
 
 	// ----------------------------------------------------
 	// public
@@ -479,60 +476,17 @@ public class AppConfig {
 		// Needs more checking, but the connection pools are closed differently.
 	}
 
-	public static String padRight(String s, int n) {
-		return String.format("%1$-" + n + "s", s);
-	}
-
-	public static String padLeft(String s, int n) {
-		return String.format("%1$" + n + "s", s);
-	}
-
-	public static String getKey1() {
-		String key1 = "";
-		String localhostname = "";
-
-		try {
-			localhostname = java.net.InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-		}
-
-		if (localhostname.length() > 16) {
-			localhostname = localhostname.substring(0, 16);
-		}
-
-		key1 = padRight(localhostname, 16).replace(" ", "|");
-
-		return key1;
-	}
 
 	// if it is already encrypted, then do nothing
 	// if it is NOT already encrypted, then use method 1:
 	public String encryptPWD(String pwd) {
-		pwd = pwd.trim();
 
-		if (pwd.startsWith("1:")) {
-			// password is encrypted with method 1 ... do nothing
-		} else {
-			// not encrypted => ENCRYPT!
-			pwd = "1:" + Encryptor.encrypt(getKey1(), key2, pwd);
-		}
-
-		return pwd;
+		return SecurityUtils.encryptPWD(pwd);
 	}
 
 	public String decryptPWD(String pwd) {
 
-		if (pwd != null) {
-			if (pwd.startsWith("1:")) {
-				// password is encrypted with method 1
-				String encPwd = pwd.substring("1:".length());
-				pwd = Encryptor.decrypt(getKey1(), key2, encPwd);
-			} else {
-				// not encrypted => do nothing
-			}
-		}
-
-		return pwd;
+	    return SecurityUtils.decryptPWD(pwd);
 	}
 
 	/**

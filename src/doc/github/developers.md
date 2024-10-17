@@ -3,14 +3,8 @@
 ## Requirements
 
 * Java JDK >= **Java 8**
-* Gradle (https://gradle.org/) (this is optional and not required, only when upgrading the gradle environment). Currently, we are using Gradle 6.6.1 and a gradle wrapper is provided.
-* **Apache ant** (you need a working installation of ant in order to download the new libraries for jasperreports). You can download and install it from here: https://ant.apache.org/bindownload.cgi
-* **Apache Ivy** (you need this extension to Apache ant in order to download the jasperreports libraries successfully). You can download it from here: https://ant.apache.org/ivy/download.cgi. Once downloaded, you need to copy the ``ivy<version>.jar`` file into the directory ``<ant install dir>\lib``. 
-
-## Best practices
-
-When contributing as a developer, please adhere to the best practices: https://www.datree.io/resources/github-best-practices. 
-Specifically, the main branch is protected: https://docs.github.com/en/github/administering-a-repository/configuring-protected-branches.
+* Gradle (https://gradle.org/) (this is optional and not required, only when upgrading the gradle environment). Currently, we are using Gradle 7.6.4 and a gradle wrapper is provided.
+* *Apache ant and Apache Ivy are no longer required, because the JasperReports libraries are no longer built using those tools. Since JasperReports 7.0.0 this has been moved to a pure Maven build.* 
 
 ## Setup
 
@@ -28,7 +22,7 @@ Thus, for all commands you can use `./gradlew` or `gradle.bat` instead of `gradl
 
 Please create a local file named `gradle.properties` in the root directory. This will remain local and not be included on github (see file `.gitignore` for details). 
 
-All local configuration files for the JasperReportsIntegration at runtime (application.properties and report directories) will be created there. Everything will be created automatically, even the directory itself. You only need to register the path to hold the configuration files. 
+All local configuration files for the JasperReportsIntegration at runtime (``application.properties`` and ``report`` directories) will be created there. Everything will be created automatically, even the directory itself. You only need to register the path to hold the configuration files. 
 
 **Sample file contents for Linux or MacOS:**
 
@@ -85,30 +79,18 @@ The most important configuration can be found in the build file `build.gradle`:
 
 ```
   project.description       = "JasperReportsIntegration"
-  project.version           = '2.6.0'
+  project.version           = '3.0.0'
   
-  sourceCompatibility       = 1.8
-  targetCompatibility       = 1.8
+  sourceCompatibility       = 1.11
+  targetCompatibility       = 1.11
 
   archivesBaseName          = "JasperReportsIntegration"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.14.0'  
+  def jasperreportsVersion  ='7.0.1'  
 ```
 
 If you create a new version (meaning you change the Java sources), please update the property `project.version`. Should you only want to download and include a new version of the jasperreport libraries, then you can change the property `jasperreportsVersion`. 
-
-### Downloading a new version of the libraries
-
-Once you have updated the property `jasperreportsVersion`, you can now call the following command to download the new libraries: 
-
-```
-<gradle command> jriDownloadJasperLibraries
-```
-
-This will download the files into the directory: `lib/jasper-reports/<version>` .
-
-**Also, this is a required step for the current release, because the libraries are not uploaded to github, they are always downloaded locally for each developer.**
 
 ## Building
 
@@ -117,18 +99,29 @@ This will download the files into the directory: `lib/jasper-reports/<version>` 
 There are many different ways you can build the project ... depending on your needs: 
 * cleaning the build directory
     * `<gradle command> clean`
-* building the war file 
+* the main build command to create the ``.war`` file and the binary files for the release. In ``distributions`` you will find the binaries to upload to GitHub as a release. In ``libs`` you will find the generated ``.jar`` and ``.war`` file. 
     * `<gradle command> build`
-* building the distribution (without zip) into the build directory `build/install/JasperReportsIntegration`
+* building the distribution (without zip) into the build directory `build/install/JasperReportsIntegration`. This is for local testing of the command line scripts and the embedded Jetty. 
     * `<gradle command> installDist`
-* building the distribution as zip into the build directory: `build/distributions`
-    * `<gradle command> assembleDist`
 
 The following naming conventions will be used: `JasperReportsIntegration-<project.version>-<jasperreportsVersion>.zip`.
 
-A *.tar file will also be created. 
+A ``*.tar`` file will also be created. 
+
+## Setting up the Eclipse project
+
+You can use the build task ``eclipse`` to create a project file for Eclipse. 
+
+```
+<gradle command> eclipse
+```
 
 ## Testing / debugging
+
+<!-- This is a comment and will not be displayed in the rendered Markdown 
+
+This section can be re-introduced again once the conflicts regarding java versions
+has been fixed. 
 
 * starting the built-in jetty (provided by gretty) - (faster) - will use an inplace web application and not compile the full war file. Thus the version numbers might not show properly. 
     * `<gradle command> appRun`
@@ -144,21 +137,32 @@ gretty {
 } 
 ```
 
-```
---------------------------------------------------------------------------------
--- Test cases
---------------------------------------------------------------------------------
+-->
 
-*) local install
-gradle clean
-gradle installDist
+Debugging is done in your local development environment. There you can start a Tomcat9 instance and deploy the application automatically. 
+
+In the Eclipse environment, I am using the following settings: 
+- apache-tomcat-9.0.95
+- Open JDK 17.0.4.1 as a runtime engine for Tomcat
+- In the runtime environment for the Tomcat container, specify the environment variable ``OC_JASPER_CONFIG_HOME``. In my environment it defaults to ``/tmp/jri`` which also corresponds to the entry in the ``build.gradle`` file. 
+
+## Test checklist
+
+This is the checklist I run for each release, please adapt to your local environment. 
+
+### Test command line scripts on MacOS (encrypt passwords, deploy, start)
+
+```
+*) local install on MacOS
+./gradlew clean
+./gradlew installDist
 
 cd /Users/daust/LOCAL-FILES/50-Projects/JasperReportsIntegration/build/install/JasperReportsIntegration/bin
 
 *) edit configuration
 vi ../conf/application.properties
 
-Modify default data source: 
+Modify default data source to connect to your development environment, e.g.:
 
 [datasource:default]
 type=jdbc
@@ -183,6 +187,8 @@ open http://localhost:8090/jri/
 
 *) compilation of .jrxml => .jasper on-the-fly
 
+rm /Users/daust/LOCAL-FILES/50-Projects/JasperReportsIntegration/build/install/JasperReportsIntegration/reports/test.jasper
+
 open http://localhost:8090/jri/report?_repName=test&_repFormat=pdf&_dataSource=default&_outFilename=&_repLocale=&_repEncoding=&_repTimeZone=&_printIsEnabled=&_printPrinterName=&_printJobName=&_printPrinterTray=&_printCopies=&_printDuplex=&_printCollate=&_saveIsEnabled=&_saveFileName=
 
 *) create config directory
@@ -193,7 +199,7 @@ tree /tmp/jri
 *) get config directory - should be empty
 
 ./getConfigDir.sh ../webapp/jri.war
-ConfigDir: /tmp/jri
+ConfigDir: 
 
 *) set config dir
 
@@ -201,18 +207,145 @@ ConfigDir: /tmp/jri
 process web.xml
 replace config.home with directory: /tmp/jri
 
-*) get config directory - should be empty
+*) get config directory - should now be /tmp/jri
 
 ./getConfigDir.sh ../webapp/jri.war
 ConfigDir: /tmp/jri
+```
+### Test different report types through APEX
 
-After that, do the same thing on Windows. 
+```
+*) Start APEX application
 
-*) More use cases:
-- Export file to CSV
-- Export file to xlsx
-- run environment with https and wallet
-- compile report test.jrxml on-the-fly
+/usr/bin/open -a "/Applications/Google Chrome.app" 'http://win11:8090/ords/f?p=201'
+
+*) Verify Setup
+Enter the correct URL (parts) into the section: J2EE Server Configuration (Defaults)
+E.g. connect from the database in my local virtual machine to the http://macbook2022.local:9080/jri
+Both my Eclipse environment and also my Tomcat10 on the MacBook (host machine) run on this port. 
+
+*) Test reports
+- Go to "Report Demos"
+- Execute all reports in order
+
+*) Test saving files on the server
+- edit ``application.properties`` file:
+
+[saveFileOnServer]
+isEnabled=true
+directoryWhitelist=/tmp/jri
+
+- Restart Appserver
+- Go to "Release Checklist" in APEX app
+- Click on "Save file on server (test.pdf)" => will create the file in ``/tmp/jri/test.pdf``
+- Click on "Save file on server and show (test.pdf)" => will create the file in ``/tmp/jri/test.pdf`` and also display it in the browser
+- Click on "Save file on server (test.csv)" => will export the test report in CSV format as ``/tmp/jri/test.pdf``.
+```
+
+### Test Tomcat 10 support on MacOS
+
+```
+*) Build war file for Tomcat10 (will take 2min approx.)
+
+./gradlew buildWarTomcat10
+
+*) Deploy to apache-tomcat-10.0.16 and start it
+
+./gradlew deployTomcat10
+
+*) Start browser
+
+open http://localhost:9080/jri/
+
+*) When done, stop Tomcat10
+/Users/daust/Downloads/KEEP/tomcat/apache-tomcat-10.0.16/bin/shutdown.sh
+
+```
+
+### Test command line scripts on Windows (encrypt passwords, deploy, start)
+
+```
+*) Download and unzip to Windows
+
+e.g. File: jri-3.0.0-jasper-7.0.1.zip
+download to c:\temp
+unzip
+rename directory to c:\temp\jri-install
+download jri-3.0.0-jasper-7.0.1-tomcat10.war to c:\temp\jri-install\webapp
+and rename it to jri-tomcat10.war
+
+*) Start a cmd command shell and navigate to that directory
+cd /d C:\temp\jri-install\bin
+
+*) edit configuration
+start ..\conf\application.properties
+
+Modify default data source to connect to your development environment, e.g.:
+
+[datasource:default]
+type=jdbc
+name=default
+url=jdbc:oracle:thin:@win11:1521/orclpdb
+username=demo
+password=oracle1
+
+*) encryptPasswords
+
+encryptPasswords.cmd ..\conf\application.properties
+
+*) check encryption
+
+type  ..\conf\application.properties
+
+*) deploy web application and start embedded jetty
+
+deployJasperReportsIntegration.cmd
+startJasperReportsIntegration.cmd
+
+start http://localhost:8090/jri/
+
+*) compilation of .jrxml => .jasper on-the-fly (should create the file ``test.jasper`` in the ``reports`` directory)
+
+del "C:\temp\jri-install\reports\test.jasper"
+start http://localhost:8090/jri/report?_repName=test
+
+*) create config directory (delete first)
+
+rmdir /s /q c:\temp\jri
+cd /d C:\temp\jri-install\bin
+createConfigDir.cmd c:\temp\jri ..
+tree c:\temp\jri
+
+*) get config directory - should be empty
+
+getConfigDir.cmd ..\webapp\jri.war
+ConfigDir: 
+
+*) set config dir
+
+setConfigDir.cmd ..\webapp\jri.war c:\temp\jri
+=> process web.xml
+=> replace config.home with directory: c:\temp\jri
+
+*) get config directory - should now be c:\temp\jri
+
+getConfigDir.cmd ..\webapp\jri.war
+=> ConfigDir: c:\temp\jri
+
+*) Deploy to local installations (mandatory step, else the wrong config directory will be picked up. The entry in the web.xml overrides the environment variable). Alternatively, you can take a "fresh" war file that has not yet a config dir set. 
+setConfigDir.cmd ..\webapp\jri.war C:\app\jri
+setConfigDir.cmd ..\webapp\jri-tomcat10.war C:\app\jri
+
+*) Deploy the war file to different local application servers and to basic tests there
+"C:\Programme-Manuell\deployWAR.cmd"
+
+- Tomcat9 + current JDK (http://localhost:8090/jri)
+- Tomcat10 + current JDK (http://localhost:8080/jri)
+- Weblogic 14 + JDK8 (http://localhost:7001/jri/)
+- Weblogic 12 + JDK8 (http://localhost:7001/jri/)
+- Wildfly 26.1 + JDK11 (http://localhost:8080/jri)
+- Wildfly 26.1 + current JDK (http://localhost:8080/jri)
+- Glassfish 4.1 +  JDK8 (http://localhost:8080/jri/)
 
 ```
 
@@ -220,7 +353,7 @@ After that, do the same thing on Windows.
 
 What are the steps for releasing a new version of JRI?
 
-* Update the release notes
+* Update the release notes => ``ReleaseNotes.md``
 * Test all use cases in the APEX application
 * Do a full install on Windows following the full installation guidelines
 * Do a full install on Linux following the full installation guidelines

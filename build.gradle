@@ -26,6 +26,8 @@
   24.08.2022  D. Aust   #115: Upgrade libraries to JasperReports 6.20.0
   25.08.2022  D. Aust   #116: JDK17 support, replace Groovy library with 3.0.12 (3.0.+)
   22.11.2023  D. Aust   #136: Upgrade libraries to JasperReports 6.20.6
+  18.09.2024  D. Aust   #146: Upgrade libraries to JasperReports 7.0.0
+  16.10.2024  D. Aust   #146: Upgrade libraries to JasperReports 7.0.1  
 
  */
 
@@ -33,10 +35,8 @@ plugins {
   id "war"
   id "eclipse"
   id "distribution"
-  id "org.gretty" version "3.0.7"
+  id "org.gretty" version "3.0.9"
 }
-// version 4.0 of gretty requires Java 11: https://gretty-gradle-plugin.github.io/gretty-doc/Gretty-configuration.html
-//apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
 
 //for Ant filter
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -52,7 +52,7 @@ import org.gradle.internal.os.OperatingSystem
 //-----------------------------------------------------------------------------
 
   project.description       = "JasperReportsIntegration - more details here: https://github.com/daust/JasperReportsIntegration"
-  project.version           = '2.11.0'
+  project.version           = '3.0.0'
   
   sourceCompatibility       = 1.8
   targetCompatibility       = 1.8
@@ -60,13 +60,14 @@ import org.gradle.internal.os.OperatingSystem
   archivesBaseName          = "jri"
 
   // version of jasperreports to be used
-  def jasperreportsVersion  ='6.20.6'  
+  def jasperreportsVersion  ='7.0.1'  
 
   // Download Oracle JDBC drivers, must be the full version:
   // https://www.oracle.com/database/technologies/appdev/jdbc-ucp-19c-downloads.html
   // put files into folder lib/additional-war-libraries
 
-  // Download JasperReports files from: https://sourceforge.net/projects/jasperreports/files/jasperreports/
+  // Download JasperReports files 
+  // from: https://sourceforge.net/projects/jasperreports/files/jasperreports/
   // or from https://github.com/TIBCOSoftware/jasperreports/releases
 
 //-----------------------------------------------------------------------------
@@ -97,8 +98,14 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jcl
     implementation group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.+'
 
+    // for the StringUtils was moved from lang3 to text
+    implementation 'org.apache.commons:commons-text:1.11.0'
+
     // https://mvnrepository.com/artifact/commons-configuration/commons-configuration
     implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.+'
+
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.+'
 
     // Get BOM file and choose Oracle JDBC driver (ojdbc8.jar) and Universal Connection Pool (ucp.jar)
     // https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
@@ -124,25 +131,154 @@ dependencies {
     
     // https://mvnrepository.com/artifact/xalan/serializer
     // see bug: #55 - Barcodes produce classnotfounderror
-    compile group: 'xalan', name: 'serializer', version: '2.7.1'
+    implementation group: 'xalan', name: 'serializer', version: '2.7.1'
+
     // https://mvnrepository.com/artifact/org.apache.xmlgraphics/xmlgraphics-commons
     // see bug: #55 - Barcodes produce classnotfounderror
-    compile group: 'org.apache.xmlgraphics', name: 'xmlgraphics-commons', version: '2.+'
+    implementation group: 'org.apache.xmlgraphics', name: 'xmlgraphics-commons', version: '2.+'
 
     // *** Only for TESTING
     testCompileOnly 'junit:junit:4.12'
 
     // joda time because auf 
     // https://mvnrepository.com/artifact/joda-time/joda-time
-    compile group: 'joda-time', name: 'joda-time', version: '2.4'
+    implementation group: 'joda-time', name: 'joda-time', version: '2.4'
 
     // dependencies from jasperreports.proj
-    compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
+    implementation fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
     // dependencies from oracle jdbc
-    compile fileTree(dir: "lib/additional-war-libraries", include: ['*'])
+    implementation fileTree(dir: "lib/additional-war-libraries", include: ['*'])
 
     // https://mvnrepository.com/artifact/org.codehaus.groovy/groovy
-    implementation 'org.codehaus.groovy:groovy:3.0.+'
+    // removed because version 4 will be included through jasperreports 7
+    // implementation 'org.codehaus.groovy:groovy:3.0.+'
+
+    // *** new import for JR 7 ***
+    // dependencies from jasperreports.proj
+    //compile fileTree(dir: "lib/jasper-reports/$jasperreportsVersion", include: ['*.jar'])
+    // dependencies from oracle jdbc
+    //compile fileTree(dir: "lib/additional-war-libraries", include: ['*'])
+
+    // https://mvnrepository.com/artifact/org.codehaus.groovy/groovy
+    //implementation 'org.codehaus.groovy:groovy:3.0.+'
+
+    //${jasperreportsVersion}
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports', version: "$jasperreportsVersion"
+    //implementation "net.sf.jasperreports:jasperreports:$jasperreportsVersion"
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-functions
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-functions', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-xalan
+    // not using xml data sources
+    //implementation group: 'net.sf.jasperreports', name: 'jasperreports-xalan', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-ant
+    // implementation group: 'net.sf.jasperreports', name: 'jasperreports-ant', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-fonts
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-fonts', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-metadata
+    // no introspection/reflection of code is required
+    // implementation group: 'net.sf.jasperreports', name: 'jasperreports-metadata', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-data-adapters
+    // possibly required, will see
+    //implementation group: 'net.sf.jasperreports', name: 'jasperreports-data-adapters', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-pdf
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-pdf', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-velocity
+    // will include that because users might be using velocity syntax in their reports
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-velocity', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-charts
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-charts', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-json
+    // no support for JSON data sources required
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-json', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-excel-poi
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-excel-poi', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-chart-themes
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-chart-themes', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-jdt
+    // YES, I will certainly need support to compile the reports on-the-fly
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-jdt', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-annotation-processors
+    // yes, people might use annotations in the reports
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-annotation-processors', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-interactivity
+    // no, no JavaScript interactivity supported / required
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-interactivity', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-javascript
+    // no, no JavaScript interactivity supported / required
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-javascript', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-barbecue
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-barbecue', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-hibernate
+    // I don't use hibernate to access the data
+    // implementation group: 'net.sf.jasperreports', name: 'jasperreports-hibernate', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-spring
+    // nope, also no spring support needed
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-spring', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-chrome
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-chrome', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-google-maps
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-google-maps', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-data-adapters-http
+    // no, no data source over http required
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-data-adapters-http', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-fastexcel
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-fastexcel', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-ejbql
+    // nope, only JDBC data sources
+    // implementation group: 'net.sf.jasperreports', name: 'jasperreports-ejbql', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-chart-customizers
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-chart-customizers', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-barcode4j
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-barcode4j', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-servlets
+    // perhaps, perhaps not
+    // implementation group: 'net.sf.jasperreports', name: 'jasperreports-servlets', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-olap
+    // only jdbc data sources
+    // implementation group: 'net.sf.jasperreports', name: 'jasperreports-olap', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-groovy
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-groovy', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-jaxen
+    // no, I am not using XML data sources
+    // implementation group: 'net.sf.jasperreports', name: 'jasperreports-jaxen', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-servlets-j2ee
+    implementation group: 'net.sf.jasperreports', name: 'jasperreports-servlets-j2ee', version: "$jasperreportsVersion"
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.+'
+
+
 }
 
 gretty {
@@ -162,32 +298,6 @@ gretty {
 //-----------------------------------------------------------------------------
 //-- Groovy helper functions
 //-----------------------------------------------------------------------------
-
-/* download the required libraries for jasperreports from the official repositories and 
-   store them locally (also following redirect instructions) */
-def downloadRedirect( String url, String filename ) {
-  while( url ) {
-    new URL( url ).openConnection().with { conn ->
-      conn.instanceFollowRedirects = false
-      url = conn.getHeaderField( "Location" )      
-      if( !url ) {
-        new File( filename ).withOutputStream { out ->
-          conn.inputStream.with { inp ->
-            out << inp
-            inp.close()
-          }
-        }
-      }
-    }
-  }
-}
-
-/* download files without redirection */
-def download(String remoteUrl, String localUrl) {
-  new File("$localUrl").withOutputStream { out ->
-      new URL(remoteUrl).withInputStream { from ->  out << from; }
-  }
-}
 
 // a wrapper closure around executing a string                                  
 // can take either a string or a list of strings (for arguments with spaces)    
@@ -237,9 +347,13 @@ eclipse {
             whenMerged { classpath ->
                     java.util.List wanted = new java.util.ArrayList()
                     def entries = classpath.getEntries()
-                    entries.each {
-                        if (   (it.path.contains('commons-lang-2.6.jar') && it.path.contains('.gradle/caches'))
-                            ||
+                    // Sort the entries by their path (name)
+                    def sortedEntries = entries.sort { it.path }
+
+                    sortedEntries.each {
+                        println " classpath: " + it.path
+                        if (   //(it.path.contains('commons-lang-2.6.jar') && it.path.contains('.gradle/caches'))
+                               //||
                                (it.path.contains('commons-logging-1.1.1.jar') && it.path.contains('.gradle/caches'))
                         ) {
                             println('Removing library: ' + it.path + ' from eclipse classpath (duplicate)')
@@ -247,6 +361,8 @@ eclipse {
                             wanted.add(it)
                         }
                     }
+
+                    //Collections.sort(wanted);
                     classpath.setEntries(wanted)
                 }
      }
@@ -295,8 +411,7 @@ eclipse {
 //-----------------------------------------------------------------------------
 
 war {
-    dependsOn configurations.compile
-    archiveName = "${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.war"
+    archiveFileName = "${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.war"
 
     // replaces tokens in the respective files only for the assembly of the .war file:
     // @project.version@ => 
@@ -336,8 +451,8 @@ war {
     //webInf { from 'src/conf/weblogic.xml' }  // adds a file-set to the WEB-INF dir.  
 }
 
-distZip.setArchiveName("${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.zip")
-distTar.setArchiveName("${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.tar")
+distZip.setArchiveFileName("${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.zip")
+distTar.setArchiveFileName("${archivesBaseName}-${project.version}-jasper-${jasperreportsVersion}.tar")
 
 distributions {
     main {
@@ -356,24 +471,13 @@ distributions {
             from('src/reports'){into 'reports'}
             from (war.outputs){into 'webapp' rename(war.archiveName , "jri.war")}
 
-            /*from (configurations.compile){
-              include(["commons-configuration-*.jar"
-                          , "commons-lang-*.jar" 
-                          , "commons-logging-*.jar"
-                          , "jasperreports-*.jar"])
-              into 'lib'
-            }*/
-
-            from ("lib/jasper-reports/$jasperreportsVersion"){include 'jasperreports*.jar' into 'lib'}
+            from (configurations.runtimeClasspath){include "jasperreports-${jasperreportsVersion}.jar" into 'lib'}
             from (jar.outputs){into 'lib'}
             from ('lib/additional-commandline-libraries'){into 'lib'}
-
-            // copy war file directly into jetty/webapps
-            // rather not, make zip distribution too large
-            //from (war.outputs){into 'jetty/webapps' rename(war.archiveName , "jri.war")}
         }
     }
 }
+
 println "\n***********************************************"
 println "Version: " + project.version
 println "Source-Compatibility: " + project.sourceCompatibility
@@ -404,66 +508,6 @@ task jriCreateLocalEnvironment{
     copy{from ('src/conf/log4j2.xml') into "$jriLocalPath/conf"}
   }
 }
-
-task jriDownloadJasperLibraries{
-  description = "This will download the libraries for version $jasperreportsVersion to a local directory. Needs to be done only once when you upgrade to a new jasperreports version."
-
-  // ${File.separator}
-  doLast{
-    def tempLocation    ="$project.projectDir/build/download/$jasperreportsVersion"
-    def tempLocation2   ="$tempLocation/jasperreports-$jasperreportsVersion"
-    def targetLocation  ="$project.projectDir/lib/jasper-reports/$jasperreportsVersion"
-    def baseURLJasper   ="https://sourceforge.net/projects/jasperreports/files/jasperreports/JasperReports%20${jasperreportsVersion}"
-
-    println " download files and install in target location: " + targetLocation
-    println " first download project files into temporary directory: " + tempLocation2
-
-    file(targetLocation).mkdirs()
-    file(tempLocation).mkdirs()
-
-    downloadRedirect( "$baseURLJasper/jasperreports-${jasperreportsVersion}-project.tar.gz", "$tempLocation/jasperreports.tar.gz")
-    downloadRedirect( "$baseURLJasper/jasperreports-chart-themes-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-themes-${jasperreportsVersion}.jar")
-    downloadRedirect( "$baseURLJasper/jasperreports-chart-customizers-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-chart-customizers-${jasperreportsVersion}.jar")
-    downloadRedirect( "$baseURLJasper/jasperreports-functions-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-functions-${jasperreportsVersion}.jar")
-    downloadRedirect( "$baseURLJasper/jasperreports-fonts-${jasperreportsVersion}.jar", "$tempLocation/jasperreports-fonts-${jasperreportsVersion}.jar")
-
-    // ungzip / untar files
-    copy {
-            from tarTree(resources.gzip("$tempLocation/jasperreports.tar.gz"))
-            into "$tempLocation"
-        }
-    // run build.xml file to download all libraries and build the jasperreport libraries
-	println "running ant task: " + osAdaptiveCommand("ant", "-f", "$tempLocation2/build.xml", "retrievelibs")
-    runCommand.call( osAdaptiveCommand("ant", "-f", "$tempLocation2/build.xml", "retrievelibs") )
-	
-	println "running ant task: " + osAdaptiveCommand("ant", "-f", "$tempLocation2/build.xml", "jar")
-    runCommand.call( osAdaptiveCommand("ant", "-f", "$tempLocation2/build.xml", "jar") )
-
-    // copy all libraries to target location to: lib/jasper-reports/<version>
-    copy {
-            from "$tempLocation2"
-            from "$tempLocation2/dist"
-            from "$tempLocation2/dist/lib"
-            from "$tempLocation"    // chart-customizers, chart-themes, jasperreports-functions, jasperreports-fonts
-            into "$targetLocation"
-            include "*.jar"
-            // exclude all that are used for compilation and test only
-            // but not required at runtime
-            exclude "net.tascalate.asmx*jar"
-            exclude "net.tascalate.javaflow*jar"
-            exclude "testng*jar"
-            exclude "servlet-api*"
-            // https://github.com/TIBCOSoftware/jasperreports/issues/241
-            // CVE-2021-22096 - Medium Severity Vulnerability,  Vulnerable Library - spring-core-5.1.4.RELEASE.jar
-            exclude "spring-core-*"
-            exclude "spring-beans-*"
-
-            // ignore/remove older log4j2 libraries included in jasperreports-libraries
-            exclude "log4j-*"
-            exclude "groovy-3.0.*"
-    }
-  }
-}   
 
 
 /* build a new war file that will work on Tomcat10 */

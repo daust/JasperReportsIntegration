@@ -1,0 +1,43 @@
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<!-- 2024-09-21T11:20:31 -->
+<jasperReport name="BarcodeFont128" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a2fd818-4a0b-4578-b6b9-926dafccbe54">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="dataadapters/win11-orclpdb-demo.jrdax"/>
+	<query language="SQL"><![CDATA[Select sysdate, '123' symbol from dual]]></query>
+	<field name="SYSDATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="SYSDATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="SYSDATE"/>
+	</field>
+	<field name="SYMBOL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SYMBOL"/>
+		<property name="com.jaspersoft.studio.field.label" value="SYMBOL"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="79" splitType="Stretch"/>
+	<pageHeader height="35" splitType="Stretch"/>
+	<columnHeader height="30" splitType="Stretch">
+		<element kind="staticText" uuid="f8afdbb2-d2d1-448d-a36e-34a16d6a3e3a" x="40" y="0" width="100" height="30">
+			<text><![CDATA[SYSDATE]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2b552ceb-ab99-455a-9bf3-63ec7a0478cc"/>
+		</element>
+		<element kind="staticText" uuid="839dffd6-8671-4878-bc4d-94b17793e5ca" x="140" y="0" width="100" height="30">
+			<text><![CDATA[SYMBOL]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="43895132-155b-431e-80b5-43010cd8e58c"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<element kind="textField" uuid="a560e39e-8f6c-4f62-8e26-45071fa37962" x="40" y="0" width="100" height="30">
+				<expression><![CDATA[$F{SYSDATE}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2b552ceb-ab99-455a-9bf3-63ec7a0478cc"/>
+			</element>
+			<element kind="textField" uuid="999b7686-279e-4e39-9169-fc67d47cc936" x="140" y="0" width="420" height="125" fontName="Code 128" fontSize="93.0" textAdjust="StretchHeight" linkType="None" linkTarget="Self">
+				<expression><![CDATA[$F{SYMBOL}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="43895132-155b-431e-80b5-43010cd8e58c"/>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

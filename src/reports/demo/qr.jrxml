@@ -1,33 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="QR" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c41d808f-ba95-4788-8ef8-b4e5ded228b2">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="jri_test@vm1.xml"/>
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<!-- 2024-09-19T15:15:54 -->
+<jasperReport name="QR" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c41d808f-ba95-4788-8ef8-b4e5ded228b2">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<queryString>
-		<![CDATA[select TO_CHAR(sysdate, 'DD.MM.YYYY HH24:MI:SS') as Datum from dual]]>
-	</queryString>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="dataadapters/win11-orclpdb-demo.jrdax"/>
+	<query language="sql"><![CDATA[select TO_CHAR(sysdate, 'DD.MM.YYYY HH24:MI:SS') as Datum from dual]]></query>
 	<field name="DATUM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DATUM"/>
 		<property name="com.jaspersoft.studio.field.label" value="DATUM"/>
 	</field>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
+	<background splitType="Stretch"/>
 	<detail>
 		<band height="125" splitType="Stretch">
-			<textField>
-				<reportElement x="40" y="30" width="100" height="30" uuid="90eac7f9-1a10-4272-9d2c-4363006fc24c"/>
-				<textFieldExpression><![CDATA[$F{DATUM}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="40" y="0" width="100" height="30" uuid="e9d0a426-de72-49d4-affe-87e3c751502d"/>
+			<element kind="textField" uuid="90eac7f9-1a10-4272-9d2c-4363006fc24c" x="40" y="30" width="100" height="30">
+				<expression><![CDATA[$F{DATUM}]]></expression>
+			</element>
+			<element kind="staticText" uuid="e9d0a426-de72-49d4-affe-87e3c751502d" x="40" y="0" width="100" height="30">
 				<text><![CDATA[DATUM]]></text>
-			</staticText>
-			<componentElement>
-				<reportElement x="175" y="5" width="150" height="120" uuid="964af9e1-3882-434c-9873-801d3dd91aa7"/>
-				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<jr:codeExpression><![CDATA[$F{DATUM}]]></jr:codeExpression>
-				</jr:QRCode>
-			</componentElement>
+			</element>
+			<element kind="component" uuid="964af9e1-3882-434c-9873-801d3dd91aa7" x="175" y="5" width="150" height="120">
+				<component kind="barcode4j:QRCode" errorCorrectionLevel="M">
+					<codeExpression><![CDATA[$F{DATUM}]]></codeExpression>
+				</component>
+			</element>
 		</band>
 	</detail>
 </jasperReport>

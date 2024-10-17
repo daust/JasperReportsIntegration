@@ -1,94 +1,58 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.20.1.final using JasperReports Library version 6.20.1-7584acb244139816654f64e2fd57a00d3e31921e  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="oracle" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="43fdd4da-5cc1-43bd-a5e3-e58aab25c671">
+<jasperReport name="oracle" language="java" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="43fdd4da-5cc1-43bd-a5e3-e58aab25c671">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="dave"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="dataadapters/win11-orclpdb-demo.jrdax"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="225"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="769"/>
-	<queryString language="SQL">
-		<![CDATA[select 4 as "four" from dual]]>
-	</queryString>
+	<query language="SQL"><![CDATA[select 4 as "four" from dual]]></query>
 	<field name="four" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="four"/>
 		<property name="com.jaspersoft.studio.field.label" value="four"/>
 	</field>
-	<background>
-		<band/>
-	</background>
-	<title>
-		<band height="72">
-			<frame>
-				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#CC3333" uuid="abba8997-5810-47a5-b503-ad8d16c1bb5a"/>
-				<staticText>
-					<reportElement x="20" y="20" width="380" height="43" forecolor="#FFFFFF" uuid="dc5b14b0-228a-4920-ac4d-b530ce99fe0c"/>
-					<textElement>
-						<font size="34" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Chart]]></text>
-				</staticText>
-			</frame>
-		</band>
+	<background/>
+	<title height="72">
+		<element kind="frame" uuid="abba8997-5810-47a5-b503-ad8d16c1bb5a" mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#CC3333">
+			<element kind="staticText" uuid="dc5b14b0-228a-4920-ac4d-b530ce99fe0c" x="20" y="20" width="380" height="43" forecolor="#FFFFFF" fontSize="34.0" bold="true">
+				<text><![CDATA[Chart]]></text>
+			</element>
+		</element>
 	</title>
-	<pageHeader>
-		<band height="13"/>
-	</pageHeader>
-	<columnHeader>
-		<band height="31">
-			<staticText>
-				<reportElement x="78" y="0" width="100" height="30" uuid="14463622-99c2-439a-b599-d14319f1aaf2">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fd1d7774-712b-41aa-b95f-4f05fd792bc1"/>
-				</reportElement>
-				<text><![CDATA[four]]></text>
-			</staticText>
-		</band>
+	<pageHeader height="13"/>
+	<columnHeader height="31">
+		<element kind="staticText" uuid="14463622-99c2-439a-b599-d14319f1aaf2" x="78" y="0" width="100" height="30">
+			<text><![CDATA[four]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fd1d7774-712b-41aa-b95f-4f05fd792bc1"/>
+		</element>
 	</columnHeader>
 	<detail>
 		<band height="211">
-			<pieChart>
-				<chart evaluationTime="Report">
-					<reportElement x="210" y="-2" width="321" height="200" uuid="191117e7-1ccd-4611-b68e-4836671ce6a3"/>
-					<chartTitle/>
-					<chartSubtitle/>
-					<chartLegend/>
-				</chart>
-				<pieDataset>
-					<keyExpression><![CDATA[$F{four}]]></keyExpression>
-					<valueExpression><![CDATA[$F{four}]]></valueExpression>
-				</pieDataset>
-				<piePlot>
-					<plot/>
+			<element kind="chart" chartType="pie" uuid="191117e7-1ccd-4611-b68e-4836671ce6a3" x="210" y="-2" width="321" height="200" evaluationTime="Report">
+				<dataset kind="pie">
+					<series>
+						<keyExpression><![CDATA[$F{four}]]></keyExpression>
+						<valueExpression><![CDATA[$F{four}]]></valueExpression>
+					</series>
+				</dataset>
+				<plot>
 					<itemLabel/>
-				</piePlot>
-			</pieChart>
-			<textField>
-				<reportElement x="40" y="60" width="100" height="30" uuid="b1ea244b-b58b-41b4-a5a4-b98b06432899">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fd1d7774-712b-41aa-b95f-4f05fd792bc1"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{four}]]></textFieldExpression>
-			</textField>
+				</plot>
+			</element>
+			<element kind="textField" uuid="b1ea244b-b58b-41b4-a5a4-b98b06432899" x="40" y="60" width="100" height="30">
+				<expression><![CDATA[$F{four}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fd1d7774-712b-41aa-b95f-4f05fd792bc1"/>
+			</element>
 		</band>
 	</detail>
-	<columnFooter>
-		<band/>
-	</columnFooter>
-	<pageFooter>
-		<band height="17">
-			<textField>
-				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="128b5a34-2ee1-439d-91a7-1ba15433c9b1"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="d437d18f-8a67-4f83-9fa8-7dd1cc1a7695"/>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement x="0" y="4" width="100" height="13" uuid="4f2801c2-6fab-487f-aa58-1a0a9823a218"/>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
-		</band>
+	<columnFooter/>
+	<pageFooter height="17">
+		<element kind="textField" uuid="128b5a34-2ee1-439d-91a7-1ba15433c9b1" mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" hTextAlign="Right">
+			<expression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></expression>
+		</element>
+		<element kind="textField" uuid="d437d18f-8a67-4f83-9fa8-7dd1cc1a7695" mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" evaluationTime="Report">
+			<expression><![CDATA[" " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+		<element kind="textField" uuid="4f2801c2-6fab-487f-aa58-1a0a9823a218" x="0" y="4" width="100" height="13" pattern="EEEEE dd MMMMM yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
 	</pageFooter>
-	<summary>
-		<band height="8"/>
-	</summary>
+	<summary height="8"/>
 </jasperReport>
