@@ -1,5 +1,3 @@
-<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
-<!-- 2024-09-25T20:47:10 -->
 <jasperReport name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cb86a302-28cf-4a59-8ac4-e7a2e180e2cc" ignorePagination="true">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -31,11 +29,11 @@ select 2 seq, 'value2' demo_value from dual
 	</field>
 	<background splitType="Stretch"/>
 	<title height="42" splitType="Stretch">
-		<element kind="staticText" uuid="379d639d-b067-47c6-8e43-32e049492bcd" x="10" y="11" width="217" height="31" fontSize="18.0" bold="true">
-			<text><![CDATA[Integration Test]]></text>
+		<element kind="staticText" uuid="379d639d-b067-47c6-8e43-32e049492bcd" x="10" y="11" width="217" height="31" fontName="DejaVu Sans" fontSize="18.0" bold="true">
+			<text><![CDATA[Fonts]]></text>
 		</element>
 	</title>
-	<pageHeader height="84" splitType="Stretch">
+	<pageHeader height="235" splitType="Stretch">
 		<element kind="staticText" uuid="73be86a9-6ff5-4c31-b1aa-01ccb10c3183" x="11" y="14" width="68" height="20">
 			<text><![CDATA[Parameter 1:]]></text>
 		</element>
@@ -71,6 +69,15 @@ select 2 seq, 'value2' demo_value from dual
 		</element>
 		<element kind="staticText" uuid="380cae45-42fb-432d-beb8-557bf489914d" x="282" y="54" width="100" height="20">
 			<text><![CDATA[Date/time]]></text>
+		</element>
+		<element kind="staticText" uuid="6825c2ba-cbe3-410d-834b-85ceeda5ca24" x="10" y="90" width="68" height="20" fontName="DejaVu Sans" fontSize="16.0">
+			<text><![CDATA[DejaVu Sans]]></text>
+		</element>
+		<element kind="staticText" uuid="2505d211-fa2f-4d9c-99f0-96d3ea5ffafd" x="10" y="120" width="68" height="20" fontName="Arial" fontSize="16.0">
+			<text><![CDATA[Arial]]></text>
+		</element>
+		<element kind="staticText" uuid="6572fa1c-b0c2-447c-a854-670a7149a90e" x="12" y="150" width="68" height="20" fontName="Verdana" fontSize="16.0">
+			<text><![CDATA[Verdana]]></text>
 		</element>
 	</pageHeader>
 	<columnHeader height="20" splitType="Stretch">

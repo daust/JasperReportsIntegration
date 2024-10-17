@@ -1,15 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="master_detail_subreport1" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport name="master_detail_subreport1" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="783ac5f8-8aed-49d4-ae76-2b99e6c2219d">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="p_table_name" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ODT_LOCATION"]]></defaultValueExpression>
 	</parameter>
-	<queryString>
-		<![CDATA[select * from user_tab_cols
-where table_name = $P{p_table_name}]]>
-	</queryString>
+	<query language="sql"><![CDATA[select * from user_tab_cols
+where table_name = $P{p_table_name}]]></query>
 	<field name="TABLE_NAME" class="java.lang.String"/>
 	<field name="COLUMN_NAME" class="java.lang.String"/>
 	<field name="DATA_TYPE" class="java.lang.String"/>
@@ -39,44 +36,24 @@ where table_name = $P{p_table_name}]]>
 	<field name="INTERNAL_COLUMN_ID" class="java.math.BigDecimal"/>
 	<field name="HISTOGRAM" class="java.lang.String"/>
 	<field name="QUALIFIED_COL_NAME" class="java.lang.String"/>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
-	<title>
-		<band splitType="Stretch"/>
-	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
-	</pageHeader>
-	<columnHeader>
-		<band splitType="Stretch"/>
-	</columnHeader>
+	<background splitType="Stretch"/>
+	<title splitType="Stretch"/>
+	<pageHeader splitType="Stretch"/>
+	<columnHeader splitType="Stretch"/>
 	<detail>
 		<band height="20" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="0" width="126" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{COLUMN_NAME}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="126" y="0" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{DATA_TYPE}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="226" y="0" width="80" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{TABLE_NAME}]]></textFieldExpression>
-			</textField>
+			<element kind="textField" uuid="e6400bbf-166a-4bbb-9fb7-0e9105ba7d28" x="0" y="0" width="126" height="20">
+				<expression><![CDATA[$F{COLUMN_NAME}]]></expression>
+			</element>
+			<element kind="textField" uuid="8caa40f7-d3cf-4301-b71f-ce4f01f1dcd5" x="126" y="0" width="100" height="20">
+				<expression><![CDATA[$F{DATA_TYPE}]]></expression>
+			</element>
+			<element kind="textField" uuid="8b12e375-2b09-4125-afbc-8006884740cc" x="226" y="0" width="80" height="20">
+				<expression><![CDATA[$F{TABLE_NAME}]]></expression>
+			</element>
 		</band>
 	</detail>
-	<columnFooter>
-		<band splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band splitType="Stretch"/>
-	</summary>
+	<columnFooter splitType="Stretch"/>
+	<pageFooter splitType="Stretch"/>
+	<summary splitType="Stretch"/>
 </jasperReport>

@@ -1,14 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="master_detail" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport name="master_detail" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="30f26331-e114-446c-a084-5af5b51333a4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="2"/>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+	<parameter name="SUBREPORT_DIR" forPrompting="false" class="java.lang.String">
 		<defaultValueExpression><![CDATA["D:\\dropbox\\My Dropbox\\Projekt\\prj_JasperReportsIntegration\\src\\reports\\demo\\"]]></defaultValueExpression>
 	</parameter>
-	<queryString>
-		<![CDATA[select * from user_tables]]>
-	</queryString>
+	<query language="sql"><![CDATA[select * from user_tables]]></query>
 	<field name="TABLE_NAME" class="java.lang.String"/>
 	<field name="TABLESPACE_NAME" class="java.lang.String"/>
 	<field name="CLUSTER_NAME" class="java.lang.String"/>
@@ -63,45 +60,26 @@
 	<field name="READ_ONLY" class="java.lang.String"/>
 	<field name="SEGMENT_CREATED" class="java.lang.String"/>
 	<field name="RESULT_CACHE" class="java.lang.String"/>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
-	<title>
-		<band height="79" splitType="Stretch"/>
-	</title>
-	<pageHeader>
-		<band height="35" splitType="Stretch"/>
-	</pageHeader>
-	<columnHeader>
-		<band height="40" splitType="Stretch"/>
-	</columnHeader>
+	<background splitType="Stretch"/>
+	<title height="79" splitType="Stretch"/>
+	<pageHeader height="35" splitType="Stretch"/>
+	<columnHeader height="40" splitType="Stretch"/>
 	<detail>
 		<band height="65" splitType="Stretch">
-			<textField>
-				<reportElement x="4" y="14" width="135" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{TABLE_NAME}]]></textFieldExpression>
-			</textField>
-			<subreport>
-				<reportElement x="149" y="14" width="395" height="42"/>
-				<subreportParameter name="p_table_name">
-					<subreportParameterExpression><![CDATA[$F{TABLE_NAME}]]></subreportParameterExpression>
-				</subreportParameter>
+			<element kind="textField" uuid="7578a5ca-f70b-480b-80f1-6f7583446f98" x="4" y="14" width="135" height="20">
+				<expression><![CDATA[$F{TABLE_NAME}]]></expression>
+			</element>
+			<element kind="subreport" uuid="ae9cdd2a-05ac-4706-90ee-414f84a9397b" x="149" y="14" width="395" height="42">
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "master_detail_subreport1.jasper"]]></subreportExpression>
-			</subreport>
-			<line>
-				<reportElement x="4" y="5" width="551" height="1"/>
-			</line>
+				<expression><![CDATA[$P{SUBREPORT_DIR} + "master_detail_subreport1.jasper"]]></expression>
+				<parameter name="p_table_name">
+					<expression><![CDATA[$F{TABLE_NAME}]]></expression>
+				</parameter>
+			</element>
+			<element kind="line" uuid="bc9593ba-0444-4e3b-9f69-d78c3ba29bdb" x="4" y="5" width="551" height="1"/>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
 </jasperReport>

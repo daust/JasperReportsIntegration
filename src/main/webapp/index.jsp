@@ -4,7 +4,7 @@
 <%@page import="java.util.Iterator"%>
 <%@page import="net.sf.jasperreports.engine.*" %>
 <%@page import="org.apache.commons.lang3.*" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="java.io.File" %>
 <%@page import="org.apache.logging.log4j.*" %>
 
@@ -89,9 +89,9 @@
 				Map.Entry<String,DataSourceDefinition> entry = (Map.Entry<String,DataSourceDefinition>) it.next();
 				String dsName = (String) entry.getKey();
 				DataSourceDefinition ds = (DataSourceDefinition) entry.getValue();
-				out.write("<tr><td>"+ StringEscapeUtils.escapeHtml(ds.name) +"</td>");
-				out.write("<td>"+ StringEscapeUtils.escapeHtml(ds.type) +"</td>");
-				out.write("<td><a target=\"_new\" href=\"test?_dataSource="+ StringEscapeUtils.escapeHtml(ds.name) + "\">Test</a></td></tr>");
+				out.write("<tr><td>"+ StringEscapeUtils.escapeHtml4(ds.name) +"</td>");
+				out.write("<td>"+ StringEscapeUtils.escapeHtml4(ds.type) +"</td>");
+				out.write("<td><a target=\"_new\" href=\"test?_dataSource="+ StringEscapeUtils.escapeHtml4(ds.name) + "\">Test</a></td></tr>");
 				
 				
 				//System.out.println("key,val: " + key + "," + val);

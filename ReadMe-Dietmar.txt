@@ -8,6 +8,11 @@
 	- http://win11:8090/ords
 	- Workspace: DEMO, User: dietmar.aust
 	- APEX Application: Jasper Reports Integration Test (v2.6.2)
+
+
+  Test-Verbindung: 
+  - http://localhost:8090/jri-2.11.0-jasper-6.20.6
+  - http://macbook2022.local:9080/jri/
 	
 - Datenbank-Schema: 
 	- Server: win11
@@ -18,21 +23,47 @@
 - Patch/<versionsnummer>/_install.sql
 	- Hier jeden Installationsschritt für ein Upgrade dokumentieren
 
---------------------------------------------------------------
--- Apache Ivy konfigurieren (nur einmalig)
---------------------------------------------------------------
+- Einträge in /tmp/jri
+[datasource:default]
+type=jdbc
+url=jdbc:oracle:thin:@10.211.55.7:1521/orclpdb
+username=demo
+password=oracle1
 
-*) Apache ANT installieren
+*) Upgrade Gradle Wrapper
 
-brew install ant
-oder
-brew upgrade ant
+- first configure file: 
+vi /Users/daust/LOCAL-FILES/50-Projects/JasperReportsIntegration/gradle/wrapper/gradle-wrapper.properties
 
-*) Herunterladen und in ANT Bibliothek kopieren
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.4-all.zip
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
 
-brew install ivy
-locate ivy-2.4.0.jar
-cp /usr/local/Cellar/groovy/2.4.7/libexec/lib/ivy-2.4.0.jar /usr/local/Cellar/ant/1.10.1/libexec/lib
+- then run:
+./gradlew wrapper --distribution-type=bin
+
+*) Checking the syntax for possible deprecations (before upgrading gradle)
+
+gradle help --scan
+
+*) Reset Gradle Wrapper
+
+Just do the same as before, just pick the previous version in the config file.
+
+-----------------------------------------------------------------------------
+-- Troubleshooting
+-----------------------------------------------------------------------------
+
+*) Gradle, during build i get a corrupted data block in the cache
+=> Remove the complete local .gradle directory, then the binaries for the current gradle version will be downloaded again: 
+rm -r $HOME/.gradle
+
+Just cleaning the local cache: rm -r $HOME/.gradle/caches
+
+https://www.baeldung.com/gradle-build-cache
+
 
 
 -----------------------------------------------------------------------------

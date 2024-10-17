@@ -1,6 +1,33 @@
 [//]: # (Infos about this file)
 [//]: # (Markdown Syntax: https://guides.github.com/features/mastering-markdown/)
 
+# Version 3.0.0 (release: 17.10.2024)
+
+You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/14?closed=1).  
+ 
+## New features
+  * #146 Upgrade libraries to JasperReports 7.0.1
+
+## Bug fixes
+  * *none*
+
+## Changed behaviour
+  * **Existing reports will break!** All existing reports need to be upgraded using JasperReportsStudio 7.0.x first. 
+    * You can do this with the following steps: 
+      * select your ``<report>.jrxml`` file in the Project Explorer pane
+      * right-click on the file or on a directory. If you choose a directory, it will be applied recursively for all ``.jrxml`` files in all subdirectories
+      * select ``JasperReports``>``Update JasperReports files``
+      * now, the selected ``.jrxml`` files will be upgraded to version 7 of JasperReports. 
+      * then, deploy all modified ``.jrxml`` files to the target system, i.e. your application server. 
+      * you actually don't even need to compile the ``.jrxml`` file into an ``.jasper`` file for deployment. It will be created automatically if it does not exist. It is safe to delete all ``.jasper`` files (if you have the ``.jrxml`` file in the directory)
+  * All other changes are mainly affecting developers, the JasperReports development team changed from using Apache Ant and Apache Ivy to Maven. This makes the development on our side much easier and all artifacts can be taken directly from the Maven repository.
+    * Also, using gradle with gretty for testing is currently not working and has been removed from the developer documentation. It is rather advised to test/debug directly from Eclipse.  
+
+## Known issues
+  * Please check the current list of open issues: https://github.com/daust/JasperReportsIntegration/issues. 
+  * For running the application on Tomcat10, you have to use ``jri-3.0.0-jasper-7.0.1-tomcat10.war`` instead of ``jri.war``.
+  * Should you run into errors while running the reports, it will be most likely due to not yet upgraded reports to the version 7.x syntax.
+
 # Version 2.11.0 (release: 23.11.2023)
 
 You can see the full list of issues with details in the [milestones page](https://github.com/daust/JasperReportsIntegration/milestone/12?closed=1).  
