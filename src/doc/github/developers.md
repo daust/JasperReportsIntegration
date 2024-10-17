@@ -354,16 +354,26 @@ setConfigDir.cmd ..\webapp\jri-tomcat10.war C:\app\jri
 What are the steps for releasing a new version of JRI?
 
 * Update the release notes => ``ReleaseNotes.md``
+* Build the current release
+    * ``<gradle command> clean``
+    * ``<gradle command> build``
+    * ``<gradle command> buildWarTomcat10``
 * Test all use cases in the APEX application
 * Do a full install on Windows following the full installation guidelines
 * Do a full install on Linux following the full installation guidelines
 * Merge the current branch into the main branch
+    * e.g. for version 3.0.0, merge the branch ``b3.0.0`` back into branch ``main``
 * Close the current milestone ( https://github.com/daust/JasperReportsIntegration/milestones ) 
 * Create a new release
-* Build the current release
-* Upload the binaries
-* Blogpost on dietmaraust.com
-* Update the latest blogpost on dietmaraust.com and reference the new blogpost saying that a new version available, see: https://dietmaraust.com/jasperreportsintegration-2-6-1-released
+    * Draft a new release
+    * Tag as ``v3.0.0`` for version ``3.0.0``
+    * Release title is ``Version 3.0.0 (release: 17.10.2024)`` from the file ``ReleaseNotes.md``
+    * The contents is also from ``ReleaseNotes.md``, just without the title
+    * Upload the binaries
+        * e.g. ``jri-3.0.0-jasper-7.0.1.zip``
+        * e.g. ``jri-3.0.0-jasper-7.0.1.tar``
+        * e.g. ``jri-3.0.0-jasper-7.0.1-tomcat10.war``
+* Post on Twitter / X
 
 ## Development with Eclipse
 
