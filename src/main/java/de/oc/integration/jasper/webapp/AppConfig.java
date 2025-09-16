@@ -43,6 +43,9 @@ public class AppConfig {
 	public static final String OC_JASPER_WEBAPP_HOME = "oc.jasper.webapp.home";
 	public static final String OC_JASPER_LOG_DIR = "oc.jasper.log.dir";
 	public static final java.lang.String APPLICATION_PROPERTIES_FILE = "application.properties";
+	private static final String DB_URL = "db_url";
+	private static final String DB_USER = "db_user";
+	private static final String DB_PWD = "db_password";
 
 
 	// ----------------------------------------------------
@@ -355,9 +358,12 @@ public class AppConfig {
 			if (sectionName.startsWith("datasource:")) {
 				logger.trace("datasource section found=" + sectionName);
 				String dsName = sectionName.split(":")[1];
-				DataSourceDefinition ds = new DataSourceDefinition(props.getString(sectionName + ".type"), dsName,
-						props.getString(sectionName + ".url"), props.getString(sectionName + ".username"),
-						decryptPWD(props.getString(sectionName + ".password")),
+				DataSourceDefinition ds = new DataSourceDefinition(
+						props.getString(sectionName + ".type"),
+						dsName,
+						System.getenv(DB_URL) != null ? System.getenv(DB_URL) : props.getString(sectionName + ".url"),
+						System.getenv(DB_USER) != null ? System.getenv(DB_USER) : props.getString(sectionName + ".username"),
+						System.getenv(DB_PWD) != null ? System.getenv(DB_PWD) : decryptPWD(props.getString(sectionName + ".password")),
 						props.getStringArray(sectionName + ".ipAddressesAllowed"));
 
 				_dataSourceDefinitions.put(dsName, ds);
