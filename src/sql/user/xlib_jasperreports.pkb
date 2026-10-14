@@ -324,7 +324,7 @@ AS
       l_url := l_url || '?_repName=' || p_rep_name;
       l_url := l_url || '&_repFormat=' || p_rep_format;
       l_url := l_url || '&_dataSource=' || p_data_source;
-      l_url := l_url || '&_outFilename=' || p_out_filename;
+      l_url := l_url || '&_outFilename=' || utl_url.escape (p_out_filename, true, 'UTF-8');
       l_url := l_url || '&_repLocale=' || p_rep_locale;
       l_url := l_url || '&_repEncoding=' || p_rep_encoding;
       l_url := l_url || '&_repTimeZone=' || APEX_UTIL.URL_ENCODE (p_rep_time_zone);
@@ -341,16 +341,16 @@ AS
 
       -- direct printing
       l_url := l_url || '&_printIsEnabled=' || bool2string (p_print_is_enabled);
-      l_url := l_url || '&_printPrinterName=' || p_print_printer_name;
+      l_url := l_url || '&_printPrinterName=' || utl_url.escape (p_print_printer_name, true, 'UTF-8');
       l_url := l_url || '&_printPrinterTray=' || p_print_media;
       l_url := l_url || '&_printCopies=' || p_print_copies;
       l_url := l_url || '&_printDuplex=' || bool2string (p_print_duplex);
       l_url := l_url || '&_printCollate=' || bool2string (p_print_collate);
-      l_url := l_url || '&_printJobName=' || p_print_job_name;
+      l_url := l_url || '&_printJobName=' || utl_url.escape (p_print_job_name, true, 'UTF-8');
 
       -- save file on server
       l_url := l_url || '&_saveIsEnabled=' || bool2string (p_save_is_enabled);
-      l_url := l_url || '&_saveFileName=' || p_save_filename;
+      l_url := l_url || '&_saveFileName=' || utl_url.escape (p_save_filename, true, 'UTF-8');
 
 
 /*
@@ -441,16 +441,16 @@ AS
 
       -- direct printing
       l_url := l_url || '&_printIsEnabled=' || bool2string (p_print_is_enabled);
-      l_url := l_url || '&_printPrinterName=' || p_print_printer_name;
+      l_url := l_url || '&_printPrinterName=' || utl_url.escape (p_print_printer_name, true, 'UTF-8');
       l_url := l_url || '&_printPrinterTray=' || p_print_media;
       l_url := l_url || '&_printCopies=' || p_print_copies;
       l_url := l_url || '&_printDuplex=' || bool2string (p_print_duplex);
       l_url := l_url || '&_printCollate=' || bool2string (p_print_collate);
-      l_url := l_url || '&_printJobName=' || p_print_job_name;
+      l_url := l_url || '&_printJobName=' || utl_url.escape (p_print_job_name, true, 'UTF-8');
 
       -- save file on server
       l_url := l_url || '&_saveIsEnabled=' || bool2string (p_save_is_enabled);
-      l_url := l_url || '&_saveFileName=' || p_save_filename;
+      l_url := l_url || '&_saveFileName=' || utl_url.escape (p_save_filename, true, 'UTF-8');
 
       -- additional report parameter passed?
       IF (p_additional_params IS NOT NULL)
