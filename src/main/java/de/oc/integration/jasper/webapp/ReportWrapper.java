@@ -371,7 +371,24 @@ public class ReportWrapper extends HttpServlet {
 
 			// set a specific filename for download, if given
 			if (urlCallInterface.outFilename != null && !"".equals(urlCallInterface.outFilename)) {
-				response.setHeader("Content-Disposition", "attachment; filename=" + urlCallInterface.outFilename);
+				String fn = urlCallInterface.outFilename;
+
+				// ASCII fallback for old browsers: replace d-stroke (no decomposition), strip accents, drop the rest
+				String ascii = java.text.Normalizer
+						.normalize(fn.replace('\u0111', 'd').replace('\u0110', 'D'), java.text.Normalizer.Form.NFD)
+						.replaceAll("\\p{M}", "")
+						.replaceAll("[^\\x20-\\x7E]", "_")
+						.replace("\"", "'");
+
+				// UTF-8 percent-encoded real name (RFC 5987)
+				String encoded;
+				try {
+					encoded = java.net.URLEncoder.encode(fn, "UTF-8").replace("+", "%20");
+				} catch (java.io.UnsupportedEncodingException e) {
+					encoded = ascii;
+				}
+
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + ascii + "\"; filename*=UTF-8''" + encoded);
 			}
 
 			// ----------------------------------------------------
